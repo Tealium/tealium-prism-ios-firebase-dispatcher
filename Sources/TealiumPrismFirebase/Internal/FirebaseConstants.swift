@@ -110,7 +110,7 @@ enum FirebaseConstants {
     
     // MARK: - SetUserProperty Command
     
-    /// Set user property command for setting custom user attributes.
+    /// Set user property command for setting custom user attributes (single property).
     ///
     /// Firebase SDK Reference:
     /// - setUserProperty: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
@@ -120,6 +120,21 @@ enum FirebaseConstants {
         enum Param {
             static let propertyName = "firebase_property_name"
             static let propertyValue = "firebase_property_value"
+        }
+    }
+    
+    // MARK: - SetUserProperties Command
+    
+    /// Set user properties command for setting multiple custom user attributes at once.
+    ///
+    /// Firebase SDK Reference:
+    /// - setUserProperty: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
+    enum SetUserProperties {
+        static let name = "setuserproperties"
+        
+        enum Param {
+            static let propertyNames = "firebase_property_names"
+            static let propertyValues = "firebase_property_values"
         }
     }
     
@@ -159,7 +174,10 @@ enum FirebaseConstants {
         static let name = "setconsent"
         
         enum Param {
-            static let consentSettings = "firebase_consent_settings"
+            static let adStorage = "ad_storage"
+            static let analyticsStorage = "analytics_storage"
+            static let adUserData = "ad_user_data"
+            static let adPersonalization = "ad_personalization"
         }
     }
     
