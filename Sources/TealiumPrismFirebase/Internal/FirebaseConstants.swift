@@ -8,6 +8,11 @@
 
 import Foundation
 import FirebaseAnalytics
+import TealiumPrismCore
+
+extension LogCategory {
+    static let firebase = "Firebase"
+}
 
 // MARK: - Firebase Constants
 
