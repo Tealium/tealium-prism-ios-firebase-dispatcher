@@ -51,14 +51,14 @@ final class FirebaseValidatorTests: XCTestCase {
     
     func test_event_name_with_invalid_chars_uses_replace_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.replace)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.replace)
         XCTAssertEqual(validator.validateEventName("my-event.name"), "my_event_name")
         XCTAssertEqual(validator.validateEventName("test@event#123"), "test_event_123")
     }
     
     func test_event_name_with_invalid_chars_uses_remove_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.remove)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.remove)
         XCTAssertEqual(validator.validateEventName("my-event"), "myevent")
         XCTAssertEqual(validator.validateEventName("my-event.name"), "myeventname")
     }
@@ -73,7 +73,7 @@ final class FirebaseValidatorTests: XCTestCase {
     
     func test_event_name_cleans_up_multiple_underscores() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.replace)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.replace)
         XCTAssertEqual(validator.validateEventName("my---event"), "my_event")
     }
     
@@ -116,13 +116,13 @@ final class FirebaseValidatorTests: XCTestCase {
     
     func test_user_property_name_with_invalid_chars_uses_replace_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.replace)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.replace)
         XCTAssertEqual(validator.validateUserPropertyName("my-prop.name"), "my_prop_name")
     }
     
     func test_user_property_name_with_invalid_chars_uses_remove_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.remove)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.remove)
         XCTAssertEqual(validator.validateUserPropertyName("my-prop"), "myprop")
     }
     
@@ -168,13 +168,13 @@ final class FirebaseValidatorTests: XCTestCase {
     
     func test_parameter_name_with_invalid_chars_uses_replace_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.replace)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.replace)
         XCTAssertEqual(validator.validateParameterName("my-param.name"), "my_param_name")
     }
     
     func test_parameter_name_with_invalid_chars_uses_remove_strategy() {
         let validator = FirebaseValidator()
-        validator.setInvalidCharStrategy(FirebaseValidator.Validation.Strategy.remove)
+        validator.setInvalidCharStrategy(NameSanitizer.Strategy.remove)
         XCTAssertEqual(validator.validateParameterName("my-param"), "myparam")
     }
     

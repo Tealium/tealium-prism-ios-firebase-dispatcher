@@ -88,9 +88,7 @@ enum FirebaseConstants {
         enum Param {
             static let eventName = "firebase_event_name"
             static let eventParams = "firebase_event_params"
-            static let eventKey = "event"
-            static let itemsParams = "items"
-            static let paramItems = "param_items"
+            static let items = "items"
         }
     }
     
@@ -159,8 +157,7 @@ enum FirebaseConstants {
         static let name = "setdefaultparameters"
         
         enum Param {
-            static let defaultParams = "default"
-            static let tagDefaultParams = "firebase_default_params"
+            static let params = "firebase_params"
         }
     }
     

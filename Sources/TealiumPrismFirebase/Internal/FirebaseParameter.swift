@@ -13,16 +13,14 @@ import FirebaseAnalytics
 
 /// Maps Tealium parameter names to Firebase Analytics predefined parameter constants.
 ///
-/// Custom parameters are also supported by Firebase - if a parameter name is not found
-/// in the mapping, the original name is returned and will be sent as a custom parameter.
+/// Custom parameters are supported if not found in the mapping.
 ///
 /// Firebase SDK Reference:
-/// - Parameters: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
 struct FirebaseParameter {
     
     /// Maps param_* keys to Firebase Analytics parameter constants.
-    ///
-    /// Usage: Send `param_currency` in payload → mapped to `AnalyticsParameterCurrency`
+    /// Example: `param_currency` → `"currency"`
     static let mapping: [String: String] = [
         "param_achievement_id": AnalyticsParameterAchievementID,
         "param_ad_format": AnalyticsParameterAdFormat,
@@ -60,7 +58,8 @@ struct FirebaseParameter {
         "param_item_list_name": AnalyticsParameterItemListName,
         "param_item_name": AnalyticsParameterItemName,
         "param_item_variant": AnalyticsParameterItemVariant,
-        "param_items": AnalyticsParameterItems,
+        // Note: "param_items" is handled separately in LogEventCommand
+        // "param_items": AnalyticsParameterItems, 
         "param_level": AnalyticsParameterLevel,
         "param_level_name": AnalyticsParameterLevelName,
         "param_location": AnalyticsParameterLocation,
@@ -98,18 +97,6 @@ struct FirebaseParameter {
     ]
     
     /// Returns the mapped Firebase parameter name, or the original name if no mapping exists.
-    ///
-    /// If no mapping is found, the original name is returned unchanged.
-    /// Firebase allows custom parameter names as long as they follow these rules:
-    /// - Up to 40 characters
-    /// - Must start with an alphabetic character
-    /// - Only alphanumeric characters and underscores allowed
-    /// - Reserved prefixes (`firebase_`, `google_`, `ga_`) cannot be used
-    ///
-    /// Parameter values must be one of these types:
-    /// - String (max 100 characters for standard GA, 500 for GA 360)
-    /// - Int
-    /// - Double
     ///
     /// - Parameter paramName: The Tealium parameter name (e.g., "param_currency" or custom "my_param")
     /// - Returns: The Firebase Analytics parameter constant, or the original name for custom parameters
