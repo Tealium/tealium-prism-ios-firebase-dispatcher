@@ -14,10 +14,10 @@ import TealiumPrismCore
 /// Associates analytics data with a specific user by setting the user ID property.
 /// This must be used in accordance with Google's Privacy Policy.
 ///
-/// **Firebase SDK Reference:**
-/// https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserid_:
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserid_:
 ///
-/// **Usage in Tealium:**
+/// Usage:
 /// ```swift
 /// // Set user ID on login
 /// tealium.track("login", data: [
@@ -29,11 +29,6 @@ import TealiumPrismCore
 ///     "firebase_user_id": ""
 /// ])
 /// ```
-///
-/// **Behavior:**
-/// - Firebase accepts non-empty string (1-256 chars) or nil to clear
-/// - Use empty string `""` to clear user ID (command converts `""` → nil for Firebase)
-/// - User ID persists across app sessions until cleared
 class SetUserIdCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

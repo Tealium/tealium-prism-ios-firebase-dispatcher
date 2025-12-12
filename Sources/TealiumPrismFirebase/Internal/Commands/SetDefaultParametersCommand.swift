@@ -13,12 +13,11 @@ import TealiumPrismCore
 ///
 /// Default parameters are automatically included with every event logged to Firebase.
 /// These parameters persist across app runs and are of lower precedence than event parameters.
-/// Use empty string values to clear previously set default parameters.
 ///
-/// **Firebase SDK Reference:**
-/// https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
 ///
-/// **Usage in Tealium:**
+/// Usage:
 /// ```swift
 /// // Set default parameters that will be included with every event
 /// tealium.track("setdefaultparameters", data: [
@@ -39,15 +38,6 @@ import TealiumPrismCore
 ///     "setdefaultparameters_firebase_params": [:]
 /// ])
 /// ```
-
-///
-/// **Behavior:**
-/// - Default parameters persist across app runs
-/// - Event parameters override default parameters with the same name
-/// - Valid parameter types: String, Int, Double
-/// - Empty string clears a specific parameter (converted to NSNull for Firebase)
-/// - Empty payload `[]` or empty `firebase_params: {}` clears all default parameters
-/// - Missing `firebase_params` returns false (error - not intended)
 class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

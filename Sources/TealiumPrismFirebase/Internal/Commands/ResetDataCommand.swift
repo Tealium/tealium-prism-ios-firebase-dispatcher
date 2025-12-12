@@ -14,19 +14,14 @@ import TealiumPrismCore
 /// Clears all analytics data for this app instance from the device and resets the app instance ID.
 /// This is typically used when a user logs out or when privacy regulations require data deletion.
 ///
-/// **Firebase SDK Reference:**
-/// https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#resetanalyticsdata
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#resetanalyticsdata
 ///
-/// **Usage in Tealium:**
+/// Usage:
 /// ```swift
 /// // Reset all analytics data (e.g., on user logout)
 /// tealium.track("resetdata", data: [:])
 /// ```
-///
-/// **Behavior:**
-/// - Clears all analytics data for this app instance
-/// - Resets the app instance ID
-/// - No parameters required
 class ResetDataCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

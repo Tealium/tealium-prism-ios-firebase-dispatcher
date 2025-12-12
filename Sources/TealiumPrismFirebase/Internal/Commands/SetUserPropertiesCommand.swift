@@ -14,23 +14,16 @@ import TealiumPrismCore
 /// Sets multiple user properties using parallel arrays. Up to 25 user property names are supported.
 /// Once set, user property values persist throughout the app lifecycle and across sessions.
 ///
-/// **Firebase SDK Reference:**
-/// https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
 ///
-/// **Usage:**
+/// Usage:
 /// ```swift
 /// tealium.track("set_properties", data: [
 ///     "user_name_for_property_names": ["subscription_tier", "user_level", "account_type"],
 ///     "user_name_for_property_values": ["premium", "expert", "business"]
 /// ])
 /// ```
-///
-/// **Constraints:**
-/// - Name: 1-24 alphanumeric characters or underscores, must start with letter
-/// - Value: Up to 36 characters, empty string or nil removes the property
-/// - Reserved prefixes: "firebase_", "google_", "ga_"
-/// - Reserved names: "first_open_time", "last_deep_link_referrer", "user_id"
-/// - Arrays must have matching length (values[i] corresponds to names[i])
 class SetUserPropertiesCommand: FirebaseCommandProtocol {
     
     public let name = FirebaseConstants.SetUserProperties.name

@@ -14,9 +14,10 @@ import FirebaseAnalytics
 ///
 /// Sets end user consent state for device identifiers.
 ///
-/// **Firebase SDK:** https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(Consent)#setconsent_:
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(Consent)#setconsent_:
 ///
-/// **Usage:**
+/// Usage:
 /// ```swift
 /// tealium.track("consent_update", data: [
 ///     "user_name_for_ad_storage": "granted",
@@ -31,11 +32,9 @@ import FirebaseAnalytics
 /// ])
 /// ```
 ///
-/// **Supported types:** `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
-/// **Supported values:** `granted`, `denied`
+/// Supported consent types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
 ///
-/// Invalid keys/values are logged as warnings and ignored. Command fails only if no valid settings are provided.
-///
+/// Supported values: `granted`, `denied`
 class SetConsentCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
