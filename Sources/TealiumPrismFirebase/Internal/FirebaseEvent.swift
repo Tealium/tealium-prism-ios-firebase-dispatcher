@@ -13,17 +13,14 @@ import FirebaseAnalytics
 
 /// Maps Tealium event names to Firebase Analytics predefined event constants.
 ///
-/// Custom event names are also supported by Firebase - if an event name is not found
-/// in the mapping, the original name is returned and will be sent as a custom event.
+/// Custom event names are supported if not found in the mapping.
 ///
 /// Firebase SDK Reference:
-/// - Events: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
-/// - logEvent: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#/c:objc(cs)FIRAnalytics(cm)logEventWithName:parameters:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
 struct FirebaseEvent {
     
     /// Maps event_* keys to Firebase Analytics event constants.
-    ///
-    /// Usage: Send `event_purchase` in payload → mapped to `AnalyticsEventPurchase`
+    /// Example: `event_purchase` → `"purchase"`
     static let mapping: [String: String] = [
         "event_ad_impression": AnalyticsEventAdImpression,
         "event_add_payment_info": AnalyticsEventAddPaymentInfo,
@@ -43,7 +40,7 @@ struct FirebaseEvent {
         "event_post_score": AnalyticsEventPostScore,
         "event_purchase": AnalyticsEventPurchase,
         "event_refund": AnalyticsEventRefund,
-        "event_remove_cart": AnalyticsEventRemoveFromCart,
+        "event_remove_from_cart": AnalyticsEventRemoveFromCart,
         "event_screen_view": AnalyticsEventScreenView,
         "event_search": AnalyticsEventSearch,
         "event_select_content": AnalyticsEventSelectContent,
@@ -63,14 +60,6 @@ struct FirebaseEvent {
     ]
     
     /// Returns the mapped Firebase event name, or the original name if no mapping exists.
-    ///
-    /// If no mapping is found, the original name is returned unchanged.
-    /// Firebase allows custom event names as long as they follow these rules:
-    /// - Max 40 characters
-    /// - Must start with an alphabetic character
-    /// - Only alphanumeric characters and underscores allowed
-    /// - Reserved prefixes (`firebase_`, `google_`, `ga_`) cannot be used
-    /// - Case-sensitive (two events differing only in case are distinct)
     ///
     /// - Parameter eventName: The Tealium event name (e.g., "event_purchase" or custom "my_event")
     /// - Returns: The Firebase Analytics event constant, or the original name for custom events
