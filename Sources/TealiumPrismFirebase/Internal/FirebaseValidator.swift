@@ -12,6 +12,11 @@ import TealiumPrismCore
 /// Validates Firebase event names, parameter names, and parameter values.
 class FirebaseValidator {
     
+    /// Maximum number of parameters allowed per Firebase Analytics event.
+    /// Firebase Analytics allows up to 25 event parameters per event.
+    /// Reference: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#logevent_:parameters:
+    static let maxEventParameters = 25
+    
     // MARK: - Properties
     
     private let nameSanitizer: NameSanitizer
@@ -84,8 +89,25 @@ class FirebaseValidator {
                                                    valueType: "User property value")
     }
     
-    public func isEcommerceEvent(_ eventName: String) -> Bool {
-        return ReservedNamesChecker.isEcommerceEvent(eventName)
+    /// Checks if the event name supports the `items` parameter.
+    public func supportsItemsParameter(_ eventName: String) -> Bool {
+        return ReservedNamesChecker.supportsItemsParameter(eventName)
+    }
+    
+    /// Enforces Firebase's maximum parameters per event limit.
+    /// - Parameters:
+    ///   - parameters: The parameters dictionary to validate
+    ///   - eventName: The event name (used for logging)
+    /// - Returns: Parameters dictionary limited to maxEventParameters, or original if within limit
+    public func enforceParameterLimit(_ parameters: [String: Any], eventName: String) -> [String: Any] {
+        guard parameters.count > Self.maxEventParameters else { return parameters }
+        
+        let excessCount = parameters.count - Self.maxEventParameters
+        logger?.warn(category: LogCategory.firebase,
+            "Event '\(eventName)' has \(parameters.count) parameters, " +
+            "exceeding Firebase limit of \(Self.maxEventParameters). Removing \(excessCount) excess parameter(s)")
+        
+        return Dictionary(uniqueKeysWithValues: Array(parameters.prefix(Self.maxEventParameters)))
     }
 }
 

@@ -26,7 +26,6 @@ import TealiumPrismCore
 /// ```
 class SetUserPropertiesCommand: FirebaseCommandProtocol {
     
-    public let name = FirebaseConstants.SetUserProperties.name
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol
@@ -37,6 +36,8 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
         self.logger = logger
     }
     
+    public let name = FirebaseConstants.SetUserProperties.name
+    
     public func execute(payload: DataObject) -> Bool {
         logger.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
         
@@ -45,13 +46,13 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
             return false
         }
         
-        guard let names = propertyData[FirebaseConstants.SetUserProperties.Param.propertyNames] as? [String] else {
+        guard let names = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
             logger.warn(category: LogCategory.firebase, 
                        "Missing or invalid property names array - command skipped")
             return false
         }
         
-        guard let values = propertyData[FirebaseConstants.SetUserProperties.Param.propertyValues] as? [String] else {
+        guard let values = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
             logger.warn(category: LogCategory.firebase, 
                        "Missing or invalid property values array - command skipped")
             return false
@@ -74,7 +75,7 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
         // Set each property (continues even if some fail validation)
         for (index, name) in names.enumerated() {
             let value = values[index]
-            setProperty(name: name, value: value)
+            _ = setProperty(name: name, value: value)
         }
                 
         return true

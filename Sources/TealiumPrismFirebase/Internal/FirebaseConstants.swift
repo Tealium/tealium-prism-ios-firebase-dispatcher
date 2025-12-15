@@ -88,7 +88,7 @@ enum FirebaseConstants {
         enum Param {
             static let eventName = "firebase_event_name"
             static let eventParams = "firebase_event_params"
-            static let items = "items"
+            static let items = "param_items"
         }
     }
     

@@ -52,7 +52,8 @@ struct ReservedNamesChecker {
         "user_engagement"
     ]
     
-    static let ecommerceEventsWithItems: Set<String> = [
+    /// Events that support the `items` parameter according to Firebase Analytics documentation.
+    static let eventsWithItems: Set<String> = [
         "add_payment_info",
         "add_shipping_info",
         "add_to_cart",
@@ -79,8 +80,9 @@ struct ReservedNamesChecker {
         return reservedUserPropertyNames.contains(name.lowercased())
     }
     
-    static func isEcommerceEvent(_ eventName: String) -> Bool {
-        return ecommerceEventsWithItems.contains(eventName)
+    /// Checks if the event name supports the `items` parameter.
+    static func supportsItemsParameter(_ eventName: String) -> Bool {
+        return eventsWithItems.contains(eventName)
     }
 }
 

@@ -91,11 +91,11 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
             }
             
             // Firebase supports String, Int, and Double only
-            if let intValue = value as? Int {
+            if let intValue = value.get(as: Int.self) {
                 sanitizedParams[sanitizedName] = intValue
-            } else if let doubleValue = value as? Double {
+            } else if let doubleValue = value.get(as: Double.self) {
                 sanitizedParams[sanitizedName] = doubleValue
-            } else if let stringValue = value as? String {
+            } else if let stringValue = value.get(as: String.self) {
                 // Empty string clears the parameter
                 if stringValue.isEmpty {
                     sanitizedParams[sanitizedName] = NSNull()

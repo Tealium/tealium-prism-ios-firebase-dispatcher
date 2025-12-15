@@ -7,9 +7,29 @@
 //
 
 import Foundation
+import FirebaseAnalytics
 import TealiumPrismCore
 
 /// Command for logging Firebase Analytics events with parameter and item support.
+///
+/// Logs events to Firebase Analytics with optional parameters and items (for e-commerce events).
+/// Supports both predefined Firebase events and custom events.
+///
+/// Firebase SDK Reference:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#logevent_:parameters:
+///
+/// Usage:
+/// ```swift
+/// // Log an e-commerce event
+/// tealium.track("event_purchase", data: [
+///     "param_currency": "USD",
+///     "param_value": 99.97,
+///     "param_items_item_id": ["SKU123", "SKU456", "SKU789"],
+///     "param_items_item_name": ["Product A", "Product B", "Product C"],
+///     "param_items_price": [29.99, 49.99, 19.99],
+///     "param_items_quantity": [1, 1, 1]
+/// ])
+/// ```
 class LogEventCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
@@ -27,280 +47,207 @@ class LogEventCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger.debug(category: LogCategory.firebase, "Executing LogEvent command")
         
-        guard let eventName = payload.get(key: FirebaseConstants.LogEvent.Param.eventName,
-                                          as: String.self) else {
+        guard let logEventData = payload.getDataItem(key: FirebaseConstants.LogEvent.name)?
+            .getDataDictionary() else {
             return false
         }
         
-        // Map to Firebase predefined event if available, otherwise use the name as-is
-        let mappedEventName = FirebaseEvent.map(eventName)
-        
-        // Validate event name
-        guard let sanitizedEventName = validator.validateEventName(mappedEventName) else {
+        // 1. Extract and validate event name
+        guard let eventName = extractEventName(from: logEventData) else {
             return false
         }
         
-        // Extract event parameters
-        var parameters: [String: Any] = [:]
+        // 2. Build parameters from logevent data
+        var parameters = buildParameters(from: logEventData, eventName: eventName)
         
-        // Get event params object
-        if let eventParamsDict = payload.getDataItem(key: FirebaseConstants.LogEvent.Param.eventParams)?
-            .getDataDictionary() {
-            // Convert [String: DataItem] to [String: DataInput]
-            let eventParams = eventParamsDict.mapValues { $0.toDataInput() }
-            parameters = convertAndValidateParams(eventParams)
-        }
+        // 3. Enforce Firebase limits
+        parameters = validator.enforceParameterLimit(parameters, eventName: eventName)
         
-        // Get items array (for e-commerce)
-        // First, check if items are explicitly provided under "items" key
-        if let itemsData = payload.getDataItem(key: FirebaseConstants.LogEvent.Param.items) {
-            // Check if items are already in array format (array of dictionaries)
-            if let itemsArray = itemsData.getDataArray() as? [[String: DataInput]] {
-                // Items are already in array of dictionaries format
-                let items = convertArrayOfDictionariesToItems(itemsArray)
-                if !items.isEmpty {
-                    parameters[FirebaseConstants.LogEvent.Param.items] = items
-                    logger.debug(category: LogCategory.firebase, "Event '\(sanitizedEventName)' includes \(items.count) item(s) (array format)")
-                }
-            } else if let itemsObjectDict = itemsData.getDataDictionary() {
-                // Items are in parallel arrays format (dictionary with arrays)
-                // Convert [String: DataItem] to [String: DataInput]
-                let itemsObject = itemsObjectDict.mapValues { $0.toDataInput() }
-                let items = convertParallelArraysToItems(itemsObject)
-            if !items.isEmpty {
-                parameters[FirebaseConstants.LogEvent.Param.items] = items
-                    logger.debug(category: LogCategory.firebase, "Event '\(sanitizedEventName)' includes \(items.count) item(s) (parallel arrays format)")
-                }
-            }
-        } else {
-            // Auto-detect item parameters from payload (product_id, product_name, etc.)
-            // These will be automatically grouped as items (parallel arrays)
-            if let detectedItems = detectAndExtractItems(from: payload) {
-                parameters[FirebaseConstants.LogEvent.Param.items] = detectedItems
-                logger.debug(category: LogCategory.firebase, "Event '\(sanitizedEventName)' includes \(detectedItems.count) item(s) (auto-detected from item parameters)")
-            }
-        }
-        
-        // Info: Check if items parameter is used with non-e-commerce event
-        // Note: GA4 documentation focuses on e-commerce events for items parameter, but does not
-        // explicitly state restrictions. All examples use e-commerce events, but behavior with
-        // custom events is not documented. Testing may be needed to confirm item-scoped dimensions
-        // functionality with custom events.
-        if parameters[FirebaseConstants.LogEvent.Param.items] != nil {
-            if !validator.isEcommerceEvent(sanitizedEventName) {
-                logger.info(category: LogCategory.firebase, "Event '\(sanitizedEventName)' includes 'items' parameter. Note: GA4 documentation focuses on e-commerce events for items usage (e.g., 'purchase', 'add_to_cart'). All official examples use e-commerce events. Data will be sent to Firebase and available in BigQuery. Item-scoped dimensions behavior with custom events is not documented and may require testing.")
-            }
-        }
-        
-        // Validate parameter count limit (Firebase allows max 25 parameters per event)
-        let maxParameters = 25
-        if parameters.count > maxParameters {
-            let excessCount = parameters.count - maxParameters
-            logger.warn(category: LogCategory.firebase, "Event '\(sanitizedEventName)' has \(parameters.count) parameters, exceeding Firebase limit of \(maxParameters). Removing \(excessCount) excess parameter(s)")
-            
-            // Keep first 25 parameters (items parameter counts as 1)
-            let sortedKeys = Array(parameters.keys).sorted()
-            var limitedParameters: [String: Any] = [:]
-            for key in sortedKeys.prefix(maxParameters) {
-                limitedParameters[key] = parameters[key]
-            }
-            parameters = limitedParameters
-        }
-        
-        if parameters.isEmpty {
-            logger.debug(category: LogCategory.firebase, "Logging event '\(sanitizedEventName)' with no parameters")
-        } else {
-            logger.debug(category: LogCategory.firebase, "Logging event '\(sanitizedEventName)' with \(parameters.count) parameter(s): \(parameters.keys.joined(separator: ", "))")
-        }
-        
-        // Log the event
-        firebaseInstance.logEvent(sanitizedEventName,
-                                 parameters: parameters.isEmpty ? nil : parameters)
+        // 4. Log the event
+        logEvent(eventName, with: parameters)
         
         return true
     }
     
-    // MARK: - Private Helpers
+    /// Extracts and validates the event name from logevent data.
+    private func extractEventName(from logEventData: [String: DataItem]) -> String? {
+        guard let rawEventName = logEventData.get(key: FirebaseConstants.LogEvent.Param.eventName, as: String.self) else {
+            logger.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
+            return nil
+        }
+        
+        let mappedName = FirebaseEvent.map(rawEventName)
+        guard let validatedName = validator.validateEventName(mappedName) else {
+            logger.warn(category: LogCategory.firebase, "Invalid event name '\(rawEventName)' (mapped to '\(mappedName)')")
+            return nil
+        }
+        return validatedName
+    }
     
-    /// Converts and validates event parameters dictionary
-    /// 
-    /// **Important:** Firebase Analytics only supports String, Int, and Double as parameter values.
-    /// The `items` parameter is a special exception that accepts `[[String: Any]]` (array of dictionaries).
-    /// All other array/list types are not supported and will be rejected.
-    private func convertAndValidateParams(_ params: [String: DataInput]) -> [String: Any] {
+    /// Builds all Firebase parameters from logevent data (including items).
+    private func buildParameters(from logEventData: [String: DataItem], eventName: String) -> [String: Any] {
+        guard let eventParamsDict = logEventData.getDataItem(key: FirebaseConstants.LogEvent.Param.eventParams)?
+            .getDataDictionary() else {
+            return [:]
+        }
+        
+        var parameters: [String: Any] = [:]
+        
+        // Build items first (if present)
+        if let items = buildItems(from: eventParamsDict, eventName: eventName) {
+            parameters[FirebaseConstants.LogEvent.Param.items] = items
+            warnIfEventWithoutItemsSupport(eventName)
+        }
+        
+        // Build regular parameters
+        let regularParams = buildRegularParameters(from: eventParamsDict)
+        parameters.merge(regularParams) { _, new in new }
+        
+        return parameters
+    }
+    
+    /// Builds regular parameters (excluding items).
+    private func buildRegularParameters(from eventParamsDict: [String: DataItem]) -> [String: Any] {
+        let params = eventParamsDict.toDataObject().asDictionary()
         var result: [String: Any] = [:]
         
         for (key, value) in params {
-            // Map to Firebase predefined parameter if available (mapping expects param_ prefix)
-            let mappedName = FirebaseParameter.map(key)
+            // Skip items - handled separately
+            guard key != FirebaseConstants.LogEvent.Param.items else { continue }
             
-            // Validate parameter name
-            guard let sanitizedName = validator.validateParameterName(mappedName) else {
+            guard let paramName = mapAndValidateParameter(key),
+                  let convertedValue = convertValue(value, for: paramName) else {
                 continue
             }
-            
-            // Skip items parameter - it's handled separately and is the only parameter that accepts array
-            if sanitizedName == FirebaseConstants.LogEvent.Param.items {
-                continue
-            }
-            
-            // Convert and validate value
-            // Firebase only supports String, Int, and Double - Bool and Array are not supported
-            // Note: items parameter is a special exception handled separately
-            if let intValue = value as? Int {
-                result[sanitizedName] = intValue
-            } else if let doubleValue = value as? Double {
-                result[sanitizedName] = doubleValue
-            } else if let stringValue = value as? String {
-                let sanitizedValue = validator.validateParameterValue(stringValue)
-                result[sanitizedName] = sanitizedValue
-            } else {
-                // Reject unsupported types (Bool, Array, Dictionary, etc.)
-                // Note: Array values are not supported except for the special 'items' parameter
-                let valueType = String(describing: type(of: value))
-                logger.warn(category: LogCategory.firebase, "Parameter '\(sanitizedName)' has unsupported value type '\(valueType)'. Firebase Analytics only supports String, Int, and Double. This parameter will be skipped. Note: Arrays are only supported for the special 'items' parameter.")
-            }
+            result[paramName] = convertedValue
         }
         
         return result
     }
     
-    /// Detects item parameters in payload and extracts them as items array.
-    /// Supports all predefined Firebase item parameters and custom item parameters (up to 27).
-    ///
-    /// This method looks for keys that match `FirebaseItemParameter.mapping` keys (predefined)
-    /// or keys starting with `param_items_` (custom item parameters).
-    ///
-    /// Reference: https://developers.google.com/analytics/devguides/collection/ga4/item-scoped-ecommerce
-    ///
-    /// - Parameter payload: The full payload dictionary
-    /// - Returns: Array of item dictionaries, or nil if no item parameters found
-    private func detectAndExtractItems(from payload: DataObject) -> [[String: Any]]? {
-        // Collect all item parameters from payload
-        // Only include values that are arrays (parallel arrays format)
-        var itemsObject: [String: DataInput] = [:]
-        var foundAnyItems = false
-        
-        // Get all keys from payload
-        let payloadDict = payload.asDictionary()
-        
-        // Check each key in payload
-        for (key, value) in payloadDict {
-            // Check if it's a predefined item parameter (in FirebaseItemParameter.mapping)
-            // or a custom item parameter (starts with "param_items_")
-            let isPredefinedItemParam = FirebaseItemParameter.mapping.keys.contains(key)
-            let isCustomItemParam = key.hasPrefix("param_items_")
-            
-            if isPredefinedItemParam || isCustomItemParam {
-                // Only include if it's an array (parallel arrays format)
-                if let arrayValue = value as? [DataInput] {
-                    itemsObject[key] = arrayValue
-                    foundAnyItems = true
-                }
-            }
+    /// Builds Firebase items array from parallel arrays format.
+    /// - Returns: Array of item dictionaries, or nil if no items found.
+    private func buildItems(from eventParamsDict: [String: DataItem], eventName: String) -> [[String: Any]]? {
+        guard let itemsData = eventParamsDict.getDataItem(key: FirebaseConstants.LogEvent.Param.items),
+              let itemsDict = itemsData.getDataDictionary() else {
+            return nil
         }
         
-        guard foundAnyItems else { return nil }
+        let parallelArrays = itemsDict.toDataObject().asDictionary()
+        let items = buildItemsFromParallelArrays(parallelArrays)
         
-        // Convert parallel arrays to items format
-        return convertParallelArraysToItems(itemsObject)
+        guard !items.isEmpty else { return nil }
+        
+        logger.debug(category: LogCategory.firebase, "Event '\(eventName)' includes \(items.count) item(s)")
+        return items
     }
     
-    /// Convert parallel arrays (Tealium style) to array of item dictionaries (Firebase style).
-    /// Input: { "param_items_item_id": ["SKU1", "SKU2"], "param_items_item_name": ["P1", "P2"] }
+    /// Converts parallel arrays to array of item dictionaries.
+    /// Input:  { "param_items_item_id": ["SKU1", "SKU2"], "param_items_item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
-    private func convertParallelArraysToItems(_ itemsObject: [String: DataInput]) -> [[String: Any]] {
-        // Find first array to determine count
-        var itemCount = 0
-        var arrays: [String: [DataInput]] = [:]
+    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataInput]) -> [[String: Any]] {
+        let arrays = extractArrays(from: parallelArrays)
         
-        for (key, value) in itemsObject {
-            if let array = value as? [DataInput] {
-                arrays[key] = array
-                itemCount = max(itemCount, array.count)
-            }
+        guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {
+            return []
         }
         
-        guard itemCount > 0 else { return [] }
-        
-        // Build items array
-        var items: [[String: Any]] = []
-        for i in 0..<itemCount {
-            var item: [String: Any] = [:]
-            
-            for (key, array) in arrays {
-                guard i < array.count else { continue }
-                
-                // Map to Firebase predefined item parameter if available (mapping expects param_ prefix)
-                // Custom item parameters are also supported (up to 27 per item)
-                let mappedName = FirebaseItemParameter.map(key)
-                
-                // Validate name
-                guard let sanitizedName = validator.validateParameterName(mappedName) else {
-                    continue
-                }
-                
-                // Convert value
-                let value = array[i]
-               if let intValue = value as? Int {
-                    item[sanitizedName] = intValue
-                } else if let doubleValue = value as? Double {
-                    item[sanitizedName] = doubleValue
-                } else if let stringValue = value as? String {
-                    let sanitizedValue = validator.validateParameterValue(stringValue)
-                    item[sanitizedName] = sanitizedValue
-                } 
-            }
-            
-            if !item.isEmpty {
-                items.append(item)
-            }
+        // Warn if arrays have mismatched lengths
+        if !arrays.values.allSatisfy({ $0.count == itemCount }) {
+            let mismatchedKeys = arrays.filter { $0.value.count != itemCount }.map(\.key)
+            logger.warn(category: LogCategory.firebase,
+                "Item arrays have mismatched lengths (expected: \(itemCount)). " +
+                "Arrays with shorter lengths will have missing values for some items. " +
+                "Mismatched keys: \(mismatchedKeys.joined(separator: ", "))")
         }
         
-        return items
+        return (0..<itemCount).compactMap { index in
+            let item = buildItem(from: arrays, at: index)
+            return item.isEmpty ? nil : item
+        }
     }
     
-    /// Convert array of dictionaries to Firebase items format with proper parameter mapping.
-    /// Input: [{"param_items_item_id": "SKU1", "param_items_item_name": "P1"}, ...]
-    /// Output: [["item_id": "SKU1", "item_name": "P1"], ...]
-    ///
-    /// Custom item parameters (up to 27) are also supported and passed through.
-    ///
-    /// - Parameter itemsArray: Array of item dictionaries with param_items_* prefixed keys
-    /// - Returns: Array of item dictionaries with Firebase parameter names
-    private func convertArrayOfDictionariesToItems(_ itemsArray: [[String: DataInput]]) -> [[String: Any]] {
-        var items: [[String: Any]] = []
+    /// Builds a single item dictionary from parallel arrays at given index.
+    private func buildItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
+        var item: [String: Any] = [:]
         
-        for itemDict in itemsArray {
-            var item: [String: Any] = [:]
-            
-            for (key, value) in itemDict {
-                // Map to Firebase predefined item parameter if available (mapping expects param_ prefix)
-                // Custom item parameters are also supported (up to 27 per item)
-                let mappedName = FirebaseItemParameter.map(key)
-                
-                // Validate name
-                guard let sanitizedName = validator.validateParameterName(mappedName) else {
-                    continue
-                }
-                
-                // Convert value
-                if let intValue = value as? Int {
-                    item[sanitizedName] = intValue
-                } else if let doubleValue = value as? Double {
-                    item[sanitizedName] = doubleValue
-                } else if let stringValue = value as? String {
-                    let sanitizedValue = validator.validateParameterValue(stringValue)
-                    item[sanitizedName] = sanitizedValue
-                }
+        for (key, array) in arrays where index < array.count {
+            guard let paramName = mapAndValidateItemParameter(key),
+                  let value = convertValue(array[index], for: paramName) else {
+                continue
             }
-            
-            if !item.isEmpty {
-                items.append(item)
-            }
+            item[paramName] = value
         }
         
-        return items
+        return item
+    }
+    
+    /// Extracts only array values from dictionary.
+    private func extractArrays(from dict: [String: DataInput]) -> [String: [DataInput]] {
+        dict.compactMapValues { $0 as? [DataInput] }
+    }
+    
+    /// Maps and validates an event parameter key.
+    private func mapAndValidateParameter(_ key: String) -> String? {
+        let mapped = FirebaseParameter.map(key)
+        return validator.validateParameterName(mapped)
+    }
+    
+    /// Maps and validates an item parameter key.
+    private func mapAndValidateItemParameter(_ key: String) -> String? {
+        let mapped = FirebaseItemParameter.map(key)
+        return validator.validateParameterName(mapped)
+    }
+    
+    /// Converts a value to Firebase-compatible type (String, Int, Double, Float, Int64, Bool, NSNumber).
+    private func convertValue(_ value: DataInput, for parameterName: String) -> Any? {
+        switch value {
+        case let intValue as Int:
+            return intValue
+        case let int64Value as Int64:
+            return int64Value
+        case let doubleValue as Double:
+            return doubleValue
+        case let floatValue as Float:
+            return floatValue
+        case let boolValue as Bool:
+            return boolValue
+        case let stringValue as String:
+            return validator.validateParameterValue(stringValue)
+        case let nsNumberValue as NSNumber:
+            // NSNumber can represent various numeric types - pass through as-is
+            // Firebase SDK will handle the conversion
+            return nsNumberValue
+        default:
+            let valueType = String(describing: type(of: value))
+            logger.warn(category: LogCategory.firebase,
+                "Parameter '\(parameterName)' has unsupported type '\(valueType)'. " +
+                "Firebase supports String, Int, Int64, Double, Float, Bool, NSNumber. Skipping.")
+            return nil
+        }
+    }
+    
+    /// Logs info if items are used with an event that doesn't typically support items parameter.
+    private func warnIfEventWithoutItemsSupport(_ eventName: String) {
+        guard !validator.supportsItemsParameter(eventName) else { return }
+        
+        logger.info(category: LogCategory.firebase,
+            "Event '\(eventName)' includes 'items' parameter. " +
+            "Note: Firebase Analytics typically uses 'items' with events like 'purchase', 'add_to_cart', 'select_item', etc. " +
+            "Data will be sent to Firebase. Item-scoped dimensions behavior with this event may require testing.")
+    }
+    
+    /// Logs the event to Firebase.
+    private func logEvent(_ eventName: String, with parameters: [String: Any]) {
+        if parameters.isEmpty {
+            logger.debug(category: LogCategory.firebase, "Logging event '\(eventName)' with no parameters")
+        } else {
+            logger.debug(category: LogCategory.firebase,
+                "Logging event '\(eventName)' with \(parameters.count) parameter(s): \(parameters.keys.sorted().joined(separator: ", "))")
+        }
+        
+        firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
     }
 }
+
 

@@ -33,7 +33,6 @@ import FirebaseAnalytics
 /// ```
 ///
 /// Supported consent types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
-///
 /// Supported values: `granted`, `denied`
 class SetConsentCommand: FirebaseCommandProtocol {
     
@@ -66,7 +65,7 @@ class SetConsentCommand: FirebaseCommandProtocol {
                 continue
             }
             
-            guard let stringValue = consentData[key] as? String else {
+            guard let stringValue = consentData.get(key: key, as: String.self) else {
                 logger.warn(category: LogCategory.firebase, 
                            "Unexpected data type for consent '\(key)' - expected String, ignoring")
                 continue

@@ -32,7 +32,6 @@ import TealiumPrismCore
 /// ```
 class SetUserPropertyCommand: FirebaseCommandProtocol {
     
-    public let name = FirebaseConstants.SetUserProperty.name
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol
@@ -42,6 +41,8 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         self.validator = validator
         self.logger = logger
     }
+
+    public let name = FirebaseConstants.SetUserProperty.name
     
     public func execute(payload: DataObject) -> Bool {
         logger.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
@@ -51,13 +52,13 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
             return false
         }
         
-        guard let name = propertyData[FirebaseConstants.SetUserProperty.Param.propertyName] as? String else {
+        guard let name = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyName, as: String.self) else {
             logger.warn(category: LogCategory.firebase, 
                        "Missing property name - command skipped")
             return false
         }
         
-        let value = propertyData[FirebaseConstants.SetUserProperty.Param.propertyValue] as? String
+        let value = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyValue, as: String.self)
         
         guard let sanitizedName = validator.validateUserPropertyName(name) else {
             logger.warn(category: LogCategory.firebase, 
