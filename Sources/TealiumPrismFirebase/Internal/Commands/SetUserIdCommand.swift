@@ -42,9 +42,9 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -53,7 +53,7 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetUserId.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing SetUserId command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetUserId command")
         
         guard let userIdData = payload.getDataItem(key: FirebaseConstants.SetUserId.name)?
             .getDataDictionary() else {
@@ -66,7 +66,7 @@ class SetUserIdCommand: FirebaseCommandProtocol {
         }
         
         guard userId.count <= 256 else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "User ID exceeds 256 characters limit - command skipped")
             return false
         }
@@ -75,9 +75,9 @@ class SetUserIdCommand: FirebaseCommandProtocol {
         let userIdToSet = userId.isEmpty ? nil : userId
         
         if let userIdToSet = userIdToSet {
-            logger.debug(category: LogCategory.firebase, "Setting user ID: '\(userIdToSet)'")
+            logger?.debug(category: LogCategory.firebase, "Setting user ID: '\(userIdToSet)'")
         } else {
-            logger.debug(category: LogCategory.firebase, "Clearing user ID")
+            logger?.debug(category: LogCategory.firebase, "Clearing user ID")
         }
         
         firebaseInstance.setUserId(userIdToSet)

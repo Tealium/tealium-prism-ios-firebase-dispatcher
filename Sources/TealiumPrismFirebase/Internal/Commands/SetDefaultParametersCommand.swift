@@ -55,9 +55,9 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -66,31 +66,31 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetDefaultParameters.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing SetDefaultParameters command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetDefaultParameters command")
         
         // Empty payload [] -> clear all default parameters (intended behavior)
         guard let commandData = payload.getDataItem(key: FirebaseConstants.SetDefaultParameters.name)?
             .getDataDictionary() else {
-            logger.debug(category: LogCategory.firebase, "Clearing all default parameters (empty payload)")
+            logger?.debug(category: LogCategory.firebase, "Clearing all default parameters (empty payload)")
             firebaseInstance.setDefaultEventParameters(nil)
             return true
         }
         
         // setdefaultparameters exists but firebase_params is missing -> error (not intended)
         guard let paramsData = commandData[FirebaseConstants.SetDefaultParameters.Param.params] else {
-            logger.warn(category: LogCategory.firebase, "Missing 'firebase_params' in setdefaultparameters - command skipped")
+            logger?.warn(category: LogCategory.firebase, "Missing 'firebase_params' in setdefaultparameters - command skipped")
             return false
         }
         
         // firebase_params exists but is not a dictionary -> error
         guard let defaultParams = paramsData.getDataDictionary() else {
-            logger.warn(category: LogCategory.firebase, "Invalid 'firebase_params' type - expected dictionary - command skipped")
+            logger?.warn(category: LogCategory.firebase, "Invalid 'firebase_params' type - expected dictionary - command skipped")
             return false
         }
         
         // firebase_params is empty dictionary {} -> clear all default parameters (intended behavior)
         if defaultParams.isEmpty {
-            logger.debug(category: LogCategory.firebase, "Clearing all default parameters (empty firebase_params)")
+            logger?.debug(category: LogCategory.firebase, "Clearing all default parameters (empty firebase_params)")
             firebaseInstance.setDefaultEventParameters(nil)
             return true
         }
@@ -121,10 +121,10 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
         
         // If all parameters were invalid/cleared, clear all default parameters
         if sanitizedParams.isEmpty {
-            logger.warn(category: LogCategory.firebase, "All parameters were invalid - command skipped")
+            logger?.warn(category: LogCategory.firebase, "All parameters were invalid - command skipped")
             return false
         } else {
-            logger.debug(category: LogCategory.firebase, "Setting \(sanitizedParams.count) default parameter(s): \(sanitizedParams.keys.joined(separator: ", "))")
+            logger?.debug(category: LogCategory.firebase, "Setting \(sanitizedParams.count) default parameter(s): \(sanitizedParams.keys.joined(separator: ", "))")
             firebaseInstance.setDefaultEventParameters(sanitizedParams)
         }
         

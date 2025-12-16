@@ -53,9 +53,9 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -64,7 +64,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.LogEvent.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing LogEvent command")
+        logger?.debug(category: LogCategory.firebase, "Executing LogEvent command")
         
         guard let logEventData = payload.getDataItem(key: FirebaseConstants.LogEvent.name)?
             .getDataDictionary() else {
@@ -91,13 +91,13 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Extracts and validates the event name from logevent data.
     private func extractEventName(from logEventData: [String: DataItem]) -> String? {
         guard let rawEventName = logEventData.get(key: FirebaseConstants.LogEvent.Param.eventName, as: String.self) else {
-            logger.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
+            logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
             return nil
         }
         
         let mappedName = FirebaseEvent.map(rawEventName)
         guard let validatedName = validator.validateEventName(mappedName) else {
-            logger.warn(category: LogCategory.firebase, "Invalid event name '\(rawEventName)' (mapped to '\(mappedName)')")
+            logger?.warn(category: LogCategory.firebase, "Invalid event name '\(rawEventName)' (mapped to '\(mappedName)')")
             return nil
         }
         return validatedName
@@ -157,7 +157,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         guard !items.isEmpty else { return nil }
         
-        logger.debug(category: LogCategory.firebase, "Event '\(eventName)' includes \(items.count) item(s)")
+        logger?.debug(category: LogCategory.firebase, "Event '\(eventName)' includes \(items.count) item(s)")
         return items
     }
     
@@ -174,7 +174,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         // Warn if arrays have mismatched lengths
         if !arrays.values.allSatisfy({ $0.count == itemCount }) {
             let mismatchedKeys = arrays.filter { $0.value.count != itemCount }.map(\.key)
-            logger.warn(category: LogCategory.firebase,
+            logger?.warn(category: LogCategory.firebase,
                 "Item arrays have mismatched lengths (expected: \(itemCount)). " +
                 "Arrays with shorter lengths will have missing values for some items. " +
                 "Mismatched keys: \(mismatchedKeys.joined(separator: ", "))")
@@ -239,7 +239,7 @@ class LogEventCommand: FirebaseCommandProtocol {
             return nsNumberValue
         default:
             let valueType = String(describing: type(of: value))
-            logger.warn(category: LogCategory.firebase,
+            logger?.warn(category: LogCategory.firebase,
                 "Parameter '\(parameterName)' has unsupported type '\(valueType)'. " +
                 "Firebase supports String, Int, Int64, Double, Float, Bool, NSNumber. Skipping.")
             return nil
@@ -250,7 +250,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     private func warnIfEventWithoutItemsSupport(_ eventName: String) {
         guard !validator.supportsItemsParameter(eventName) else { return }
         
-        logger.info(category: LogCategory.firebase,
+        logger?.info(category: LogCategory.firebase,
             "Event '\(eventName)' includes 'items' parameter. " +
             "Note: Firebase Analytics typically uses 'items' with events like 'purchase', 'add_to_cart', 'select_item', etc. " +
             "Data will be sent to Firebase. Item-scoped dimensions behavior with this event may require testing.")
@@ -259,9 +259,9 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Logs the event to Firebase.
     private func logEvent(_ eventName: String, with parameters: [String: Any]) {
         if parameters.isEmpty {
-            logger.debug(category: LogCategory.firebase, "Logging event '\(eventName)' with no parameters")
+            logger?.debug(category: LogCategory.firebase, "Logging event '\(eventName)' with no parameters")
         } else {
-            logger.debug(category: LogCategory.firebase,
+            logger?.debug(category: LogCategory.firebase,
                 "Logging event '\(eventName)' with \(parameters.count) parameter(s): \(parameters.keys.sorted().joined(separator: ", "))")
         }
         

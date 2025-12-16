@@ -38,9 +38,9 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -49,7 +49,7 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetUserProperties.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
         
         guard let propertyData = payload.getDataItem(key: FirebaseConstants.SetUserProperties.name)?
             .getDataDictionary() else {
@@ -57,30 +57,30 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
         }
         
         guard let names = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property names array - command skipped")
             return false
         }
         
         guard let values = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property values array - command skipped")
             return false
         }
         
         guard !names.isEmpty else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Empty property names array - command skipped")
             return false
         }
         
         guard names.count == values.count else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Property names array (\(names.count) items) and values array (\(values.count) items) must have matching length - command skipped")
             return false
         }
         
-        logger.debug(category: LogCategory.firebase, "Setting \(names.count) user properties")
+        logger?.debug(category: LogCategory.firebase, "Setting \(names.count) user properties")
         
         // Set each property (continues even if some fail validation)
         for (index, name) in names.enumerated() {
@@ -95,7 +95,7 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     
     private func setProperty(name: String, value: String?) -> Bool {
         guard let sanitizedName = validator.validateUserPropertyName(name) else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Invalid user property name '\(name)' - skipping")
             return false
         }
@@ -107,9 +107,9 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
         }
         
         if let sanitizedValue = sanitizedValue {
-            logger.debug(category: LogCategory.firebase, "Setting user property '\(sanitizedName)' = '\(sanitizedValue)'")
+            logger?.debug(category: LogCategory.firebase, "Setting user property '\(sanitizedName)' = '\(sanitizedValue)'")
         } else {
-            logger.debug(category: LogCategory.firebase, "Removing user property '\(sanitizedName)'")
+            logger?.debug(category: LogCategory.firebase, "Removing user property '\(sanitizedName)'")
         }
         
         firebaseInstance.setUserProperty(sanitizedValue, forName: sanitizedName)

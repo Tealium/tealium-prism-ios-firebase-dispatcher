@@ -26,9 +26,9 @@ class ResetDataCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -37,9 +37,9 @@ class ResetDataCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.ResetData.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing ResetData command")
+        logger?.debug(category: LogCategory.firebase, "Executing ResetData command")
         firebaseInstance.resetAnalyticsData()
-        logger.debug(category: LogCategory.firebase, "Firebase Analytics data reset completed")
+        logger?.debug(category: LogCategory.firebase, "Firebase Analytics data reset completed")
         return true
     }
 }

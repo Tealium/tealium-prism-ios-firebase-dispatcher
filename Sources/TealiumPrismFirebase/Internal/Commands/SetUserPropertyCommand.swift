@@ -44,9 +44,9 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
     private let validator: FirebaseValidator
-    private let logger: LoggerProtocol
+    private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol) {
+    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger
@@ -55,7 +55,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetUserProperty.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
         
         guard let propertyData = payload.getDataItem(key: FirebaseConstants.SetUserProperty.name)?
             .getDataDictionary() else {
@@ -63,7 +63,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         }
         
         guard let name = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyName, as: String.self) else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Missing property name - command skipped")
             return false
         }
@@ -71,7 +71,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         let value = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyValue, as: String.self)
         
         guard let sanitizedName = validator.validateUserPropertyName(name) else {
-            logger.warn(category: LogCategory.firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                        "Invalid user property name '\(name)' - command skipped")
             return false
         }
@@ -83,9 +83,9 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         }
         
         if let sanitizedValue = sanitizedValue {
-            logger.debug(category: LogCategory.firebase, "Setting user property '\(sanitizedName)' = '\(sanitizedValue)'")
+            logger?.debug(category: LogCategory.firebase, "Setting user property '\(sanitizedName)' = '\(sanitizedValue)'")
         } else {
-            logger.debug(category: LogCategory.firebase, "Removing user property '\(sanitizedName)'")
+            logger?.debug(category: LogCategory.firebase, "Removing user property '\(sanitizedName)'")
         }
         
         firebaseInstance.setUserProperty(sanitizedValue, forName: sanitizedName)

@@ -16,7 +16,7 @@ protocol FirebaseCommandProtocol {
     var name: String { get }
     
     /// Initializer with shared dependencies (firebaseInstance, validator, logger)
-    init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol)
+    init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?)
     
     /// Executes the command with payload, returns true on success, false if validation fails or execution fails
     func execute(payload: DataObject) -> Bool
