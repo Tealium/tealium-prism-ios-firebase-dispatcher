@@ -32,6 +32,18 @@ import FirebaseAnalytics
 /// ])
 /// ```
 ///
+/// Expected Payload Structure (after mappings):
+/// ```
+/// payload = [
+///     "setconsent": [
+///         "ad_storage": "granted",
+///         "analytics_storage": "granted",
+///         "ad_user_data": "granted",
+///         "ad_personalization": "denied"
+///     ]
+/// ]
+/// ```
+///
 /// Supported consent types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
 /// Supported values: `granted`, `denied`
 class SetConsentCommand: FirebaseCommandProtocol {

@@ -24,6 +24,16 @@ import TealiumPrismCore
 ///     "user_name_for_property_values": ["premium", "expert", "business"]
 /// ])
 /// ```
+///
+/// Expected Payload Structure (after mappings):
+/// ```
+/// payload = [
+///     "setuserproperties": [
+///         "firebase_property_names": ["subscription_tier", "user_level", "account_type"],
+///         "firebase_property_values": ["premium", "expert", "business"]
+///     ]
+/// ]
+/// ```
 class SetUserPropertiesCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

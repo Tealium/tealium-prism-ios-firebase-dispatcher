@@ -29,6 +29,15 @@ import TealiumPrismCore
 ///     "firebase_user_id": ""
 /// ])
 /// ```
+///
+/// Expected Payload Structure (after mappings):
+/// ```
+/// payload = [
+///     "setuserid": [
+///         "firebase_user_id": "user123"
+///     ]
+/// ]
+/// ```
 class SetUserIdCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
@@ -46,8 +55,13 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger.debug(category: LogCategory.firebase, "Executing SetUserId command")
         
-        guard let userId = payload.get(key: FirebaseConstants.SetUserId.Param.userId,
-                                       as: String.self) else {
+        guard let userIdData = payload.getDataItem(key: FirebaseConstants.SetUserId.name)?
+            .getDataDictionary() else {
+            return false
+        }
+        
+        guard let userId = userIdData.get(key: FirebaseConstants.SetUserId.Param.userId,
+                                          as: String.self) else {
             return false
         }
         

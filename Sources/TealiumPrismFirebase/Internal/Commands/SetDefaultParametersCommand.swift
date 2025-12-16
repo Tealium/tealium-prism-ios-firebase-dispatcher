@@ -38,6 +38,19 @@ import TealiumPrismCore
 ///     "setdefaultparameters_firebase_params": [:]
 /// ])
 /// ```
+///
+/// Expected Payload Structure (after mappings):
+/// ```
+/// payload = [
+///     "setdefaultparameters": [
+///         "firebase_params": [
+///             "currency": "USD",
+///             "language": "en",
+///             "country": "US"
+///         ]
+///     ]
+/// ]
+/// ```
 class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

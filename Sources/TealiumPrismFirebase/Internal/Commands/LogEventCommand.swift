@@ -30,6 +30,25 @@ import TealiumPrismCore
 ///     "param_items_quantity": [1, 1, 1]
 /// ])
 /// ```
+///
+/// Expected Payload Structure (after mappings):
+/// ```
+/// payload = [
+///     "logevent": [
+///         "firebase_event_name": "purchase",
+///         "firebase_event_params": [
+///             "currency": "USD",
+///             "value": 99.97,
+///             "param_items": [
+///                 "param_items_item_id": ["SKU123", "SKU456", "SKU789"],
+///                 "param_items_item_name": ["Product A", "Product B", "Product C"],
+///                 "param_items_price": [29.99, 49.99, 19.99],
+///                 "param_items_quantity": [1, 1, 1]
+///             ]
+///         ]
+///     ]
+/// ]
+/// ```
 class LogEventCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

@@ -20,7 +20,7 @@ import TealiumPrismCore
 /// Usage:
 /// ```swift
 /// // Reset all analytics data (e.g., on user logout)
-/// tealium.track("resetdata", data: [:])
+/// tealium.track("resetdata")
 /// ```
 class ResetDataCommand: FirebaseCommandProtocol {
     
