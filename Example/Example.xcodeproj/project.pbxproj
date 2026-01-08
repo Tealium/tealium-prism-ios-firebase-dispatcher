@@ -7,121 +7,45 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5FE230096C7E61256E1185DD /* Pods_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAB17213E9B89D6C81AED959 /* Pods_Example.framework */; };
+		9E354F0C2F10284600A9F761 /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		9E6054642EE09B6A006FD336 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9E60544E2EE09B69006FD336 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9E6054552EE09B69006FD336;
-			remoteInfo = Example;
-		};
-		9E60546E2EE09B6A006FD336 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 9E60544E2EE09B69006FD336 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 9E6054552EE09B69006FD336;
-			remoteInfo = Example;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
-		71BC3E5E2DFA9FEEE224E628 /* Pods-Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.release.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.release.xcconfig"; sourceTree = "<group>"; };
-		7466155A3477689B5B6457E0 /* Pods-Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Example.debug.xcconfig"; path = "Target Support Files/Pods-Example/Pods-Example.debug.xcconfig"; sourceTree = "<group>"; };
-		9E6054562EE09B69006FD336 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		9E6054632EE09B6A006FD336 /* ExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		9E60546D2EE09B6A006FD336 /* ExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		CAB17213E9B89D6C81AED959 /* Pods_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E354EC62F1024E400A9F761 /* Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		9E6054582EE09B69006FD336 /* Example */ = {
+		9E354EC82F1024E400A9F761 /* Example */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = Example;
-			sourceTree = "<group>";
-		};
-		9E6054662EE09B6A006FD336 /* ExampleTests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = ExampleTests;
-			sourceTree = "<group>";
-		};
-		9E6054702EE09B6A006FD336 /* ExampleUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			path = ExampleUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		9E6054532EE09B69006FD336 /* Frameworks */ = {
+		9E354EC32F1024E400A9F761 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5FE230096C7E61256E1185DD /* Pods_Example.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E6054602EE09B6A006FD336 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E60546A2EE09B6A006FD336 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
+				9E354F0C2F10284600A9F761 /* TealiumPrismFirebase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		24EC5C8A3D14F4CB7ECAE48A /* Frameworks */ = {
+		9E354EBD2F1024E400A9F761 = {
 			isa = PBXGroup;
 			children = (
-				CAB17213E9B89D6C81AED959 /* Pods_Example.framework */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		68AAB19BEB456DAB57C689A4 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				7466155A3477689B5B6457E0 /* Pods-Example.debug.xcconfig */,
-				71BC3E5E2DFA9FEEE224E628 /* Pods-Example.release.xcconfig */,
-			);
-			name = Pods;
-			path = Pods;
-			sourceTree = "<group>";
-		};
-		9E60544D2EE09B69006FD336 = {
-			isa = PBXGroup;
-			children = (
-				9E6054582EE09B69006FD336 /* Example */,
-				9E6054662EE09B6A006FD336 /* ExampleTests */,
-				9E6054702EE09B6A006FD336 /* ExampleUITests */,
-				9E6054572EE09B69006FD336 /* Products */,
-				68AAB19BEB456DAB57C689A4 /* Pods */,
-				24EC5C8A3D14F4CB7ECAE48A /* Frameworks */,
+				9E354EC82F1024E400A9F761 /* Example */,
+				9E354EC72F1024E400A9F761 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		9E6054572EE09B69006FD336 /* Products */ = {
+		9E354EC72F1024E400A9F761 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				9E6054562EE09B69006FD336 /* Example.app */,
-				9E6054632EE09B6A006FD336 /* ExampleTests.xctest */,
-				9E60546D2EE09B6A006FD336 /* ExampleUITests.xctest */,
+				9E354EC62F1024E400A9F761 /* Example.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -129,130 +53,69 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		9E6054552EE09B69006FD336 /* Example */ = {
+		9E354EC52F1024E400A9F761 /* Example */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 9E6054772EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "Example" */;
+			buildConfigurationList = 9E354ED12F1024E500A9F761 /* Build configuration list for PBXNativeTarget "Example" */;
 			buildPhases = (
-				DD25A118B2A8BB10379584A5 /* [CP] Check Pods Manifest.lock */,
-				9E6054522EE09B69006FD336 /* Sources */,
-				9E6054532EE09B69006FD336 /* Frameworks */,
-				9E6054542EE09B69006FD336 /* Resources */,
-				1649FCBB8FD5BD205FDB5722 /* [CP] Embed Pods Frameworks */,
+				9E354EC22F1024E400A9F761 /* Sources */,
+				9E354EC32F1024E400A9F761 /* Frameworks */,
+				9E354EC42F1024E400A9F761 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				9E6054582EE09B69006FD336 /* Example */,
+				9E354EC82F1024E400A9F761 /* Example */,
 			);
 			name = Example;
+			packageProductDependencies = (
+				9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */,
+			);
 			productName = Example;
-			productReference = 9E6054562EE09B69006FD336 /* Example.app */;
+			productReference = 9E354EC62F1024E400A9F761 /* Example.app */;
 			productType = "com.apple.product-type.application";
-		};
-		9E6054622EE09B6A006FD336 /* ExampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9E60547A2EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "ExampleTests" */;
-			buildPhases = (
-				9E60545F2EE09B6A006FD336 /* Sources */,
-				9E6054602EE09B6A006FD336 /* Frameworks */,
-				9E6054612EE09B6A006FD336 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9E6054652EE09B6A006FD336 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				9E6054662EE09B6A006FD336 /* ExampleTests */,
-			);
-			name = ExampleTests;
-			productName = ExampleTests;
-			productReference = 9E6054632EE09B6A006FD336 /* ExampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		9E60546C2EE09B6A006FD336 /* ExampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 9E60547D2EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "ExampleUITests" */;
-			buildPhases = (
-				9E6054692EE09B6A006FD336 /* Sources */,
-				9E60546A2EE09B6A006FD336 /* Frameworks */,
-				9E60546B2EE09B6A006FD336 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				9E60546F2EE09B6A006FD336 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				9E6054702EE09B6A006FD336 /* ExampleUITests */,
-			);
-			name = ExampleUITests;
-			productName = ExampleUITests;
-			productReference = 9E60546D2EE09B6A006FD336 /* ExampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		9E60544E2EE09B69006FD336 /* Project object */ = {
+		9E354EBE2F1024E400A9F761 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
-				LastUpgradeCheck = 1630;
+				LastSwiftUpdateCheck = 2620;
+				LastUpgradeCheck = 2620;
 				TargetAttributes = {
-					9E6054552EE09B69006FD336 = {
-						CreatedOnToolsVersion = 16.3;
-					};
-					9E6054622EE09B6A006FD336 = {
-						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 9E6054552EE09B69006FD336;
-					};
-					9E60546C2EE09B6A006FD336 = {
-						CreatedOnToolsVersion = 16.3;
-						TestTargetID = 9E6054552EE09B69006FD336;
+					9E354EC52F1024E400A9F761 = {
+						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
-			buildConfigurationList = 9E6054512EE09B69006FD336 /* Build configuration list for PBXProject "Example" */;
+			buildConfigurationList = 9E354EC12F1024E400A9F761 /* Build configuration list for PBXProject "Example" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = 9E60544D2EE09B69006FD336;
+			mainGroup = 9E354EBD2F1024E400A9F761;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */,
+				9E354F0A2F10284600A9F761 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */,
+			);
 			preferredProjectObjectVersion = 77;
-			productRefGroup = 9E6054572EE09B69006FD336 /* Products */;
+			productRefGroup = 9E354EC72F1024E400A9F761 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				9E6054552EE09B69006FD336 /* Example */,
-				9E6054622EE09B6A006FD336 /* ExampleTests */,
-				9E60546C2EE09B6A006FD336 /* ExampleUITests */,
+				9E354EC52F1024E400A9F761 /* Example */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		9E6054542EE09B69006FD336 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E6054612EE09B6A006FD336 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E60546B2EE09B6A006FD336 /* Resources */ = {
+		9E354EC42F1024E400A9F761 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -261,64 +124,8 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		1649FCBB8FD5BD205FDB5722 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Example/Pods-Example-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		DD25A118B2A8BB10379584A5 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Example-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
-		9E6054522EE09B69006FD336 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E60545F2EE09B6A006FD336 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		9E6054692EE09B6A006FD336 /* Sources */ = {
+		9E354EC22F1024E400A9F761 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -327,21 +134,8 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXTargetDependency section */
-		9E6054652EE09B6A006FD336 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9E6054552EE09B69006FD336 /* Example */;
-			targetProxy = 9E6054642EE09B6A006FD336 /* PBXContainerItemProxy */;
-		};
-		9E60546F2EE09B6A006FD336 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 9E6054552EE09B69006FD336 /* Example */;
-			targetProxy = 9E60546E2EE09B6A006FD336 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
 /* Begin XCBuildConfiguration section */
-		9E6054752EE09B6A006FD336 /* Debug */ = {
+		9E354ECF2F1024E500A9F761 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -376,10 +170,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = XC939GDC9P;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -394,7 +187,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -405,7 +198,7 @@
 			};
 			name = Debug;
 		};
-		9E6054762EE09B6A006FD336 /* Release */ = {
+		9E354ED02F1024E500A9F761 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -440,10 +233,9 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = XC939GDC9P;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -452,7 +244,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -462,15 +254,13 @@
 			};
 			name = Release;
 		};
-		9E6054782EE09B6A006FD336 /* Debug */ = {
+		9E354ED22F1024E500A9F761 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7466155A3477689B5B6457E0 /* Pods-Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -485,21 +275,23 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
-		9E6054792EE09B6A006FD336 /* Release */ = {
+		9E354ED32F1024E500A9F761 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71BC3E5E2DFA9FEEE224E628 /* Pods-Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -514,124 +306,56 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.Example;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		9E60547B2EE09B6A006FD336 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.ExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example";
-			};
-			name = Debug;
-		};
-		9E60547C2EE09B6A006FD336 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.ExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Example.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Example";
-			};
-			name = Release;
-		};
-		9E60547E2EE09B6A006FD336 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.ExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Example;
-			};
-			name = Debug;
-		};
-		9E60547F2EE09B6A006FD336 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = XC939GDC9P;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.tealium.ExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Example;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		9E6054512EE09B69006FD336 /* Build configuration list for PBXProject "Example" */ = {
+		9E354EC12F1024E400A9F761 /* Build configuration list for PBXProject "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9E6054752EE09B6A006FD336 /* Debug */,
-				9E6054762EE09B6A006FD336 /* Release */,
+				9E354ECF2F1024E500A9F761 /* Debug */,
+				9E354ED02F1024E500A9F761 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		9E6054772EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "Example" */ = {
+		9E354ED12F1024E500A9F761 /* Build configuration list for PBXNativeTarget "Example" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				9E6054782EE09B6A006FD336 /* Debug */,
-				9E6054792EE09B6A006FD336 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9E60547A2EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "ExampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				9E60547B2EE09B6A006FD336 /* Debug */,
-				9E60547C2EE09B6A006FD336 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		9E60547D2EE09B6A006FD336 /* Build configuration list for PBXNativeTarget "ExampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				9E60547E2EE09B6A006FD336 /* Debug */,
-				9E60547F2EE09B6A006FD336 /* Release */,
+				9E354ED22F1024E500A9F761 /* Debug */,
+				9E354ED32F1024E500A9F761 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../tealium-swift-v3";
+		};
+		9E354F0A2F10284600A9F761 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../../tealium-prism-ios-firebase-dispatcher";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TealiumPrismFirebase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
-	rootObject = 9E60544E2EE09B69006FD336 /* Project object */;
+	rootObject = 9E354EBE2F1024E400A9F761 /* Project object */;
 }

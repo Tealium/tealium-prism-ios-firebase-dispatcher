@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import TealiumPrismCore
+import TealiumPrismFirebase
 
 @main
 struct ExampleApp: App {
