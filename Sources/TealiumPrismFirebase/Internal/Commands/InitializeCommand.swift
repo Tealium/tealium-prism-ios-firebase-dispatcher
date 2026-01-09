@@ -65,7 +65,7 @@ class InitializeCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.Initialize.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: .firebase, "Executing Initialize command")
+        logger?.debug(category: LogCategory.firebase, "Executing Initialize command")
         
         // 1. Configure log level (must be done before Firebase is configured)
         if let logLevel = payload.get(key: FirebaseConstants.Initialize.Param.logLevel, as: String.self) {
@@ -78,13 +78,13 @@ class InitializeCommand: FirebaseCommandProtocol {
         // 3. Configure session timeout
         if let sessionTimeout = extractSessionTimeout(from: payload) {
             firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
-            logger?.debug(category: .firebase, "Session timeout set to \(sessionTimeout) seconds")
+            logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds")
         }
         
         // 4. Configure analytics collection
         if let analyticsEnabled = payload.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
-            logger?.debug(category: .firebase, "Analytics collection enabled: \(analyticsEnabled)")
+            logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled)")
         }
         
         return true
@@ -96,7 +96,7 @@ class InitializeCommand: FirebaseCommandProtocol {
     private func configureLogLevel(_ levelString: String) {
         // Validate log level
         guard FirebaseLogLevel.isValid(levelString) else {
-            logger?.warn(category: .firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                 "Unknown log level '\(levelString)', using 'notice' as default. " +
                 "Valid values: \(FirebaseLogLevel.allLevels.joined(separator: ", "))")
             firebaseInstance.setLoggerLevel(.notice)
@@ -105,7 +105,7 @@ class InitializeCommand: FirebaseCommandProtocol {
         
         let loggerLevel = FirebaseLogLevel.map(levelString)
         firebaseInstance.setLoggerLevel(loggerLevel)
-        logger?.debug(category: .firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel))")
+        logger?.debug(category: LogCategory.firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel))")
     }
     
     /// Configures validator with GA360 mode and invalid character strategy.
@@ -113,14 +113,14 @@ class InitializeCommand: FirebaseCommandProtocol {
         // Configure GA360 mode
         if let ga360Mode = payload.get(key: FirebaseConstants.Initialize.Param.ga360Mode, as: Bool.self) {
             validator.setGA360Mode(ga360Mode)
-            logger?.debug(category: .firebase, 
+            logger?.debug(category: LogCategory.firebase, 
                 "GA360 mode: \(ga360Mode) (parameter value limit: \(ga360Mode ? 500 : 100) characters)")
         }
         
         // Configure invalid character strategy
         if let strategy = payload.get(key: FirebaseConstants.Initialize.Param.invalidCharStrategy, as: String.self) {
             validator.setInvalidCharStrategy(strategy)
-            logger?.debug(category: .firebase, 
+            logger?.debug(category: LogCategory.firebase, 
                 "Invalid character strategy set to '\(strategy)'")
         }
     }

@@ -54,24 +54,17 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetSessionTimeout.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: .firebase, "Executing SetSessionTimeout command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
         
         guard let sessionTimeout = extractSessionTimeout(from: payload) else {
-            logger?.warn(category: .firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(FirebaseConstants.SetSessionTimeout.Param.sessionTimeout)' parameter. " +
                 "Expected numeric value (seconds)")
             return false
         }
         
-        // Validate reasonable range (1 minute to 24 hours)
-        guard sessionTimeout >= 60 && sessionTimeout <= 86400 else {
-            logger?.warn(category: .firebase, 
-                "Session timeout \(sessionTimeout) seconds is outside recommended range (60-86400 seconds). " +
-                "Firebase will accept the value, but consider using a value between 1 minute and 24 hours.")
-        }
-        
         firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
-        logger?.debug(category: .firebase, "Session timeout updated to \(sessionTimeout) seconds")
+        logger?.debug(category: LogCategory.firebase, "Session timeout updated to \(sessionTimeout) seconds")
         
         return true
     }

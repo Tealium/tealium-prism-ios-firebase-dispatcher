@@ -54,17 +54,17 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     public let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
     
     public func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: .firebase, "Executing SetAnalyticsCollectionEnabled command")
+        logger?.debug(category: LogCategory.firebase, "Executing SetAnalyticsCollectionEnabled command")
         
         guard let enabled = extractAnalyticsEnabled(from: payload) else {
-            logger?.warn(category: .firebase, 
+            logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled)' parameter. " +
                 "Expected boolean value (true/false)")
             return false
         }
         
         firebaseInstance.setAnalyticsCollectionEnabled(enabled)
-        logger?.debug(category: .firebase, "Analytics collection \(enabled ? "enabled" : "disabled")")
+        logger?.debug(category: LogCategory.firebase, "Analytics collection \(enabled ? "enabled" : "disabled")")
         
         return true
     }

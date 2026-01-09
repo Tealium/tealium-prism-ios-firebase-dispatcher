@@ -10,12 +10,6 @@ import Foundation
 import FirebaseAnalytics
 import TealiumPrismCore
 
-extension LogCategory {
-    static let firebase = "Firebase"
-}
-
-// MARK: - Firebase Constants
-
 /// All constants for the Firebase Dispatcher module, organized by command.
 /// Each command has its own namespace with name and parameters.
 ///
