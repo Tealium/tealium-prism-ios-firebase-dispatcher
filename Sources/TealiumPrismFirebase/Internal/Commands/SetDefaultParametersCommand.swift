@@ -17,34 +17,40 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
 /// ```swift
-/// // Set default parameters that will be included with every event
-/// tealium.track("setdefaultparameters", data: [
-///     "user_name_for_param_currency": "USD",
-///     "user_name_for_param_language": "en",
-///     "user_name_for_param_country": "US"
-/// ])
-///
-/// // Clear a specific default parameter (set to empty string)
-/// tealium.track("setdefaultparameters", data: [
-///     "user_name_for_param_currency": ""
-/// ])
-///
-/// // Clear all default parameters (empty payload or empty firebase_params)
-/// tealium.track("setdefaultparameters", data: [])
-/// // or
-/// tealium.track("setdefaultparameters", data: [
-///     "setdefaultparameters_firebase_params": [:]
-/// ])
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 2. Tracking Call (Your Code)
+/// ```swift
+/// // Set default parameters (included with every event)
+/// tealium.track("set_defaults", data: [
+///     "app_version": "2.1.0",
+///     "user_language": "en",
+///     "user_country": "US"
+/// ])
+///
+/// // Clear a specific default parameter (empty string)
+/// tealium.track("set_defaults", data: [
+///     "app_version": ""
+/// ])
+///
+/// // Clear all default parameters (empty data)
+/// tealium.track("set_defaults", data: [:])
+/// ```
+///
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "setdefaultparameters": [
 ///         "firebase_params": [
-///             "currency": "USD",
+///             "version": "2.1.0",
 ///             "language": "en",
 ///             "country": "US"
 ///         ]
@@ -57,7 +63,7 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger

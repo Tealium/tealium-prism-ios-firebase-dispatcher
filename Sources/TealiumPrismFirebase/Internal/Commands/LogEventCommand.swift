@@ -18,32 +18,42 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#logevent_:parameters:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
 /// ```swift
-/// // Log an e-commerce event
-/// tealium.track("event_purchase", data: [
-///     "param_currency": "USD",
-///     "param_value": 99.97,
-///     "param_items_item_id": ["SKU123", "SKU456", "SKU789"],
-///     "param_items_item_name": ["Product A", "Product B", "Product C"],
-///     "param_items_price": [29.99, 49.99, 19.99],
-///     "param_items_quantity": [1, 1, 1]
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
+/// ```
+///
+/// ### 2. Tracking Call (Your Code)
+/// ```swift
+/// tealium.track("purchase", data: [
+///     "tealium_event": "purchase",
+///     "order_total": 99.99,
+///     "currency_code": "USD",
+///     
+///     // Parallel arrays for products
+///     "product_id": ["SKU001", "SKU002"],
+///     "product_name": ["Widget", "Gadget"],
+///     "product_price": [29.99, 70.00]
 /// ])
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "logevent": [
 ///         "firebase_event_name": "purchase",
 ///         "firebase_event_params": [
-///             "currency": "USD",
-///             "value": 99.97,
-///             "param_items": [
-///                 "param_items_item_id": ["SKU123", "SKU456", "SKU789"],
-///                 "param_items_item_name": ["Product A", "Product B", "Product C"],
-///                 "param_items_price": [29.99, 49.99, 19.99],
-///                 "param_items_quantity": [1, 1, 1]
+///             "param_value": 99.99,                // Event parameters have param_ prefix
+///             "param_currency": "USD",
+///             "param_items": [                    // Items container
+///                 "param_items_item_id": ["SKU001", "SKU002"],      // Item parameters have param_items_ prefix
+///                 "param_items_item_name": ["Widget", "Gadget"],
+///                 "param_items_price": [29.99, 70.00]
 ///             ]
 ///         ]
 ///     ]
@@ -55,7 +65,8 @@ class LogEventCommand: FirebaseCommandProtocol {
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    
+    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger

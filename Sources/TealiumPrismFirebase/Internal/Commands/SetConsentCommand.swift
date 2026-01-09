@@ -17,44 +17,54 @@ import FirebaseAnalytics
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(Consent)#setconsent_:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
 /// ```swift
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
+/// ```
+///
+/// ### 2. Tracking Call (Your Code)
+/// ```swift
+/// // Full consent update
 /// tealium.track("consent_update", data: [
-///     "user_name_for_ad_storage": "granted",
-///     "user_name_for_analytics_storage": "granted",
-///     "user_name_for_ad_user_data": "granted",
-///     "user_name_for_ad_personalization": "denied"
+///     "consent_ad_storage": "granted",
+///     "consent_analytics_storage": "granted",
+///     "consent_ad_user_data": "denied",
+///     "consent_ad_personalization": "denied"
 /// ])
 ///
 /// // Partial consent update (only specified types are updated)
-/// tealium.track("user_name_for_consent_update", data: [
-///     "user_name_for_ad_personalization": "denied"
+/// tealium.track("consent_update", data: [
+///     "consent_ad_personalization": "denied"
 /// ])
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "setconsent": [
 ///         "ad_storage": "granted",
 ///         "analytics_storage": "granted",
-///         "ad_user_data": "granted",
+///         "ad_user_data": "denied",
 ///         "ad_personalization": "denied"
 ///     ]
 /// ]
 /// ```
 ///
-/// Supported consent types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
-/// Supported values: `granted`, `denied`
+/// **Supported consent types:** `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`
+///
+/// **Supported values:** `granted`, `denied`
 class SetConsentCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.logger = logger
     }
     

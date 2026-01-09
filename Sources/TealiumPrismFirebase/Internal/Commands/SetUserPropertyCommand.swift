@@ -17,25 +17,36 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
 /// ```swift
-/// tealium.track("set_property", data: [
-///     "user_name_for_property_name": "subscription_tier",
-///     "user_name_for_property_value": "premium"
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
+/// ```
+///
+/// ### 2. Tracking Call (Your Code)
+/// ```swift
+/// // Set user property
+/// tealium.track("profile_update", data: [
+///     "membership_tier": "tier",
+///     "membership_level": "premium"
 /// ])
 ///
 /// // Remove property (empty string)
-/// tealium.track("remove_property", data: [
-///     "user_name_for_property_name": "subscription_tier",
-///     "user_name_for_property_value": ""
+/// tealium.track("profile_update", data: [
+///     "membership_tier": "tier",
+///     "membership_level": ""
 /// ])
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "setuserproperty": [
-///         "firebase_property_name": "subscription_tier",
+///         "firebase_property_name": "tier",
 ///         "firebase_property_value": "premium"
 ///     ]
 /// ]
@@ -46,7 +57,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger

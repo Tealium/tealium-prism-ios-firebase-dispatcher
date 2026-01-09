@@ -17,15 +17,25 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
 /// ```swift
-/// tealium.track("set_properties", data: [
-///     "user_name_for_property_names": ["subscription_tier", "user_level", "account_type"],
-///     "user_name_for_property_values": ["premium", "expert", "business"]
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
+/// ```
+///
+/// ### 2. Tracking Call (Your Code)
+/// ```swift
+/// tealium.track("bulk_update", data: [
+///     "property_names": ["subscription_tier", "user_level", "account_type"],
+///     "property_values": ["premium", "expert", "business"]
 /// ])
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "setuserproperties": [
@@ -40,7 +50,7 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.validator = validator
         self.logger = logger

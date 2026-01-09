@@ -17,36 +17,52 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserid_:
 ///
-/// Usage:
+/// ## Complete Flow Example
+///
+/// ### 1. Configuration (FirebaseSettingsBuilder)
+/// ```swift
+/// Modules.firebaseDispatcher(forcingSettings: { builder in
+///     builder
+///         // TODO: Add configuration here
+/// })
+/// ```
+///
+/// ### 2. Tracking Call (Your Code)
 /// ```swift
 /// // Set user ID on login
 /// tealium.track("login", data: [
-///     "firebase_user_id": "user123"
+///     "customer_id": "USER_12345"
 /// ])
 ///
 /// // Clear user ID on logout (empty string)
 /// tealium.track("logout", data: [
-///     "firebase_user_id": ""
+///     "customer_id": ""
 /// ])
 /// ```
 ///
-/// Expected Payload Structure (after mappings):
+/// ### 3. After Mappings (What This Command Receives)
 /// ```
+/// // Login event
 /// payload = [
 ///     "setuserid": [
-///         "firebase_user_id": "user123"
+///         "firebase_user_id": "USER_12345"
+///     ]
+/// ]
+///
+/// // Logout event (empty string clears user ID)
+/// payload = [
+///     "setuserid": [
+///         "firebase_user_id": ""
 ///     ]
 /// ]
 /// ```
 class SetUserIdCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public required init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.logger = logger
     }
 

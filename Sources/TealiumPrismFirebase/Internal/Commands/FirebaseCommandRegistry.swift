@@ -42,9 +42,4 @@ class FirebaseCommandRegistry {
         
         return command.execute(payload: payload)
     }
-    
-    /// Check if a command is registered
-    public func hasCommand(_ name: String) -> Bool {
-        commands[name.lowercased()] != nil
-    }
 }
