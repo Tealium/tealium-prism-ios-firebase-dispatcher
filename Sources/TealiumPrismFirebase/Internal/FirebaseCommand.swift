@@ -45,5 +45,17 @@ protocol FirebaseCommand {
     
     /// Sets the logging level for internal Firebase logging.
     func setLoggerLevel(_ loggerLevel: FirebaseLoggerLevel)
+    
+    /// Initiates on-device conversion measurement with email address.
+    func initiateOnDeviceConversionMeasurement(emailAddress: String)
+    
+    /// Initiates on-device conversion measurement with phone number.
+    func initiateOnDeviceConversionMeasurement(phoneNumber: String)
+    
+    /// Initiates on-device conversion measurement with hashed email address.
+    func initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data)
+    
+    /// Initiates on-device conversion measurement with hashed phone number.
+    func initiateOnDeviceConversionMeasurement(hashedPhoneNumber: Data)
 }
 

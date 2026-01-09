@@ -105,5 +105,29 @@ class FirebaseInstance: FirebaseCommand {
     public func setLoggerLevel(_ loggerLevel: FirebaseLoggerLevel) {
         FirebaseConfiguration.shared.setLoggerLevel(loggerLevel)
     }
+    
+    public func initiateOnDeviceConversionMeasurement(emailAddress: String) {
+        onReady {
+            Analytics.initiateOnDeviceConversionMeasurement(emailAddress: emailAddress)
+        }
+    }
+    
+    public func initiateOnDeviceConversionMeasurement(phoneNumber: String) {
+        onReady {
+            Analytics.initiateOnDeviceConversionMeasurement(phoneNumber: phoneNumber)
+        }
+    }
+    
+    public func initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data) {
+        onReady {
+            Analytics.initiateOnDeviceConversionMeasurement(hashedEmailAddress: hashedEmailAddress)
+        }
+    }
+    
+    public func initiateOnDeviceConversionMeasurement(hashedPhoneNumber: Data) {
+        onReady {
+            Analytics.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: hashedPhoneNumber)
+        }
+    }
 }
 
