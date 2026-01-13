@@ -13,46 +13,18 @@ import TealiumPrismCore
 ///
 /// Associates analytics data with a specific user by setting the user ID property.
 /// This must be used in accordance with Google's Privacy Policy.
+/// An empty string clears the user ID.
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserid_:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
 /// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // Set user ID on login
-/// tealium.track("login", data: [
-///     "customer_id": "USER_12345"
-/// ])
-///
-/// // Clear user ID on logout (empty string)
-/// tealium.track("logout", data: [
-///     "customer_id": ""
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
-/// ```
-/// // Login event
 /// payload = [
+///     "command": "setuserid",
 ///     "setuserid": [
-///         "firebase_user_id": "USER_12345"
-///     ]
-/// ]
-///
-/// // Logout event (empty string clears user ID)
-/// payload = [
-///     "setuserid": [
-///         "firebase_user_id": ""
+///         "firebase_user_id": "USER_12345"  // Empty string clears user ID
 ///     ]
 /// ]
 /// ```

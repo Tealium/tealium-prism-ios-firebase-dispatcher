@@ -17,27 +17,11 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#resetanalyticsdata
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
 /// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // Reset all analytics data (e.g., on user logout)
-/// tealium.track("logout")
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
-/// ```
-/// // Payload structure after Prism mappings
 /// payload = [
-///     "tealium_event": ["resetdata"]  // Command name in tealium_event array
+///     "command": "resetdata"
 /// ]
 /// ```
 class ResetDataCommand: FirebaseCommandProtocol {

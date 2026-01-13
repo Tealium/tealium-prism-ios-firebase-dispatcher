@@ -15,30 +15,16 @@ import TealiumPrismCore
 /// When disabled, Firebase Analytics stops collecting data but retains previously collected data.
 ///
 /// Firebase SDK Reference:
-/// - setAnalyticsCollectionEnabled: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setanalyticscollectionenabled_:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setanalyticscollectionenabled_:
 ///
-/// ## Usage Flow
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Enable Analytics)
-/// ```swift
-/// tealium.track("consent", data: [
-///     "firebase_analytics_collection_enabled": true
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
-///     "tealium_event": ["setanalyticscollectionenabled"],
-///     "firebase_analytics_collection_enabled": true
+///     "command": "setanalyticscollectionenabled",
+///     "setanalyticscollectionenabled": [
+///         "firebase_analytics_collection_enabled": true
+///     ]
 /// ]
 /// ```
 class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
@@ -56,7 +42,13 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetAnalyticsCollectionEnabled command")
         
-        guard let enabled = extractAnalyticsEnabled(from: payload) else {
+        guard let commandData = payload.getDataItem(key: FirebaseConstants.SetAnalyticsCollectionEnabled.name)?
+            .getDataDictionary() else {
+            logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
+            return false
+        }
+        
+        guard let enabled = extractAnalyticsEnabled(from: commandData) else {
             logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled)' parameter. " +
                 "Expected boolean value (true/false)")
@@ -71,20 +63,20 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     
     // MARK: - Private Methods
     
-    /// Extracts analytics enabled flag from payload, supporting both boolean and string conversion.
-    private func extractAnalyticsEnabled(from payload: DataObject) -> Bool? {
+    /// Extracts analytics enabled flag from command data, supporting both boolean and string conversion.
+    private func extractAnalyticsEnabled(from commandData: [String: DataItem]) -> Bool? {
         // Try as Bool first
-        if let enabled = payload.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Bool.self) {
+        if let enabled = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Bool.self) {
             return enabled
         }
         
         // Try as String and convert
-        if let enabledString = payload.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: String.self) {
+        if let enabledString = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: String.self) {
             return enabledString.lowercased() == "true" || enabledString == "1"
         }
         
         // Try as Int (0 = false, non-zero = true)
-        if let enabledInt = payload.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Int.self) {
+        if let enabledInt = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Int.self) {
             return enabledInt != 0
         }
         

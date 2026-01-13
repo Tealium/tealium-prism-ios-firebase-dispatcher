@@ -13,41 +13,19 @@ import TealiumPrismCore
 ///
 /// Sets a user property to a given value. Up to 25 user property names are supported.
 /// Once set, user property values persist throughout the app lifecycle and across sessions.
+/// Empty string removes the property.
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // Set user property
-/// tealium.track("profile_update", data: [
-///     "membership_tier": "tier",
-///     "membership_level": "premium"
-/// ])
-///
-/// // Remove property (empty string)
-/// tealium.track("profile_update", data: [
-///     "membership_tier": "tier",
-///     "membership_level": ""
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "setuserproperty",
 ///     "setuserproperty": [
 ///         "firebase_property_name": "tier",
-///         "firebase_property_value": "premium"
+///         "firebase_property_value": "premium"  // Empty string removes property
 ///     ]
 /// ]
 /// ```

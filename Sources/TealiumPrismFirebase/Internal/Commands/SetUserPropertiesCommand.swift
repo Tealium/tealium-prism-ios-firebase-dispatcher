@@ -17,27 +17,11 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// tealium.track("bulk_update", data: [
-///     "property_names": ["subscription_tier", "user_level", "account_type"],
-///     "property_values": ["premium", "expert", "business"]
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "setuserproperties",
 ///     "setuserproperties": [
 ///         "firebase_property_names": ["subscription_tier", "user_level", "account_type"],
 ///         "firebase_property_values": ["premium", "expert", "business"]

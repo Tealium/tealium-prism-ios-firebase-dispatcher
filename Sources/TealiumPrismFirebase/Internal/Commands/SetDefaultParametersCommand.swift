@@ -13,41 +13,16 @@ import TealiumPrismCore
 ///
 /// Default parameters are automatically included with every event logged to Firebase.
 /// These parameters persist across app runs and are of lower precedence than event parameters.
+/// Empty dictionary or missing payload clears all default parameters.
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // Set default parameters (included with every event)
-/// tealium.track("set_defaults", data: [
-///     "app_version": "2.1.0",
-///     "user_language": "en",
-///     "user_country": "US"
-/// ])
-///
-/// // Clear a specific default parameter (empty string)
-/// tealium.track("set_defaults", data: [
-///     "app_version": ""
-/// ])
-///
-/// // Clear all default parameters (empty data)
-/// tealium.track("set_defaults", data: [:])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "setdefaultparameters",
 ///     "setdefaultparameters": [
 ///         "firebase_params": [
 ///             "version": "2.1.0",

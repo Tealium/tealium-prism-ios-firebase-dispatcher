@@ -18,40 +18,18 @@ import TealiumPrismCore
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#logevent_:parameters:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// tealium.track("purchase", data: [
-///     "tealium_event": "purchase",
-///     "order_total": 99.99,
-///     "currency_code": "USD",
-///     
-///     // Parallel arrays for products
-///     "product_id": ["SKU001", "SKU002"],
-///     "product_name": ["Widget", "Gadget"],
-///     "product_price": [29.99, 70.00]
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "logevent",
 ///     "logevent": [
 ///         "firebase_event_name": "purchase",
 ///         "firebase_event_params": [
-///             "param_value": 99.99,                // Event parameters have param_ prefix
+///             "param_value": 99.99,
 ///             "param_currency": "USD",
-///             "param_items": [                    // Items container
-///                 "param_items_item_id": ["SKU001", "SKU002"],      // Item parameters have param_items_ prefix
+///             "param_items": [
+///                 "param_items_item_id": ["SKU001", "SKU002"],
 ///                 "param_items_item_name": ["Widget", "Gadget"],
 ///                 "param_items_price": [29.99, 70.00]
 ///             ]

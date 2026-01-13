@@ -11,7 +11,7 @@ import FirebaseAnalytics
 import TealiumPrismCore
 
 /// All constants for the Firebase Dispatcher module, organized by command.
-/// Each command has its own namespace with name and parameters.
+/// Each command has its own namespace with name, parameters, and JSONPath mappings.
 ///
 /// Firebase Analytics SDK Reference:
 /// - Analytics Class: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics
@@ -22,6 +22,9 @@ enum FirebaseConstants {
     static let version = "1.0.0"
     static let moduleType = "FirebaseDispatcher"
     static let tag = "TealiumPrismFirebase"
+    
+    /// The key used to identify the command to execute in mapped payload
+    static let commandKey = "command"
     
     // MARK: - Initialize Command
     
@@ -40,6 +43,16 @@ enum FirebaseConstants {
             static let sessionTimeout = "firebase_session_timeout_seconds"
             static let analyticsEnabled = "firebase_analytics_collection_enabled"
         }
+        
+        /// JSONPath destinations for mapping parameters
+        enum Path {
+            static let container = JSONPath[Initialize.name]
+            static let logLevel = container[Param.logLevel]
+            static let invalidCharStrategy = container[Param.invalidCharStrategy]
+            static let ga360Mode = container[Param.ga360Mode]
+            static let sessionTimeout = container[Param.sessionTimeout]
+            static let analyticsEnabled = container[Param.analyticsEnabled]
+        }
     }
     
     // MARK: - SetSessionTimeout Command
@@ -54,6 +67,11 @@ enum FirebaseConstants {
         enum Param {
             static let sessionTimeout = "firebase_session_timeout_seconds"
         }
+        
+        enum Path {
+            static let container = JSONPath[SetSessionTimeout.name]
+            static let sessionTimeout = container[Param.sessionTimeout]
+        }
     }
     
     // MARK: - SetAnalyticsCollectionEnabled Command
@@ -67,6 +85,11 @@ enum FirebaseConstants {
         
         enum Param {
             static let analyticsEnabled = "firebase_analytics_collection_enabled"
+        }
+        
+        enum Path {
+            static let container = JSONPath[SetAnalyticsCollectionEnabled.name]
+            static let analyticsEnabled = container[Param.analyticsEnabled]
         }
     }
     
@@ -84,6 +107,13 @@ enum FirebaseConstants {
             static let eventParams = "firebase_event_params"
             static let items = "param_items"
         }
+        
+        enum Path {
+            static let container = JSONPath[LogEvent.name]
+            static let eventName = container[Param.eventName]
+            static let eventParams = container[Param.eventParams]
+            static let items = container[Param.items]
+        }
     }
     
     // MARK: - SetUserId Command
@@ -97,6 +127,11 @@ enum FirebaseConstants {
         
         enum Param {
             static let userId = "firebase_user_id"
+        }
+        
+        enum Path {
+            static let container = JSONPath[SetUserId.name]
+            static let userId = container[Param.userId]
         }
     }
     
@@ -113,6 +148,12 @@ enum FirebaseConstants {
             static let propertyName = "firebase_property_name"
             static let propertyValue = "firebase_property_value"
         }
+        
+        enum Path {
+            static let container = JSONPath[SetUserProperty.name]
+            static let propertyName = container[Param.propertyName]
+            static let propertyValue = container[Param.propertyValue]
+        }
     }
     
     // MARK: - SetUserProperties Command
@@ -128,6 +169,12 @@ enum FirebaseConstants {
             static let propertyNames = "firebase_property_names"
             static let propertyValues = "firebase_property_values"
         }
+        
+        enum Path {
+            static let container = JSONPath[SetUserProperties.name]
+            static let propertyNames = container[Param.propertyNames]
+            static let propertyValues = container[Param.propertyValues]
+        }
     }
     
     // MARK: - ResetData Command
@@ -139,6 +186,10 @@ enum FirebaseConstants {
     enum ResetData {
         static let name = "resetdata"
         // No parameters required
+        
+        enum Path {
+            static let container = JSONPath[ResetData.name]
+        }
     }
     
     // MARK: - SetDefaultParameters Command
@@ -152,6 +203,11 @@ enum FirebaseConstants {
         
         enum Param {
             static let params = "firebase_params"
+        }
+        
+        enum Path {
+            static let container = JSONPath[SetDefaultParameters.name]
+            static let params = container[Param.params]
         }
     }
     
@@ -169,6 +225,14 @@ enum FirebaseConstants {
             static let analyticsStorage = "analytics_storage"
             static let adUserData = "ad_user_data"
             static let adPersonalization = "ad_personalization"
+        }
+        
+        enum Path {
+            static let container = JSONPath[SetConsent.name]
+            static let adStorage = container[Param.adStorage]
+            static let analyticsStorage = container[Param.analyticsStorage]
+            static let adUserData = container[Param.adUserData]
+            static let adPersonalization = container[Param.adPersonalization]
         }
     }
     
@@ -189,6 +253,14 @@ enum FirebaseConstants {
             static let phoneNumber = "param_phone_number"
             static let hashedEmailAddress = "param_hashed_email_address"
             static let hashedPhoneNumber = "param_hashed_phone_number"
+        }
+        
+        enum Path {
+            static let container = JSONPath[InitiateConversionMeasurement.name]
+            static let emailAddress = container[Param.emailAddress]
+            static let phoneNumber = container[Param.phoneNumber]
+            static let hashedEmailAddress = container[Param.hashedEmailAddress]
+            static let hashedPhoneNumber = container[Param.hashedPhoneNumber]
         }
     }
 }
