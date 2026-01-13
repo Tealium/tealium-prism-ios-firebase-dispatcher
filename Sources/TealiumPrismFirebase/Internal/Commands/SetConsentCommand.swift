@@ -17,35 +17,11 @@ import FirebaseAnalytics
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(Consent)#setconsent_:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // Full consent update
-/// tealium.track("consent_update", data: [
-///     "consent_ad_storage": "granted",
-///     "consent_analytics_storage": "granted",
-///     "consent_ad_user_data": "denied",
-///     "consent_ad_personalization": "denied"
-/// ])
-///
-/// // Partial consent update (only specified types are updated)
-/// tealium.track("consent_update", data: [
-///     "consent_ad_personalization": "denied"
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "setconsent",
 ///     "setconsent": [
 ///         "ad_storage": "granted",
 ///         "analytics_storage": "granted",

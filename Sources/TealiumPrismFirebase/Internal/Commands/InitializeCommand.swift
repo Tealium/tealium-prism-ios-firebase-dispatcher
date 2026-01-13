@@ -24,22 +24,8 @@ import TealiumPrismCore
 /// - setSessionTimeoutInterval: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setsessiontimeoutinterval_:
 /// - setAnalyticsCollectionEnabled: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setanalyticscollectionenabled_:
 ///
-/// ## Usage Flow
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call
-/// ```swift
-/// tealium.track("launch")
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
 ///     "command": "initialize",
@@ -52,6 +38,9 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
+///
+/// **Note:** Unlike other commands, Initialize reads parameters directly from the root
+/// payload (not from a nested container) because these are configuration settings.
 class InitializeCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

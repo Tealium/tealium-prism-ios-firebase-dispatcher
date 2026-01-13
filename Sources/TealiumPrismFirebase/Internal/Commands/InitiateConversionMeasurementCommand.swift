@@ -20,56 +20,21 @@ import TealiumPrismCore
 /// - initiateOnDeviceConversionMeasurement(hashedEmailAddress:): https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementhashedemailaddress:
 /// - initiateOnDeviceConversionMeasurement(hashedPhoneNumber:): https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementhashedphonenumber:
 ///
-/// ## Complete Flow Example
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call (Your Code)
-/// ```swift
-/// // With email address
-/// tealium.track("conversion", data: [
-///     "user_email": "user@example.com"
-/// ])
-///
-/// // With phone number
-/// tealium.track("conversion", data: [
-///     "user_phone": "+1234567890"
-/// ])
-///
-/// // With hashed email address
-/// tealium.track("conversion", data: [
-///     "user_hashed_email": "hashedEmailString"
-/// ])
-///
-/// // With hashed phone number
-/// tealium.track("conversion", data: [
-///     "user_hashed_phone": "hashedPhoneString"
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
+///     "command": "initiateconversionmeasurement",
 ///     "initiateconversionmeasurement": [
 ///         "param_email_address": "user@example.com"
-///         // OR
-///         "param_phone_number": "+1234567890"
-///         // OR
-///         "param_hashed_email_address": "hashedEmailString"
-///         // OR
-///         "param_hashed_phone_number": "hashedPhoneString"
+///         // OR "param_phone_number": "+1234567890"
+///         // OR "param_hashed_email_address": "hashedEmailString"
+///         // OR "param_hashed_phone_number": "hashedPhoneString"
 ///     ]
 /// ]
 /// ```
 ///
-/// **Priority**: hashed_email > hashed_phone > email > phone
-/// Only the first available parameter will be used.
+/// **Priority**: hashed_email > hashed_phone > email > phone (only first available is used)
 class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

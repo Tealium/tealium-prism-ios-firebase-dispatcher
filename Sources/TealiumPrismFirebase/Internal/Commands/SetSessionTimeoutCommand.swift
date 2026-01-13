@@ -15,30 +15,16 @@ import TealiumPrismCore
 /// A session is a period of time during which a user is actively engaged with your app.
 ///
 /// Firebase SDK Reference:
-/// - setSessionTimeoutInterval: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setsessiontimeoutinterval_:
+/// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setsessiontimeoutinterval_:
 ///
-/// ## Usage Flow
+/// ## Expected Payload
 ///
-/// ### 1. Configuration (FirebaseSettingsBuilder)
-/// ```swift
-/// Modules.firebaseDispatcher(forcingSettings: { builder in
-///     builder
-///         // TODO: Add configuration here
-/// })
-/// ```
-///
-/// ### 2. Tracking Call
-/// ```swift
-/// tealium.track("update_session", data: [
-///     "new_timeout": 3600  // Change to 1 hour
-/// ])
-/// ```
-///
-/// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
-///     "tealium_event": ["setsessiontimeout"],
-///     "firebase_session_timeout_seconds": 3600
+///     "command": "setsessiontimeout",
+///     "setsessiontimeout": [
+///         "firebase_session_timeout_seconds": 3600
+///     ]
 /// ]
 /// ```
 class SetSessionTimeoutCommand: FirebaseCommandProtocol {
@@ -56,7 +42,13 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
         
-        guard let sessionTimeout = extractSessionTimeout(from: payload) else {
+        guard let commandData = payload.getDataItem(key: FirebaseConstants.SetSessionTimeout.name)?
+            .getDataDictionary() else {
+            logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
+            return false
+        }
+        
+        guard let sessionTimeout = extractSessionTimeout(from: commandData) else {
             logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(FirebaseConstants.SetSessionTimeout.Param.sessionTimeout)' parameter. " +
                 "Expected numeric value (seconds)")
@@ -71,20 +63,20 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     
     // MARK: - Private Methods
     
-    /// Extracts session timeout from payload, supporting both numeric types and string conversion.
-    private func extractSessionTimeout(from payload: DataObject) -> TimeInterval? {
+    /// Extracts session timeout from command data, supporting both numeric types and string conversion.
+    private func extractSessionTimeout(from commandData: [String: DataItem]) -> TimeInterval? {
         // Try as Double first
-        if let timeout = payload.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Double.self) {
+        if let timeout = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Double.self) {
             return timeout
         }
         
         // Try as Int
-        if let timeout = payload.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Int.self) {
+        if let timeout = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Int.self) {
             return TimeInterval(timeout)
         }
         
         // Try as String and convert
-        if let timeoutString = payload.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: String.self),
+        if let timeoutString = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: String.self),
            let timeout = Double(timeoutString) {
             return timeout
         }
