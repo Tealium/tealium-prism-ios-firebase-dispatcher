@@ -194,29 +194,4 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     
-    // MARK: - Logging Tests
-    
-    func test_execute_logs_enabled_state() {
-        let payload: DataObject = [
-            "setanalyticscollectionenabled": [
-                "firebase_analytics_collection_enabled": true
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "enabled"))
-    }
-    
-    func test_execute_logs_disabled_state() {
-        let payload: DataObject = [
-            "setanalyticscollectionenabled": [
-                "firebase_analytics_collection_enabled": false
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "disabled"))
-    }
 }

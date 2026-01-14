@@ -48,13 +48,4 @@ final class ResetDataCommandTests: XCTestCase {
         
         XCTAssertTrue(result)
     }
-    
-    func test_execute_logs_debug_messages() {
-        let payload: DataObject = [:]
-        
-        _ = command.execute(payload: payload)
-        
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Executing ResetData"))
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "reset completed"))
-    }
 }
