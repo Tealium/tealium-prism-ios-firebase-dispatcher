@@ -38,6 +38,11 @@ class NameSanitizer {
         invalidCharStrategy = strategy
     }
     
+    /// Returns the current invalid character strategy.
+    func getInvalidCharStrategy() -> String {
+        return invalidCharStrategy
+    }
+    
     /// Validates and sanitizes a Firebase name. Returns nil if the name cannot be sanitized.
     func sanitize(_ name: String, fallbackPrefix: String, maxLength: Int, nameType: String) -> String? {
         guard !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
