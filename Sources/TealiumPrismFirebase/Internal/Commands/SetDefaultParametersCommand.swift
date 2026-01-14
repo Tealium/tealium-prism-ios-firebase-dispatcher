@@ -85,10 +85,15 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
             }
             
             // Firebase supports String, Int, and Double only
-            if let intValue = value.get(as: Int.self) {
-                sanitizedParams[sanitizedName] = intValue
-            } else if let doubleValue = value.get(as: Double.self) {
-                sanitizedParams[sanitizedName] = doubleValue
+            // Note: Check Double first because DataItem.get(as: Int.self) truncates decimals
+            // e.g., 99.99 would return 99 if Int is checked first
+            if let doubleValue = value.get(as: Double.self) {
+                // Check if it's a whole number - store as Int for cleaner Firebase data
+                if doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
+                    sanitizedParams[sanitizedName] = Int(doubleValue)
+                } else {
+                    sanitizedParams[sanitizedName] = doubleValue
+                }
             } else if let stringValue = value.get(as: String.self) {
                 // Empty string clears the parameter
                 if stringValue.isEmpty {
