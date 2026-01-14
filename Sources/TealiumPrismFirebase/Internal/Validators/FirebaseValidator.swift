@@ -40,6 +40,18 @@ class FirebaseValidator {
         ga360Mode = enabled
     }
     
+    // MARK: - State Getters (for testing)
+    
+    /// Returns the current GA360 mode setting.
+    public func isGA360ModeEnabled() -> Bool {
+        return ga360Mode
+    }
+    
+    /// Returns the current invalid character strategy.
+    public func getInvalidCharStrategy() -> String {
+        return nameSanitizer.getInvalidCharStrategy()
+    }
+    
     // MARK: - Validation Methods
     
     public func validateEventName(_ name: String) -> String? {
