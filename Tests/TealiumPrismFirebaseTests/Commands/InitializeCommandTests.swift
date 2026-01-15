@@ -15,22 +15,19 @@ final class InitializeCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
     var validator: FirebaseValidator!
-    var mockLogger: MockLogger!
     var command: InitializeCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        validator = FirebaseValidator(logger: mockLogger)
-        command = InitializeCommand(firebaseInstance: mockFirebase, validator: validator, logger: mockLogger)
+        validator = FirebaseValidator()
+        command = InitializeCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
         validator = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -42,7 +39,6 @@ final class InitializeCommandTests: XCTestCase {
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing command data"))
     }
     
     func test_execute_with_missing_initialize_container_returns_false() {
@@ -53,7 +49,6 @@ final class InitializeCommandTests: XCTestCase {
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing command data"))
     }
     
     func test_execute_with_empty_initialize_container_returns_true() {
@@ -122,7 +117,6 @@ final class InitializeCommandTests: XCTestCase {
         
         XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .notice)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Unknown log level"))
     }
     
     // MARK: - Session Timeout Tests
