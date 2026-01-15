@@ -36,22 +36,47 @@ final class InitializeCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_with_empty_payload_returns_true_and_does_not_call_firebase() {
+    func test_execute_with_empty_payload_returns_false() {
         let payload: DataObject = [:]
         
         let result = command.execute(payload: payload)
         
+        XCTAssertFalse(result)
+        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing command data"))
+    }
+    
+    func test_execute_with_missing_initialize_container_returns_false() {
+        let payload: DataObject = [
+            "some_other_key": "value"
+        ]
+        
+        let result = command.execute(payload: payload)
+        
+        XCTAssertFalse(result)
+        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing command data"))
+    }
+    
+    func test_execute_with_empty_initialize_container_returns_true() {
+        let payload: DataObject = [
+            FirebaseConstants.Initialize.name: [:] as DataObject
+        ]
+        
+        let result = command.execute(payload: payload)
+        
         XCTAssertTrue(result)
-        // Empty payload should not trigger any Firebase calls
+        // Empty container should not trigger any Firebase calls
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
         XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertFalse(mockFirebase.setLoggerLevelCalled)
     }
     
     // MARK: - Log Level Tests
     
     func test_execute_sets_log_level_min() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.logLevel: "min"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.logLevel: "min"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -62,7 +87,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_log_level_max() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.logLevel: "max"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.logLevel: "max"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -73,7 +100,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_log_level_debug() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.logLevel: "debug"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.logLevel: "debug"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -84,7 +113,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_with_invalid_log_level_defaults_to_notice() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.logLevel: "invalid"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.logLevel: "invalid"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -98,7 +129,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_session_timeout_from_double() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.sessionTimeout: 1800.0
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.sessionTimeout: 1800.0
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -109,7 +142,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_session_timeout_from_int() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.sessionTimeout: 3600
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.sessionTimeout: 3600
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -120,7 +155,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_session_timeout_from_string() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.sessionTimeout: "7200"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.sessionTimeout: "7200"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -133,7 +170,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.analyticsEnabled: true
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.analyticsEnabled: true
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -144,7 +183,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.analyticsEnabled: false
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.analyticsEnabled: false
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -157,7 +198,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_ga360_mode() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.ga360Mode: true
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.ga360Mode: true
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -167,7 +210,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_disables_ga360_mode() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.ga360Mode: false
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.ga360Mode: false
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -177,7 +222,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_invalid_char_strategy_replace() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.invalidCharStrategy: "replace"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.invalidCharStrategy: "replace"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -187,7 +234,9 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_sets_invalid_char_strategy_remove() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.invalidCharStrategy: "remove"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.invalidCharStrategy: "remove"
+            ] as DataObject
         ]
         
         _ = command.execute(payload: payload)
@@ -199,11 +248,13 @@ final class InitializeCommandTests: XCTestCase {
     
     func test_execute_configures_all_settings() {
         let payload: DataObject = [
-            FirebaseConstants.Initialize.Param.logLevel: "debug",
-            FirebaseConstants.Initialize.Param.sessionTimeout: 1800,
-            FirebaseConstants.Initialize.Param.analyticsEnabled: true,
-            FirebaseConstants.Initialize.Param.ga360Mode: true,
-            FirebaseConstants.Initialize.Param.invalidCharStrategy: "remove"
+            FirebaseConstants.Initialize.name: [
+                FirebaseConstants.Initialize.Param.logLevel: "debug",
+                FirebaseConstants.Initialize.Param.sessionTimeout: 1800,
+                FirebaseConstants.Initialize.Param.analyticsEnabled: true,
+                FirebaseConstants.Initialize.Param.ga360Mode: true,
+                FirebaseConstants.Initialize.Param.invalidCharStrategy: "remove"
+            ] as DataObject
         ]
         
         let result = command.execute(payload: payload)
