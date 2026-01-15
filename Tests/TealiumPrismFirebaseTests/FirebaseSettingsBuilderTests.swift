@@ -23,11 +23,11 @@ final class FirebaseSettingsBuilderTests: XCTestCase {
         
         XCTAssertEqual(settings, [
             "configuration": try DataItem(serializing: [
-                "firebase_session_timeout_seconds": 1800 as Int,
-                "firebase_analytics_collection_enabled": true,
-                "firebase_ga360_mode": false,
-                "firebase_log_level": "debug",
-                "firebase_invalid_char_strategy": "replace"
+                FirebaseConstants.Initialize.Param.sessionTimeout: 1800 as Int,
+                FirebaseConstants.Initialize.Param.analyticsEnabled: true,
+                FirebaseConstants.Initialize.Param.ga360Mode: false,
+                FirebaseConstants.Initialize.Param.logLevel: "debug",
+                FirebaseConstants.Initialize.Param.invalidCharStrategy: "replace"
             ])
         ])
     }

@@ -23,7 +23,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "initialize"
+            FirebaseConstants.commandKey: FirebaseConstants.Initialize.name
         ])
     }
     
@@ -40,9 +40,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "initiateconversionmeasurement",
-            "initiateconversionmeasurement": [
-                "param_email_address": "user@example.com"
+            FirebaseConstants.commandKey: FirebaseConstants.InitiateConversionMeasurement.name,
+            FirebaseConstants.InitiateConversionMeasurement.name: [
+                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
             ] as DataObject
         ])
     }
@@ -58,9 +58,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "initiateconversionmeasurement",
-            "initiateconversionmeasurement": [
-                "param_phone_number": "+1234567890"
+            FirebaseConstants.commandKey: FirebaseConstants.InitiateConversionMeasurement.name,
+            FirebaseConstants.InitiateConversionMeasurement.name: [
+                FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
             ] as DataObject
         ])
     }
@@ -76,9 +76,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "initiateconversionmeasurement",
-            "initiateconversionmeasurement": [
-                "param_hashed_email_address": "abc123hash"
+            FirebaseConstants.commandKey: FirebaseConstants.InitiateConversionMeasurement.name,
+            FirebaseConstants.InitiateConversionMeasurement.name: [
+                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "abc123hash"
             ] as DataObject
         ])
     }
@@ -94,9 +94,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "initiateconversionmeasurement",
-            "initiateconversionmeasurement": [
-                "param_hashed_phone_number": "xyz789hash"
+            FirebaseConstants.commandKey: FirebaseConstants.InitiateConversionMeasurement.name,
+            FirebaseConstants.InitiateConversionMeasurement.name: [
+                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "xyz789hash"
             ] as DataObject
         ])
     }
@@ -112,8 +112,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": ["firebase_event_name": "screen_view"] as DataObject
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [FirebaseConstants.LogEvent.Param.eventName: "screen_view"] as DataObject
         ])
     }
     
@@ -131,10 +131,10 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": [
-                "firebase_event_name": "purchase",
-                "firebase_event_params": [
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "purchase",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "value": 99.99,
                     "currency": "USD"
                 ] as DataObject
@@ -156,11 +156,11 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": [
-                "firebase_event_name": "view_item_list",
-                "firebase_event_params": [
-                    "param_items": [
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "view_item_list",
+                FirebaseConstants.LogEvent.Param.eventParams: [
+                    FirebaseConstants.LogEvent.Param.items: [
                         "item_id": ["SKU001", "SKU002"] as [String],
                         "item_name": ["Widget", "Gadget"] as [String]
                     ] as DataObject
@@ -185,10 +185,10 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": [
-                "firebase_event_name": "custom_event",
-                "firebase_event_params": [
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "custom_event",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "screen_name": "Home",
                     "user_type": "premium",
                     "session_count": 5
@@ -207,7 +207,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "resetdata"
+            FirebaseConstants.commandKey: FirebaseConstants.ResetData.name
         ])
     }
     
@@ -224,9 +224,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setanalyticscollectionenabled",
-            "setanalyticscollectionenabled": [
-                "firebase_analytics_collection_enabled": true
+            FirebaseConstants.commandKey: FirebaseConstants.SetAnalyticsCollectionEnabled.name,
+            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
+                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: true
             ] as DataObject
         ])
     }
@@ -250,12 +250,12 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setconsent",
-            "setconsent": [
-                "analytics_storage": "granted",
-                "ad_storage": "denied",
-                "ad_user_data": "granted",
-                "ad_personalization": "denied"
+            FirebaseConstants.commandKey: FirebaseConstants.SetConsent.name,
+            FirebaseConstants.SetConsent.name: [
+                FirebaseConstants.SetConsent.Param.analyticsStorage: "granted",
+                FirebaseConstants.SetConsent.Param.adStorage: "denied",
+                FirebaseConstants.SetConsent.Param.adUserData: "granted",
+                FirebaseConstants.SetConsent.Param.adPersonalization: "denied"
             ] as DataObject
         ])
     }
@@ -275,9 +275,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setdefaultparameters",
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.commandKey: FirebaseConstants.SetDefaultParameters.name,
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "app_version": "2.0",
                     "environment": "prod"
                 ] as DataObject
@@ -300,9 +300,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setdefaultparameters",
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.commandKey: FirebaseConstants.SetDefaultParameters.name,
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "app_version": "2.0",
                     "environment": "production",
                     "feature_flag_enabled": true
@@ -324,9 +324,9 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setsessiontimeout",
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": 3600
+            FirebaseConstants.commandKey: FirebaseConstants.SetSessionTimeout.name,
+            FirebaseConstants.SetSessionTimeout.name: [
+                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
             ] as DataObject
         ])
     }
@@ -342,8 +342,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setuserid",
-            "setuserid": ["firebase_user_id": "USER_123"] as DataObject
+            FirebaseConstants.commandKey: FirebaseConstants.SetUserId.name,
+            FirebaseConstants.SetUserId.name: [FirebaseConstants.SetUserId.Param.userId: "USER_123"] as DataObject
         ])
     }
     
@@ -362,10 +362,10 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setuserproperties",
-            "setuserproperties": [
-                "firebase_property_names": ["tier", "level", "status"],
-                "firebase_property_values": ["premium", "expert", "active"]
+            FirebaseConstants.commandKey: FirebaseConstants.SetUserProperties.name,
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["tier", "level", "status"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "active"]
             ] as DataObject
         ])
     }
@@ -385,10 +385,10 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "setuserproperty",
-            "setuserproperty": [
-                "firebase_property_name": "membership_tier",
-                "firebase_property_value": "premium"
+            FirebaseConstants.commandKey: FirebaseConstants.SetUserProperty.name,
+            FirebaseConstants.SetUserProperty.name: [
+                FirebaseConstants.SetUserProperty.Param.propertyName: "membership_tier",
+                FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
             ] as DataObject
         ])
     }
