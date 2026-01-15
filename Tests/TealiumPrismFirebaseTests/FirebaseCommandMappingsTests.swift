@@ -144,26 +144,27 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
     
     func test_logEvent_with_items() {
         let dispatch = Dispatch(name: "view_item_list", type: .event, data: [
-            "products": [
-                ["item_id": "SKU001", "item_name": "Widget"] as DataObject,
-                ["item_id": "SKU002", "item_name": "Gadget"] as DataObject
-            ]
+            "item_id": ["SKU001", "SKU002"] as [String],
+            "item_name": ["Widget", "Gadget"] as [String]
         ])
         
         let result = map(dispatch: dispatch, mappings: [
             .mapFirebaseLogEventCommand(),
             .mapFirebaseLogEventName(),
-            .mapFirebaseLogEventItems(itemsKey: "products")
+            .mapFirebaseItemParameter(from: "item_id", to: "item_id"),
+            .mapFirebaseItemParameter(from: "item_name", to: "item_name")
         ])
         
         XCTAssertEqual(result.payload, [
             "command": "logevent",
             "logevent": [
                 "firebase_event_name": "view_item_list",
-                "param_items": [
-                    ["item_id": "SKU001", "item_name": "Widget"] as DataObject,
-                    ["item_id": "SKU002", "item_name": "Gadget"] as DataObject
-                ]
+                "firebase_event_params": [
+                    "param_items": [
+                        "item_id": ["SKU001", "SKU002"] as [String],
+                        "item_name": ["Widget", "Gadget"] as [String]
+                    ] as DataObject
+                ] as DataObject
             ] as DataObject
         ])
     }
