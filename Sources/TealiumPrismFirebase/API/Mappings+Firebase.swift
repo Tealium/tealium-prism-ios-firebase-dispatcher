@@ -42,17 +42,17 @@ public extension Mappings {
     /// .mapFirebaseLogEventName(),
     /// .mapFirebaseEventParameter(from: "total", to: "value"),
     /// .mapFirebaseEventParameter(from: "currency", to: "currency"),
-    /// .mapFirebaseLogEventItems(itemsKey: "products")
+    /// .mapFirebaseItemParameter(from: "product_ids", to: "item_id"),
+    /// .mapFirebaseItemParameter(from: "product_names", to: "item_name"),
+    /// .mapFirebaseItemParameter(from: "prices", to: "price")
     ///
     /// // Tracking:
     /// tealium.track("purchase", data: [
     ///     "total": 99.99,
     ///     "currency": "USD",
-    ///     "products": [
-    ///         "item_id": ["SKU001", "SKU002"],
-    ///         "item_name": ["Widget", "Gadget"],
-    ///         "price": [29.99, 70.00]
-    ///     ]
+    ///     "product_ids": ["SKU001", "SKU002"],
+    ///     "product_names": ["Widget", "Gadget"],
+    ///     "prices": [29.99, 70.00]
     /// ])
     /// ```
     
@@ -110,12 +110,16 @@ public extension Mappings {
         .from(sourceKey, to: FirebaseConstants.LogEvent.Path.eventParams[parameterName])
     }
     
-    /// Maps a source key to the Firebase items array (for e-commerce events).
+    /// Maps a source key containing parallel arrays to a specific item parameter.
     ///
-    /// - Parameter itemsKey: The source key containing the items array.
+    /// Use this to map arrays of item properties directly into the items structure.
+    ///
+    /// - Parameters:
+    ///   - sourceKey: The source key containing an array of values (e.g., ["SKU001", "SKU002"]).
+    ///   - itemParameterName: The name of the Firebase item parameter (e.g., "item_id").
     /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseLogEventItems(itemsKey: String) -> VariableOptions {
-        .from(itemsKey, to: FirebaseConstants.LogEvent.Path.items)
+    static func mapFirebaseItemParameter(from sourceKey: String, to itemParameterName: String) -> VariableOptions {
+        .from(sourceKey, to: FirebaseConstants.LogEvent.Path.items[itemParameterName])
     }
     
     // MARK: - SetUserId Command

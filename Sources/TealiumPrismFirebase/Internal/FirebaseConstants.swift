@@ -112,7 +112,7 @@ enum FirebaseConstants {
             static let container = JSONPath[LogEvent.name]
             static let eventName = container[Param.eventName]
             static let eventParams = container[Param.eventParams]
-            static let items = container[Param.items]
+            static let items = eventParams[Param.items]
         }
     }
     
