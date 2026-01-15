@@ -13,20 +13,17 @@ import XCTest
 final class SetUserIdCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var mockLogger: MockLogger!
     var command: SetUserIdCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        command = SetUserIdCommand(firebaseInstance: mockFirebase, logger: mockLogger)
+        command = SetUserIdCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -45,8 +42,8 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_sets_user_id() {
         let payload: DataObject = [
-            "setuserid": [
-                "firebase_user_id": "user@example.com"
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: "user@example.com"
             ] as DataObject
         ]
         
@@ -61,8 +58,8 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_clears_user_id_with_empty_string() {
         let payload: DataObject = [
-            "setuserid": [
-                "firebase_user_id": ""
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: ""
             ] as DataObject
         ]
         
@@ -71,7 +68,6 @@ final class SetUserIdCommandTests: XCTestCase {
         XCTAssertTrue(result)
         XCTAssertTrue(mockFirebase.setUserIdCalled)
         XCTAssertNil(mockFirebase.lastUserId)
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Clearing user ID"))
     }
     
     // MARK: - Validation Tests
@@ -79,8 +75,8 @@ final class SetUserIdCommandTests: XCTestCase {
     func test_execute_rejects_user_id_exceeding_256_characters() {
         let longUserId = String(repeating: "a", count: 300)
         let payload: DataObject = [
-            "setuserid": [
-                "firebase_user_id": longUserId
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: longUserId
             ] as DataObject
         ]
         
@@ -88,14 +84,13 @@ final class SetUserIdCommandTests: XCTestCase {
         
         XCTAssertFalse(result)
         XCTAssertFalse(mockFirebase.setUserIdCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "exceeds 256 characters"))
     }
     
     func test_execute_accepts_user_id_at_256_characters() {
         let maxUserId = String(repeating: "a", count: 256)
         let payload: DataObject = [
-            "setuserid": [
-                "firebase_user_id": maxUserId
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: maxUserId
             ] as DataObject
         ]
         

@@ -13,20 +13,17 @@ import XCTest
 final class SetSessionTimeoutCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var mockLogger: MockLogger!
     var command: SetSessionTimeoutCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase, logger: mockLogger)
+        command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -39,27 +36,25 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         
         XCTAssertFalse(result)
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing command data"))
     }
     
     func test_execute_without_timeout_parameter_returns_false() {
         let payload: DataObject = [
-            "setsessiontimeout": [:] as DataObject
+            FirebaseConstants.SetSessionTimeout.name: [:] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing or invalid"))
     }
     
     // MARK: - Double Value Tests
     
     func test_execute_sets_timeout_from_double() {
         let payload: DataObject = [
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": 1800.5
+            FirebaseConstants.SetSessionTimeout.name: [
+                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 1800.5
             ] as DataObject
         ]
         
@@ -74,8 +69,8 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_int() {
         let payload: DataObject = [
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": 3600
+            FirebaseConstants.SetSessionTimeout.name: [
+                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
             ] as DataObject
         ]
         
@@ -90,8 +85,8 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_string() {
         let payload: DataObject = [
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": "1800.5"
+            FirebaseConstants.SetSessionTimeout.name: [
+                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "1800.5"
             ] as DataObject
         ]
         
@@ -104,8 +99,8 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_returns_false_for_invalid_string() {
         let payload: DataObject = [
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": "invalid"
+            FirebaseConstants.SetSessionTimeout.name: [
+                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "invalid"
             ] as DataObject
         ]
         

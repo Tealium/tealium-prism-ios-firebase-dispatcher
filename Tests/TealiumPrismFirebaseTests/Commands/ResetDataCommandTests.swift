@@ -13,20 +13,17 @@ import XCTest
 final class ResetDataCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var mockLogger: MockLogger!
     var command: ResetDataCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        command = ResetDataCommand(firebaseInstance: mockFirebase, logger: mockLogger)
+        command = ResetDataCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        mockLogger = nil
         super.tearDown()
     }
     
