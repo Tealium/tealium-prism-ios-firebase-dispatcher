@@ -38,9 +38,6 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
-///
-/// **Note:** Unlike other commands, Initialize reads parameters directly from the root
-/// payload (not from a nested container) because these are configuration settings.
 class InitializeCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand

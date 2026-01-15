@@ -142,7 +142,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
     }
     
-    func test_logEvent_with_items() {
+    func test_logEvent_with_items() { 
         let dispatch = Dispatch(name: "view_item_list", type: .event, data: [
             "item_id": ["SKU001", "SKU002"] as [String],
             "item_name": ["Widget", "Gadget"] as [String]
