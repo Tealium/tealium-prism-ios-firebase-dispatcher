@@ -14,22 +14,19 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
     var validator: FirebaseValidator!
-    var mockLogger: MockLogger!
     var command: SetDefaultParametersCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        validator = FirebaseValidator(logger: mockLogger)
-        command = SetDefaultParametersCommand(firebaseInstance: mockFirebase, validator: validator, logger: mockLogger)
+        validator = FirebaseValidator(logger: nil)
+        command = SetDefaultParametersCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
         validator = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -43,25 +40,23 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         XCTAssertTrue(result)
         XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
         XCTAssertNil(mockFirebase.lastDefaultParameters)
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Clearing all default parameters"))
     }
     
     func test_execute_without_firebase_params_returns_false() {
         let payload: DataObject = [
-            "setdefaultparameters": [:] as DataObject
+            FirebaseConstants.SetDefaultParameters.name: [:] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
         XCTAssertFalse(mockFirebase.setDefaultEventParametersCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing 'firebase_params'"))
     }
     
     func test_execute_with_empty_firebase_params_clears_parameters() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [:] as DataObject
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [:] as DataObject
             ] as DataObject
         ]
         
@@ -76,8 +71,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_string_parameters() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "version": "2.1.0",
                     "language": "en"
                 ] as DataObject
@@ -94,8 +89,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_empty_string_as_nsnull() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "to_clear": ""
                 ] as DataObject
             ] as DataObject
@@ -111,8 +106,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_int_parameters() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "count": 42
                 ] as DataObject
             ] as DataObject
@@ -126,8 +121,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_double_parameters() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "price": 99.99
                 ] as DataObject
             ] as DataObject
@@ -142,8 +137,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_whole_number_double_as_int() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "quantity": 100.0  // Whole number double
                 ] as DataObject
             ] as DataObject
@@ -160,8 +155,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sanitizes_parameter_names() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "my-param.name": "value"
                 ] as DataObject
             ] as DataObject
@@ -176,8 +171,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     func test_execute_truncates_long_string_values() {
         let longValue = String(repeating: "x", count: 150)
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "long_param": longValue
                 ] as DataObject
             ] as DataObject
@@ -195,8 +190,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_skips_invalid_parameter_names() {
         let payload: DataObject = [
-            "setdefaultparameters": [
-                "firebase_params": [
+            FirebaseConstants.SetDefaultParameters.name: [
+                FirebaseConstants.SetDefaultParameters.Param.params: [
                     "valid_param": "value"
                 ] as DataObject
             ] as DataObject

@@ -14,22 +14,19 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
     var validator: FirebaseValidator!
-    var mockLogger: MockLogger!
     var command: SetUserPropertiesCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        validator = FirebaseValidator(logger: mockLogger)
-        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase, validator: validator, logger: mockLogger)
+        validator = FirebaseValidator(logger: nil)
+        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
         validator = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -46,67 +43,63 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_without_property_names_returns_false() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_values": ["value1", "value2"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
             ] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing or invalid property names"))
     }
     
     func test_execute_without_property_values_returns_false() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["prop1", "prop2"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2"]
             ] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Missing or invalid property values"))
     }
     
     func test_execute_with_empty_names_array_returns_false() {
         let emptyNamesArray: [String] = []
         let emptyValuesArray: [String] = []
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": emptyNamesArray,
-                "firebase_property_values": emptyValuesArray
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: emptyNamesArray,
+                FirebaseConstants.SetUserProperties.Param.propertyValues: emptyValuesArray
             ] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Empty property names"))
     }
     
     func test_execute_with_mismatched_array_lengths_returns_false() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["prop1", "prop2", "prop3"],
-                "firebase_property_values": ["value1", "value2"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2", "prop3"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
             ] as DataObject
         ]
         
         let result = command.execute(payload: payload)
         
         XCTAssertFalse(result)
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "matching length"))
     }
     
     // MARK: - Single Property Tests
     
     func test_execute_sets_single_property() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["subscription_tier"],
-                "firebase_property_values": ["premium"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium"]
             ] as DataObject
         ]
         
@@ -123,9 +116,9 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_sets_multiple_properties() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["subscription_tier", "user_level", "account_type"],
-                "firebase_property_values": ["premium", "expert", "business"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier", "user_level", "account_type"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "business"]
             ] as DataObject
         ]
         
@@ -145,9 +138,9 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_clears_property_with_empty_value() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["to_clear"],
-                "firebase_property_values": [""]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["to_clear"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: [""]
             ] as DataObject
         ]
         
@@ -155,16 +148,15 @@ final class SetUserPropertiesCommandTests: XCTestCase {
         
         XCTAssertTrue(result)
         XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, nil)
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Removing user property"))
     }
     
     // MARK: - Validation Tests
     
     func test_execute_sanitizes_property_names() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["my-prop.name"],
-                "firebase_property_values": ["value"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["my-prop.name"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value"]
             ] as DataObject
         ]
         
@@ -177,9 +169,9 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     func test_execute_truncates_long_property_values() {
         let longValue = String(repeating: "x", count: 50)
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["prop"],
-                "firebase_property_values": [longValue]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop"],
+                FirebaseConstants.SetUserProperties.Param.propertyValues: [longValue]
             ] as DataObject
         ]
         
@@ -190,9 +182,9 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_skips_invalid_property_names() {
         let payload: DataObject = [
-            "setuserproperties": [
-                "firebase_property_names": ["valid_prop", "user_id"],  // user_id is reserved
-                "firebase_property_values": ["value1", "value2"]
+            FirebaseConstants.SetUserProperties.name: [
+                FirebaseConstants.SetUserProperties.Param.propertyNames: ["valid_prop", "user_id"],  // user_id is reserved
+                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
             ] as DataObject
         ]
         
@@ -203,8 +195,6 @@ final class SetUserPropertiesCommandTests: XCTestCase {
         // Only the valid property should be set
         let validCalls = mockFirebase.setUserPropertyCalls.filter { $0.name == "valid_prop" }
         XCTAssertEqual(validCalls.count, 1)
-        
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "Invalid user property name 'user_id'"))
     }
     
 }

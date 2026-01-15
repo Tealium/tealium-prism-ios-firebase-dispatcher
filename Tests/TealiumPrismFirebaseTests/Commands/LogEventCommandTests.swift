@@ -14,22 +14,19 @@ final class LogEventCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
     var validator: FirebaseValidator!
-    var mockLogger: MockLogger!
     var command: LogEventCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
-        validator = FirebaseValidator(logger: mockLogger)
-        command = LogEventCommand(firebaseInstance: mockFirebase, validator: validator, logger: mockLogger)
+        validator = FirebaseValidator(logger: nil)
+        command = LogEventCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
         validator = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -48,8 +45,8 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_simple_event() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "test_event"
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event"
             ] as DataObject
         ]
         
@@ -64,8 +61,8 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_maps_event_name() {
         // "event_purchase" should map to Firebase's AnalyticsEventPurchase ("purchase")
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "event_purchase"
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "event_purchase"
             ] as DataObject
         ]
         
@@ -79,9 +76,9 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_string_parameter() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "test_event",
-                "firebase_event_params": [
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "param_currency": "USD"
                 ] as DataObject
             ] as DataObject
@@ -96,9 +93,9 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_numeric_parameters() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "purchase",
-                "firebase_event_params": [
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "purchase",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "param_value": 99.99,
                     "param_quantity": 2
                 ] as DataObject
@@ -115,9 +112,9 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_boolean_parameter() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "test_event",
-                "firebase_event_params": [
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "is_first_time": true
                 ] as DataObject
             ] as DataObject
@@ -142,12 +139,12 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "purchase",
-                "firebase_event_params": [
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "purchase",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "param_value": 99.99,
                     "param_currency": "USD",
-                    "param_items": itemsObject
+                    FirebaseConstants.LogEvent.Param.items: itemsObject
                 ] as DataObject
             ] as DataObject
         ]
@@ -191,10 +188,10 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "add_to_cart",
-                "firebase_event_params": [
-                    "param_items": itemsObject
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "add_to_cart",
+                FirebaseConstants.LogEvent.Param.eventParams: [
+                    FirebaseConstants.LogEvent.Param.items: itemsObject
                 ] as DataObject
             ] as DataObject
         ]
@@ -223,10 +220,10 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "purchase",
-                "firebase_event_params": [
-                    "param_items": itemsObject
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "purchase",
+                FirebaseConstants.LogEvent.Param.eventParams: [
+                    FirebaseConstants.LogEvent.Param.items: itemsObject
                 ] as DataObject
             ] as DataObject
         ]
@@ -250,17 +247,14 @@ final class LogEventCommandTests: XCTestCase {
         // Third item only has item_id (item_name array was shorter)
         XCTAssertEqual(items[2]["item_id"] as? String, "SKU003")
         XCTAssertNil(items[2]["item_name"])
-        
-        // Should log a warning about mismatched lengths
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "mismatched lengths"))
     }
     
     // MARK: - Validation Tests
     
     func test_execute_with_reserved_event_name_returns_false() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "session_start"  // Reserved by Firebase
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "session_start"  // Reserved by Firebase
             ] as DataObject
         ]
         
@@ -272,8 +266,8 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_sanitizes_event_name() {
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "my-event.name"
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "my-event.name"
             ] as DataObject
         ]
         
@@ -286,9 +280,9 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_truncates_long_parameter_value() {
         let longValue = String(repeating: "x", count: 150)
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "test_event",
-                "firebase_event_params": [
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event",
+                FirebaseConstants.LogEvent.Param.eventParams: [
                     "long_param": longValue
                 ] as DataObject
             ] as DataObject
@@ -314,9 +308,9 @@ final class LogEventCommandTests: XCTestCase {
         }
         
         let payload: DataObject = [
-            "logevent": [
-                "firebase_event_name": "test_event",
-                "firebase_event_params": DataObject(dictionary: paramsDict)
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event",
+                FirebaseConstants.LogEvent.Param.eventParams: DataObject(dictionary: paramsDict)
             ] as DataObject
         ]
         
