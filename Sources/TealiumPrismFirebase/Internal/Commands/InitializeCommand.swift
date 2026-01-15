@@ -42,12 +42,14 @@ import TealiumPrismCore
 /// ### 3. After Mappings (What This Command Receives)
 /// ```
 /// payload = [
-///     "tealium_event": ["initialize"],
-///     "firebase_log_level": "max",
-///     "firebase_session_timeout_seconds": 1800,
-///     "firebase_analytics_collection_enabled": true,
-///     "firebase_ga360_mode": false,
-///     "firebase_invalid_char_strategy": "replace"
+///     "command": "initialize",
+///     "initialize": [
+///         "firebase_log_level": "max",
+///         "firebase_session_timeout_seconds": 1800,
+///         "firebase_analytics_collection_enabled": true,
+///         "firebase_ga360_mode": false,
+///         "firebase_invalid_char_strategy": "replace"
+///     ]
 /// ]
 /// ```
 class InitializeCommand: FirebaseCommandProtocol {
@@ -67,22 +69,28 @@ class InitializeCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing Initialize command")
         
+        guard let commandData = payload.getDataItem(key: FirebaseConstants.Initialize.name)?
+            .getDataDictionary() else {
+            logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
+            return false
+        }
+        
         // 1. Configure log level (must be done before Firebase is configured)
-        if let logLevel = payload.get(key: FirebaseConstants.Initialize.Param.logLevel, as: String.self) {
+        if let logLevel = commandData.get(key: FirebaseConstants.Initialize.Param.logLevel, as: String.self) {
             configureLogLevel(logLevel)
         }
         
         // 2. Configure validator settings
-        configureValidator(from: payload)
+        configureValidator(from: commandData)
         
         // 3. Configure session timeout
-        if let sessionTimeout = extractSessionTimeout(from: payload) {
+        if let sessionTimeout = extractSessionTimeout(from: commandData) {
             firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
             logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds")
         }
         
         // 4. Configure analytics collection
-        if let analyticsEnabled = payload.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
+        if let analyticsEnabled = commandData.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
             logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled)")
         }
@@ -109,36 +117,36 @@ class InitializeCommand: FirebaseCommandProtocol {
     }
     
     /// Configures validator with GA360 mode and invalid character strategy.
-    private func configureValidator(from payload: DataObject) {
+    private func configureValidator(from commandData: [String: DataItem]) {
         // Configure GA360 mode
-        if let ga360Mode = payload.get(key: FirebaseConstants.Initialize.Param.ga360Mode, as: Bool.self) {
+        if let ga360Mode = commandData.get(key: FirebaseConstants.Initialize.Param.ga360Mode, as: Bool.self) {
             validator.setGA360Mode(ga360Mode)
             logger?.debug(category: LogCategory.firebase, 
                 "GA360 mode: \(ga360Mode) (parameter value limit: \(ga360Mode ? 500 : 100) characters)")
         }
         
         // Configure invalid character strategy
-        if let strategy = payload.get(key: FirebaseConstants.Initialize.Param.invalidCharStrategy, as: String.self) {
+        if let strategy = commandData.get(key: FirebaseConstants.Initialize.Param.invalidCharStrategy, as: String.self) {
             validator.setInvalidCharStrategy(strategy)
             logger?.debug(category: LogCategory.firebase, 
                 "Invalid character strategy set to '\(strategy)'")
         }
     }
     
-    /// Extracts session timeout from payload, supporting both numeric types and string conversion.
-    private func extractSessionTimeout(from payload: DataObject) -> TimeInterval? {
+    /// Extracts session timeout from command data, supporting both numeric types and string conversion.
+    private func extractSessionTimeout(from commandData: [String: DataItem]) -> TimeInterval? {
         // Try as Double first
-        if let timeout = payload.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Double.self) {
+        if let timeout = commandData.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Double.self) {
             return timeout
         }
         
         // Try as Int
-        if let timeout = payload.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Int.self) {
+        if let timeout = commandData.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Int.self) {
             return TimeInterval(timeout)
         }
         
         // Try as String and convert
-        if let timeoutString = payload.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: String.self),
+        if let timeoutString = commandData.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: String.self),
            let timeout = Double(timeoutString) {
             return timeout
         }
