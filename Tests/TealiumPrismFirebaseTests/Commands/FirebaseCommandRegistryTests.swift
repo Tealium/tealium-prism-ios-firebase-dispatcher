@@ -133,23 +133,3 @@ final class FirebaseCommandRegistryTests: XCTestCase {
     }
 }
 
-// MARK: - Mock Command
-
-private class MockCommand: FirebaseCommandProtocol {
-    let name: String
-    let returnValue: Bool
-    
-    var executeCalled = false
-    var lastPayload: DataObject?
-    
-    init(name: String, returnValue: Bool = true) {
-        self.name = name
-        self.returnValue = returnValue
-    }
-    
-    func execute(payload: DataObject) -> Bool {
-        executeCalled = true
-        lastPayload = payload
-        return returnValue
-    }
-}
