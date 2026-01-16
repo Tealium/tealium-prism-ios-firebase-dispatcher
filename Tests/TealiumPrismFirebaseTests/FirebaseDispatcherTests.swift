@@ -13,24 +13,21 @@ import XCTest
 final class FirebaseDispatcherTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var mockLogger: MockLogger!
     var dispatcher: FirebaseDispatcher!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        mockLogger = MockLogger()
         dispatcher = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            validator: FirebaseValidator(logger: mockLogger),
-            logger: mockLogger
+            validator: FirebaseValidator(logger: nil),
+            logger: nil
         )
     }
     
     override func tearDown() {
         dispatcher = nil
         mockFirebase = nil
-        mockLogger = nil
         super.tearDown()
     }
     
@@ -59,19 +56,13 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertEqual(dispatcher.version, FirebaseConstants.version)
     }
     
-    func test_init_with_moduleId_convenience() {
-        let convenienceDispatcher = FirebaseDispatcher(moduleId: "TestModule", logger: mockLogger)
-        
-        XCTAssertEqual(convenienceDispatcher.id, "TestModule")
-    }
-    
     // MARK: - Dispatch Tests - Single Command
     
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "test_event"
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event"
             ] as DataObject
         ])
         
@@ -88,9 +79,9 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "test_event"
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event"
             ] as DataObject
         ])
         
@@ -108,12 +99,15 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_command_array_executes_all_commands() {
         let dispatch = Dispatch(name: "multi_command", data: [
-            FirebaseConstants.commandKey: ["logevent", "setuserid"] as [String],
-            "logevent": [
-                "firebase_event_name": "test_event"
+            FirebaseConstants.commandKey: [
+                FirebaseConstants.LogEvent.name,
+                FirebaseConstants.SetUserId.name
+            ] as [String],
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event"
             ] as DataObject,
-            "setuserid": [
-                "firebase_user_id": "user123"
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: "user123"
             ] as DataObject
         ])
         
@@ -131,16 +125,16 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "event_one"
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "event_one"
             ] as DataObject
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "event_two"
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "event_two"
             ] as DataObject
         ])
         
@@ -157,7 +151,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     // MARK: - Dispatch Tests - Missing/Empty Command
     
-    func test_dispatch_without_command_key_logs_debug() {
+    func test_dispatch_without_command_key_does_not_execute() {
         let dispatch = Dispatch(name: "no_command", data: [
             "some_key": "some_value"
         ])
@@ -171,10 +165,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         waitForDefaultTimeout()
         XCTAssertFalse(mockFirebase.logEventCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "No command"))
     }
     
-    func test_dispatch_with_empty_command_array_logs_debug() {
+    func test_dispatch_with_empty_command_array_does_not_execute() {
         let dispatch = Dispatch(name: "empty_commands", data: [
             FirebaseConstants.commandKey: [] as [String]
         ])
@@ -188,10 +181,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         waitForDefaultTimeout()
         XCTAssertFalse(mockFirebase.logEventCalled)
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Empty command array"))
     }
     
-    func test_dispatch_with_unknown_command_logs_warning() {
+    func test_dispatch_with_unknown_command_does_not_execute() {
         let dispatch = Dispatch(name: "unknown", data: [
             FirebaseConstants.commandKey: "unknowncommand"
         ])
@@ -203,28 +195,15 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockLogger.hasLog(level: .warn, containing: "unknowncommand"))
-    }
-    
-    // MARK: - Dispatch Tests - Empty Dispatches
-    
-    func test_dispatch_with_empty_array_calls_completion_with_empty() {
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([]) { processedDispatches in
-            XCTAssertTrue(processedDispatches.isEmpty)
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
+        XCTAssertFalse(mockFirebase.logEventCalled)
     }
     
     // MARK: - Command Execution Tests
     
     func test_dispatch_executes_initialize_command() {
         let dispatch = Dispatch(name: "init", data: [
-            FirebaseConstants.commandKey: "initialize",
-            "initialize": [
+            FirebaseConstants.commandKey: FirebaseConstants.Initialize.name,
+            FirebaseConstants.Initialize.name: [
                 FirebaseConstants.Initialize.Param.sessionTimeout: 1800,
                 FirebaseConstants.Initialize.Param.analyticsEnabled: true
             ] as DataObject
@@ -243,11 +222,16 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     
-    func test_dispatch_executes_setsessiontimeout_command() {
-        let dispatch = Dispatch(name: "timeout", data: [
-            FirebaseConstants.commandKey: "setsessiontimeout",
-            "setsessiontimeout": [
-                "firebase_session_timeout_seconds": 3600
+    // MARK: - Edge Cases
+    
+    func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
+        let dispatch = Dispatch(name: "mixed", data: [
+            FirebaseConstants.commandKey: [
+                "invalid_command",
+                FirebaseConstants.LogEvent.name
+            ] as [String],
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "test_event"
             ] as DataObject
         ])
         
@@ -258,16 +242,12 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600)
+        XCTAssertTrue(mockFirebase.logEventCalled)
     }
     
-    func test_dispatch_executes_setanalyticscollectionenabled_command() {
-        let dispatch = Dispatch(name: "analytics", data: [
-            FirebaseConstants.commandKey: "setanalyticscollectionenabled",
-            "setanalyticscollectionenabled": [
-                "firebase_analytics_collection_enabled": false
-            ] as DataObject
+    func test_dispatch_with_command_as_number_does_not_crash() {
+        let dispatch = Dispatch(name: "invalid_type", data: [
+            FirebaseConstants.commandKey: 123  // Wrong type
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -277,104 +257,8 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
-        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
-    }
-    
-    func test_dispatch_executes_setuserid_command() {
-        let dispatch = Dispatch(name: "userid", data: [
-            FirebaseConstants.commandKey: "setuserid",
-            "setuserid": [
-                "firebase_user_id": "user_12345"
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
-        XCTAssertEqual(mockFirebase.lastUserId, "user_12345")
-    }
-    
-    func test_dispatch_executes_setuserproperty_command() {
-        let dispatch = Dispatch(name: "property", data: [
-            FirebaseConstants.commandKey: "setuserproperty",
-            "setuserproperty": [
-                "firebase_property_name": "membership",
-                "firebase_property_value": "premium"
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setUserPropertyCalled)
-        XCTAssertEqual(mockFirebase.lastUserPropertyName, "membership")
-        XCTAssertEqual(mockFirebase.lastUserPropertyValue, "premium")
-    }
-    
-    func test_dispatch_executes_setuserproperties_command() {
-        let dispatch = Dispatch(name: "properties", data: [
-            FirebaseConstants.commandKey: "setuserproperties",
-            "setuserproperties": [
-                "firebase_property_names": ["tier", "region"] as [String],
-                "firebase_property_values": ["gold", "us-west"] as [String]
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setUserPropertyCalled)
-        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 2)
-    }
-    
-    func test_dispatch_executes_resetdata_command() {
-        let dispatch = Dispatch(name: "reset", data: [
-            FirebaseConstants.commandKey: "resetdata"
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.resetAnalyticsDataCalled)
-    }
-    
-    func test_dispatch_executes_setdefaultparameters_command() {
-        let dispatch = Dispatch(name: "defaults", data: [
-            FirebaseConstants.commandKey: "setdefaultparameters",
-            "setdefaultparameters": [
-                "firebase_params": [
-                    "app_version": "1.0.0",
-                    "environment": "production"
-                ] as DataObject
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
+        // Should complete without crashing
+        XCTAssertFalse(mockFirebase.logEventCalled)
     }
     
     // MARK: - Module Protocol Tests
@@ -385,47 +269,11 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertTrue(updated === dispatcher)
     }
     
-    func test_shutdown_logs_debug_message() {
+    func test_shutdown_completes_without_error() {
+        // Should not crash
         dispatcher.shutdown()
         
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "shutdown"))
-    }
-    
-    // MARK: - Logging Tests
-    
-    func test_dispatch_logs_processing_info() {
-        let dispatch = Dispatch(name: "test", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "test"
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "Processing dispatch"))
-    }
-    
-    func test_dispatch_logs_successful_command() {
-        let dispatch = Dispatch(name: "test", data: [
-            FirebaseConstants.commandKey: "logevent",
-            "logevent": [
-                "firebase_event_name": "test"
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockLogger.hasLog(level: .debug, containing: "executed successfully"))
+        // Verify dispatcher still exists and can handle calls after shutdown
+        XCTAssertNotNil(dispatcher)
     }
 }

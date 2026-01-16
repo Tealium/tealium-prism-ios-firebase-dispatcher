@@ -24,8 +24,10 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Command should be added because tealium_event == "screen_view"
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": ["firebase_event_name": "screen_view"] as DataObject
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "screen_view"
+            ] as DataObject
         ])
     }
     
@@ -41,7 +43,9 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should NOT be added because tealium_event != "screen_view"
         // But event name should still be mapped
         XCTAssertEqual(result.payload, [
-            "logevent": ["firebase_event_name": "purchase"] as DataObject
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "purchase"
+            ] as DataObject
         ])
     }
     
@@ -56,8 +60,10 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Both command and event name should be added
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": ["firebase_event_name": "screen_view"] as DataObject
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "screen_view"
+            ] as DataObject
         ])
     }
     
@@ -72,7 +78,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Command should be added, but event name should NOT be mapped
         XCTAssertEqual(result.payload, [
-            "command": "logevent"
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name
         ])
     }
     
@@ -92,9 +98,16 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Both commands should be in payload
         // When multiple commands are added to the same key, they are combined into an array
         XCTAssertEqual(result.payload, [
-            "command": ["logevent", "setuserid"],
-            "logevent": ["firebase_event_name": "login"] as DataObject,
-            "setuserid": ["firebase_user_id": "USER_123"] as DataObject
+            FirebaseConstants.commandKey: [
+                FirebaseConstants.LogEvent.name,
+                FirebaseConstants.SetUserId.name
+            ],
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "login"
+            ] as DataObject,
+            FirebaseConstants.SetUserId.name: [
+                FirebaseConstants.SetUserId.Param.userId: "USER_123"
+            ] as DataObject
         ])
     }
     
@@ -110,8 +123,10 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            "command": "logevent",
-            "logevent": ["firebase_event_name": "special_screen"] as DataObject
+            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.LogEvent.name: [
+                FirebaseConstants.LogEvent.Param.eventName: "special_screen"
+            ] as DataObject
         ])
     }
 }
