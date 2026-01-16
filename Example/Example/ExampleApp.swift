@@ -11,6 +11,12 @@ import TealiumPrismFirebase
 
 @main
 struct ExampleApp: App {
+    
+    init() {
+        // Initialize Tealium with Firebase dispatcher on app launch
+        TealiumHelper.shared.startTealium()
+    }
+    
     var body: some Scene {
         WindowGroup {
             ContentView()

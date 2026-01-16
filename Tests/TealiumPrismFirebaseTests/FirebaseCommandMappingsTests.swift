@@ -13,20 +13,6 @@ import XCTest
 /// Tests for all Firebase command mappings (LogEvent, SetUserId, SetUserProperty, etc.)
 final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
     
-    // MARK: - Initialize Command Tests
-    
-    func test_initialize_basic_mapping() {
-        let dispatch = Dispatch(name: "init", type: .event)
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseInitializeCommand()
-        ])
-        
-        XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: FirebaseConstants.Initialize.name
-        ])
-    }
-    
     // MARK: - InitiateConversionMeasurement Command Tests
     
     func test_initiateConversionMeasurement_with_email() {

@@ -355,17 +355,6 @@ public extension Mappings {
         .constant(FirebaseConstants.ResetData.name, to: FirebaseConstants.commandKey)
     }
     
-    // MARK: - Initialize Command
-    
-    /// Initialize Firebase configuration (usually handled by `FirebaseSettingsBuilder`).
-    
-    /// Maps the "initialize" command constant to the command key.
-    ///
-    /// - Returns: A `ConstantOptions` mapping builder.
-    static func mapFirebaseInitializeCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.Initialize.name, to: FirebaseConstants.commandKey)
-    }
-    
     // MARK: - SetSessionTimeout Command
     
     /// Dynamically change session timeout at runtime.

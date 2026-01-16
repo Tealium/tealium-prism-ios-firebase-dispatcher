@@ -50,8 +50,7 @@ class FirebaseDispatcher: Dispatcher {
     
     private func registerCommands() {
         commandRegistry.registerAll([
-            // Initialize and configuration commands
-            InitializeCommand(firebaseInstance: firebaseInstance, validator: validator, logger: logger),
+            // Configuration commands
             SetSessionTimeoutCommand(firebaseInstance: firebaseInstance, logger: logger),
             SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance, logger: logger),
             // Commands with validator
@@ -126,7 +125,89 @@ class FirebaseDispatcher: Dispatcher {
     // MARK: - Module Protocol
     
     func updateConfiguration(_ configuration: DataObject) -> Self? {
+        applyConfigurationSettings(configuration)
         return self
+    }
+    
+    /// Apply configuration settings to Firebase
+    /// This method applies settings from builder/enforced/local/remote configuration
+    private func applyConfigurationSettings(_ configuration: DataObject) {
+        logger?.debug(category: LogCategory.firebase, "Applying configuration settings")
+        
+        // 1. Configure log level (must be done before Firebase is configured)
+        if let logLevel = configuration.get(key: FirebaseConstants.Initialize.Param.logLevel, as: String.self) {
+            configureLogLevel(logLevel)
+        }
+        
+        // 2. Configure validator settings
+        configureValidator(from: configuration)
+        
+        // 3. Configure session timeout
+        if let sessionTimeout = extractSessionTimeout(from: configuration) {
+            firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
+            logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds from configuration")
+        }
+        
+        // 4. Configure analytics collection
+        if let analyticsEnabled = configuration.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
+            firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
+            logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled) from configuration")
+        }
+    }
+    
+    // MARK: - Private Configuration Methods
+    
+    /// Configures Firebase log level with validation.
+    private func configureLogLevel(_ levelString: String) {
+        guard FirebaseLogLevel.isValid(levelString) else {
+            logger?.warn(category: LogCategory.firebase, 
+                "Unknown log level '\(levelString)', using 'notice' as default. " +
+                "Valid values: \(FirebaseLogLevel.allLevels.joined(separator: ", "))")
+            firebaseInstance.setLoggerLevel(.notice)
+            return
+        }
+        
+        let loggerLevel = FirebaseLogLevel.map(levelString)
+        firebaseInstance.setLoggerLevel(loggerLevel)
+        logger?.debug(category: LogCategory.firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel)) from configuration")
+    }
+    
+    /// Configures validator with GA360 mode and invalid character strategy.
+    private func configureValidator(from configuration: DataObject) {
+        // Configure GA360 mode
+        if let ga360Mode = configuration.get(key: FirebaseConstants.Initialize.Param.ga360Mode, as: Bool.self) {
+            validator.setGA360Mode(ga360Mode)
+            logger?.debug(category: LogCategory.firebase, 
+                "GA360 mode: \(ga360Mode) (parameter value limit: \(ga360Mode ? 500 : 100) characters) from configuration")
+        }
+        
+        // Configure invalid character strategy
+        if let strategy = configuration.get(key: FirebaseConstants.Initialize.Param.invalidCharStrategy, as: String.self) {
+            validator.setInvalidCharStrategy(strategy)
+            logger?.debug(category: LogCategory.firebase, 
+                "Invalid character strategy set to '\(strategy)' from configuration")
+        }
+    }
+    
+    /// Extracts session timeout from configuration, supporting both numeric types and string conversion.
+    private func extractSessionTimeout(from configuration: DataObject) -> TimeInterval? {
+        // Try as Double first
+        if let timeout = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Double.self) {
+            return timeout
+        }
+        
+        // Try as Int
+        if let timeout = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Int.self) {
+            return TimeInterval(timeout)
+        }
+        
+        // Try as String and convert
+        if let timeoutString = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: String.self),
+           let timeout = Double(timeoutString) {
+            return timeout
+        }
+        
+        return nil
     }
     
     func shutdown() {

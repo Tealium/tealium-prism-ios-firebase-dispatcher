@@ -198,30 +198,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertFalse(mockFirebase.logEventCalled)
     }
     
-    // MARK: - Command Execution Tests
-    
-    func test_dispatch_executes_initialize_command() {
-        let dispatch = Dispatch(name: "init", data: [
-            FirebaseConstants.commandKey: FirebaseConstants.Initialize.name,
-            FirebaseConstants.Initialize.name: [
-                FirebaseConstants.Initialize.Param.sessionTimeout: 1800,
-                FirebaseConstants.Initialize.Param.analyticsEnabled: true
-            ] as DataObject
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        _ = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800)
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
-        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
-    }
-    
     // MARK: - Edge Cases
     
     func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
