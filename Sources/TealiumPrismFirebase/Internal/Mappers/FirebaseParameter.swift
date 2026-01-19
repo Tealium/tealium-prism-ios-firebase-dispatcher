@@ -58,8 +58,7 @@ struct FirebaseParameter {
         "param_item_list_name": AnalyticsParameterItemListName,
         "param_item_name": AnalyticsParameterItemName,
         "param_item_variant": AnalyticsParameterItemVariant,
-        // Note: "param_items" is handled separately in LogEventCommand
-        // "param_items": AnalyticsParameterItems, 
+        "param_items": AnalyticsParameterItems, 
         "param_level": AnalyticsParameterLevel,
         "param_level_name": AnalyticsParameterLevelName,
         "param_location": AnalyticsParameterLocation,

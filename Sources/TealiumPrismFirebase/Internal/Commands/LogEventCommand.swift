@@ -103,7 +103,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         // Build items first (if present)
         if let items = buildItems(from: eventParamsDict, eventName: eventName) {
-            parameters[FirebaseConstants.LogEvent.Param.items] = items
+            parameters[AnalyticsParameterItems] = items  // Use Firebase SDK constant "items"
             warnIfEventWithoutItemsSupport(eventName)
         }
         
@@ -120,8 +120,11 @@ class LogEventCommand: FirebaseCommandProtocol {
         var result: [String: Any] = [:]
         
         for (key, value) in params {
-            // Skip items - handled separately
-            guard key != FirebaseConstants.LogEvent.Param.items else { continue }
+            // Skip items - handled separately (both Tealium and Firebase conventions)
+            guard key != FirebaseConstants.LogEvent.Param.items,
+                  key != AnalyticsParameterItems else { 
+                continue 
+            }
             
             guard let paramName = mapAndValidateParameter(key),
                   let convertedValue = convertValue(value, for: paramName) else {
@@ -135,8 +138,18 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Builds Firebase items array from parallel arrays format.
     /// - Returns: Array of item dictionaries, or nil if no items found.
+    ///
+    /// Supports both Tealium convention (`param_items`) and Firebase convention (`items`).
     private func buildItems(from eventParamsDict: [String: DataItem], eventName: String) -> [[String: Any]]? {
-        guard let itemsData = eventParamsDict.getDataItem(key: FirebaseConstants.LogEvent.Param.items),
+        // Try Tealium convention first: "param_items"
+        var itemsData = eventParamsDict.getDataItem(key: FirebaseConstants.LogEvent.Param.items)
+        
+        // If not found, try Firebase convention: "items"
+        if itemsData == nil {
+            itemsData = eventParamsDict.getDataItem(key: AnalyticsParameterItems)
+        }
+        
+        guard let itemsData = itemsData,
               let itemsDict = itemsData.getDataDictionary() else {
             return nil
         }

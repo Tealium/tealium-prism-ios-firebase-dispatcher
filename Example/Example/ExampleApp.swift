@@ -8,11 +8,15 @@
 import SwiftUI
 import TealiumPrismCore
 import TealiumPrismFirebase
+import FirebaseCore
 
 @main
 struct ExampleApp: App {
     
     init() {
+        // Configure Firebase before initializing Tealium
+        FirebaseApp.configure()
+        
         // Initialize Tealium with Firebase dispatcher on app launch
         TealiumHelper.shared.startTealium()
     }

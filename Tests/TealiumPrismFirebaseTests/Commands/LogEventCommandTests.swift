@@ -155,9 +155,9 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertNotNil(mockFirebase.lastEventParameters)
         
         // Verify items were converted from parallel arrays to array of dictionaries
-        // Note: items are under "param_items" key, not "items"
-        guard let items = mockFirebase.lastEventParameters?["param_items"] as? [[String: Any]] else {
-            XCTFail("Items should be present in parameters under 'param_items' key")
+        // Note: items are under "items" key (AnalyticsParameterItems)
+        guard let items = mockFirebase.lastEventParameters?["items"] as? [[String: Any]] else {
+            XCTFail("Items should be present in parameters under 'items' key")
             return
         }
         
@@ -200,8 +200,8 @@ final class LogEventCommandTests: XCTestCase {
         
         XCTAssertTrue(result)
         
-        guard let items = mockFirebase.lastEventParameters?["param_items"] as? [[String: Any]] else {
-            XCTFail("Items should be present under 'param_items' key")
+        guard let items = mockFirebase.lastEventParameters?["items"] as? [[String: Any]] else {
+            XCTFail("Items should be present under 'items' key")
             return
         }
         
@@ -232,8 +232,8 @@ final class LogEventCommandTests: XCTestCase {
         
         XCTAssertTrue(result)
         
-        guard let items = mockFirebase.lastEventParameters?["param_items"] as? [[String: Any]] else {
-            XCTFail("Items should be present under 'param_items' key")
+        guard let items = mockFirebase.lastEventParameters?["items"] as? [[String: Any]] else {
+            XCTFail("Items should be present under 'items' key")
             return
         }
         
