@@ -13,20 +13,17 @@ import XCTest
 final class SetUserPropertiesCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var validator: FirebaseValidator!
     var command: SetUserPropertiesCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        validator = FirebaseValidator(logger: nil)
-        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
+        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        validator = nil
         super.tearDown()
     }
     
@@ -150,51 +147,5 @@ final class SetUserPropertiesCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, nil)
     }
     
-    // MARK: - Validation Tests
-    
-    func test_execute_sanitizes_property_names() {
-        let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["my-prop.name"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value"]
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].name, "my_prop_name")
-    }
-    
-    func test_execute_truncates_long_property_values() {
-        let longValue = String(repeating: "x", count: 50)
-        let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: [longValue]
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value?.count, 36)  // User property max length
-    }
-    
-    func test_execute_skips_invalid_property_names() {
-        let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["valid_prop", "user_id"],  // user_id is reserved
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        
-        // Only the valid property should be set
-        let validCalls = mockFirebase.setUserPropertyCalls.filter { $0.name == "valid_prop" }
-        XCTAssertEqual(validCalls.count, 1)
-    }
     
 }

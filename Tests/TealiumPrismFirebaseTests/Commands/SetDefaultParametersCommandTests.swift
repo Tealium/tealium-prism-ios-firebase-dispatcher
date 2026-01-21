@@ -13,20 +13,17 @@ import XCTest
 final class SetDefaultParametersCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var validator: FirebaseValidator!
     var command: SetDefaultParametersCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        validator = FirebaseValidator(logger: nil)
-        command = SetDefaultParametersCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
+        command = SetDefaultParametersCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        validator = nil
         super.tearDown()
     }
     
@@ -150,57 +147,5 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         // Whole number doubles should be stored as Int for cleaner Firebase data
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["quantity"] as? Int, 100)
     }
-    
-    // MARK: - Validation Tests
-    
-    func test_execute_sanitizes_parameter_names() {
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "my-param.name": "value"
-                ] as DataObject
-            ] as DataObject
-        ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        XCTAssertNotNil(mockFirebase.lastDefaultParameters?["my_param_name"])
-    }
-    
-    func test_execute_truncates_long_string_values() {
-        let longValue = String(repeating: "x", count: 150)
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "long_param": longValue
-                ] as DataObject
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        guard let paramValue = mockFirebase.lastDefaultParameters?["long_param"] as? String else {
-            XCTFail("Parameter should be present")
-            return
-        }
-        
-        XCTAssertEqual(paramValue.count, 100)  // Standard limit
-    }
-    
-    func test_execute_skips_invalid_parameter_names() {
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "valid_param": "value"
-                ] as DataObject
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockFirebase.lastDefaultParameters?.count, 1)
-    }
-    
 }

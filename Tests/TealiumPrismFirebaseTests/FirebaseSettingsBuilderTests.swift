@@ -16,18 +16,14 @@ final class FirebaseSettingsBuilderTests: XCTestCase {
         let settings = FirebaseSettingsBuilder()
             .setSessionTimeout(1800)
             .setAnalyticsEnabled(true)
-            .setGA360Mode(false)
             .setLogLevel("debug")
-            .setInvalidCharacterStrategy("replace")
             .build()
         
         XCTAssertEqual(settings, [
             "configuration": try DataItem(serializing: [
                 FirebaseConstants.Initialize.Param.sessionTimeout: 1800 as Int,
                 FirebaseConstants.Initialize.Param.analyticsEnabled: true,
-                FirebaseConstants.Initialize.Param.ga360Mode: false,
-                FirebaseConstants.Initialize.Param.logLevel: "debug",
-                FirebaseConstants.Initialize.Param.invalidCharStrategy: "replace"
+                FirebaseConstants.Initialize.Param.logLevel: "debug"
             ])
         ])
     }

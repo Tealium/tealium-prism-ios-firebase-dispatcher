@@ -38,8 +38,6 @@ enum FirebaseConstants {
         
         enum Param {
             static let logLevel = "firebase_log_level"
-            static let invalidCharStrategy = "firebase_invalid_char_strategy"
-            static let ga360Mode = "firebase_ga360_mode"
             static let sessionTimeout = "firebase_session_timeout_seconds"
             static let analyticsEnabled = "firebase_analytics_collection_enabled"
         }
@@ -48,8 +46,6 @@ enum FirebaseConstants {
         enum Path {
             static let container = JSONPath[Initialize.name]
             static let logLevel = container[Param.logLevel]
-            static let invalidCharStrategy = container[Param.invalidCharStrategy]
-            static let ga360Mode = container[Param.ga360Mode]
             static let sessionTimeout = container[Param.sessionTimeout]
             static let analyticsEnabled = container[Param.analyticsEnabled]
         }

@@ -40,13 +40,11 @@ import TealiumPrismCore
 class LogEventCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
     
-    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.logger = logger
     }
     
@@ -60,36 +58,28 @@ class LogEventCommand: FirebaseCommandProtocol {
             return false
         }
         
-        // 1. Extract and validate event name
+        // 1. Extract event name
         guard let eventName = extractEventName(from: logEventData) else {
             return false
         }
         
         // 2. Build parameters from logevent data
-        var parameters = buildParameters(from: logEventData, eventName: eventName)
+        let parameters = buildParameters(from: logEventData, eventName: eventName)
         
-        // 3. Enforce Firebase limits
-        parameters = validator.enforceParameterLimit(parameters, eventName: eventName)
-        
-        // 4. Log the event
+        // 3. Log the event
         logEvent(eventName, with: parameters)
         
         return true
     }
     
-    /// Extracts and validates the event name from logevent data.
+    /// Extracts the event name from logevent data.
     private func extractEventName(from logEventData: [String: DataItem]) -> String? {
         guard let rawEventName = logEventData.get(key: FirebaseConstants.LogEvent.Param.eventName, as: String.self) else {
             logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
             return nil
         }
         
-        let mappedName = FirebaseEvent.map(rawEventName)
-        guard let validatedName = validator.validateEventName(mappedName) else {
-            logger?.warn(category: LogCategory.firebase, "Invalid event name '\(rawEventName)' (mapped to '\(mappedName)')")
-            return nil
-        }
-        return validatedName
+        return FirebaseEvent.map(rawEventName)
     }
     
     /// Builds all Firebase parameters from logevent data (including items).
@@ -104,7 +94,6 @@ class LogEventCommand: FirebaseCommandProtocol {
         // Build items first (if present)
         if let items = buildItems(from: eventParamsDict, eventName: eventName) {
             parameters[AnalyticsParameterItems] = items  // Use Firebase SDK constant "items"
-            warnIfEventWithoutItemsSupport(eventName)
         }
         
         // Build regular parameters
@@ -126,8 +115,8 @@ class LogEventCommand: FirebaseCommandProtocol {
                 continue 
             }
             
-            guard let paramName = mapAndValidateParameter(key),
-                  let convertedValue = convertValue(value, for: paramName) else {
+            let paramName = FirebaseParameter.map(key)
+            guard let convertedValue = convertValue(value, for: paramName) else {
                 continue
             }
             result[paramName] = convertedValue
@@ -193,8 +182,8 @@ class LogEventCommand: FirebaseCommandProtocol {
         var item: [String: Any] = [:]
         
         for (key, array) in arrays where index < array.count {
-            guard let paramName = mapAndValidateItemParameter(key),
-                  let value = convertValue(array[index], for: paramName) else {
+            let paramName = FirebaseItemParameter.map(key)
+            guard let value = convertValue(array[index], for: paramName) else {
                 continue
             }
             item[paramName] = value
@@ -206,18 +195,6 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Extracts only array values from dictionary.
     private func extractArrays(from dict: [String: DataInput]) -> [String: [DataInput]] {
         dict.compactMapValues { $0 as? [DataInput] }
-    }
-    
-    /// Maps and validates an event parameter key.
-    private func mapAndValidateParameter(_ key: String) -> String? {
-        let mapped = FirebaseParameter.map(key)
-        return validator.validateParameterName(mapped)
-    }
-    
-    /// Maps and validates an item parameter key.
-    private func mapAndValidateItemParameter(_ key: String) -> String? {
-        let mapped = FirebaseItemParameter.map(key)
-        return validator.validateParameterName(mapped)
     }
     
     /// Converts a value to Firebase-compatible type (String, Int, Double, Float, Int64, Bool, NSNumber).
@@ -234,7 +211,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         case let boolValue as Bool:
             return boolValue
         case let stringValue as String:
-            return validator.validateParameterValue(stringValue)
+            return stringValue
         case let nsNumberValue as NSNumber:
             // NSNumber can represent various numeric types - pass through as-is
             // Firebase SDK will handle the conversion
@@ -246,16 +223,6 @@ class LogEventCommand: FirebaseCommandProtocol {
                 "Firebase supports String, Int, Int64, Double, Float, Bool, NSNumber. Skipping.")
             return nil
         }
-    }
-    
-    /// Logs info if items are used with an event that doesn't typically support items parameter.
-    private func warnIfEventWithoutItemsSupport(_ eventName: String) {
-        guard !validator.supportsItemsParameter(eventName) else { return }
-        
-        logger?.info(category: LogCategory.firebase,
-            "Event '\(eventName)' includes 'items' parameter. " +
-            "Note: Firebase Analytics typically uses 'items' with events like 'purchase', 'add_to_cart', 'select_item', etc. " +
-            "Data will be sent to Firebase. Item-scoped dimensions behavior with this event may require testing.")
     }
     
     /// Logs the event to Firebase.

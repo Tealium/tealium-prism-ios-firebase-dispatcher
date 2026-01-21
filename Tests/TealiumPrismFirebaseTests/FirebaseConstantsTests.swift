@@ -27,14 +27,6 @@ final class FirebaseConstantsTests: XCTestCase {
         XCTAssertEqual(FirebaseConstants.Initialize.Param.logLevel, "firebase_log_level")
     }
     
-    func test_initialize_invalid_char_strategy() {
-        XCTAssertEqual(FirebaseConstants.Initialize.Param.invalidCharStrategy, "firebase_invalid_char_strategy")
-    }
-    
-    func test_initialize_ga360_mode() {
-        XCTAssertEqual(FirebaseConstants.Initialize.Param.ga360Mode, "firebase_ga360_mode")
-    }
-    
     func test_initialize_session_timeout() {
         XCTAssertEqual(FirebaseConstants.Initialize.Param.sessionTimeout, "firebase_session_timeout_seconds")
     }

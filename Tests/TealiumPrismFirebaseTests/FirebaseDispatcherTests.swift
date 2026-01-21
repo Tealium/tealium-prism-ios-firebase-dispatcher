@@ -20,7 +20,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         mockFirebase = MockFirebaseCommand()
         dispatcher = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            validator: FirebaseValidator(logger: nil),
             logger: nil
         )
     }

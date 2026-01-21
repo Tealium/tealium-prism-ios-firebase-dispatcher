@@ -26,8 +26,6 @@ class TealiumHelper {
                     builder
                         .setSessionTimeout(1800)
                         .setAnalyticsEnabled(true)
-                        .setGA360Mode(false)
-                        .setInvalidCharacterStrategy("replace")
                         .setLogLevel("debug")
                         .setMappings([
                             // LogEvent Command

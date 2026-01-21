@@ -18,9 +18,7 @@ import TealiumPrismCore
 ///
 /// - `setSessionTimeout(_:)` - Session timeout in seconds (default: 1800)
 /// - `setAnalyticsEnabled(_:)` - Enable/disable analytics collection
-/// - `setGA360Mode(_:)` - Extended parameter value limits (500 vs 100 chars)
 /// - `setLogLevel(_:)` - Firebase internal logging verbosity
-/// - `setInvalidCharacterStrategy(_:)` - How to handle invalid characters
 ///
 /// ## Example
 ///
@@ -29,7 +27,6 @@ import TealiumPrismCore
 ///     builder
 ///         .setSessionTimeout(1800)
 ///         .setAnalyticsEnabled(true)
-///         .setGA360Mode(false)
 ///         .setMappings([...])
 /// })
 /// ```
@@ -65,39 +62,6 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     @discardableResult
     public func setAnalyticsEnabled(_ enabled: Bool) -> Self {
         _configurationObject.set(enabled, key: FirebaseConstants.Initialize.Param.analyticsEnabled)
-        return self
-    }
-    
-    // MARK: - Validation Configuration
-    
-    /// Set the validation strategy for handling invalid characters in event/parameter names.
-    ///
-    /// Firebase has restrictions on allowed characters in event and parameter names.
-    /// This setting controls how invalid characters are handled:
-    /// - `"replace"`: Replace invalid characters with underscores
-    /// - `"remove"`: Remove invalid characters completely
-    /// - Any other value defaults to remove behavior
-    ///
-    /// - Parameter strategy: The validation strategy to use.
-    /// - Returns: Self for method chaining.
-    @discardableResult
-    public func setInvalidCharacterStrategy(_ strategy: String) -> Self {
-        _configurationObject.set(strategy, key: FirebaseConstants.Initialize.Param.invalidCharStrategy)
-        return self
-    }
-    
-    // MARK: - GA360 Configuration
-    
-    /// Enable GA360 mode for extended parameter value limits.
-    ///
-    /// Standard Firebase Analytics has a 100 character limit for parameter values.
-    /// GA360 mode extends this to 500 characters.
-    ///
-    /// - Parameter enabled: Whether GA360 mode should be enabled.
-    /// - Returns: Self for method chaining.
-    @discardableResult
-    public func setGA360Mode(_ enabled: Bool) -> Self {
-        _configurationObject.set(enabled, key: FirebaseConstants.Initialize.Param.ga360Mode)
         return self
     }
     

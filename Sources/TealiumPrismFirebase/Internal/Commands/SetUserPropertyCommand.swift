@@ -32,12 +32,10 @@ import TealiumPrismCore
 class SetUserPropertyCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.logger = logger
     }
 
@@ -59,25 +57,14 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         
         let value = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyValue, as: String.self)
         
-        guard let sanitizedName = validator.validateUserPropertyName(name) else {
-            logger?.warn(category: LogCategory.firebase, 
-                       "Invalid user property name '\(name)' - command skipped")
-            return false
-        }
-        
         // Empty string or nil removes the property
-        var sanitizedValue: String? = nil
         if let value = value, !value.isEmpty {
-            sanitizedValue = validator.validateUserPropertyValue(value)
-        }
-        
-        if let sanitizedValue = sanitizedValue {
-            logger?.debug(category: LogCategory.firebase, "Setting user property '\(sanitizedName)' = '\(sanitizedValue)'")
+            logger?.debug(category: LogCategory.firebase, "Setting user property '\(name)' = '\(value)'")
+            firebaseInstance.setUserProperty(value, forName: name)
         } else {
-            logger?.debug(category: LogCategory.firebase, "Removing user property '\(sanitizedName)'")
+            logger?.debug(category: LogCategory.firebase, "Removing user property '\(name)'")
+            firebaseInstance.setUserProperty(nil, forName: name)
         }
-        
-        firebaseInstance.setUserProperty(sanitizedValue, forName: sanitizedName)
         return true
     }
 }

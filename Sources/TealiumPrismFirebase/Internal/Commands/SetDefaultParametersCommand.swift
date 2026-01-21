@@ -35,12 +35,10 @@ import TealiumPrismCore
 class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, validator: FirebaseValidator, logger: LoggerProtocol?) {
+    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.logger = logger
     }
     
@@ -77,41 +75,36 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
         }
         
         // Process parameters
-        var sanitizedParams: [String: Any] = [:]
+        var processedParams: [String: Any] = [:]
         
         for (key, value) in defaultParams {
-            guard let sanitizedName = validator.validateParameterName(key) else {
-                continue
-            }
-            
             // Firebase supports String, Int, and Double only
             // Note: Check Double first because DataItem.get(as: Int.self) truncates decimals
             // e.g., 99.99 would return 99 if Int is checked first
             if let doubleValue = value.get(as: Double.self) {
                 // Check if it's a whole number - store as Int for cleaner Firebase data
                 if doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
-                    sanitizedParams[sanitizedName] = Int(doubleValue)
+                    processedParams[key] = Int(doubleValue)
                 } else {
-                    sanitizedParams[sanitizedName] = doubleValue
+                    processedParams[key] = doubleValue
                 }
             } else if let stringValue = value.get(as: String.self) {
                 // Empty string clears the parameter
                 if stringValue.isEmpty {
-                    sanitizedParams[sanitizedName] = NSNull()
+                    processedParams[key] = NSNull()
                 } else {
-                    let sanitizedValue = validator.validateParameterValue(stringValue)
-                    sanitizedParams[sanitizedName] = sanitizedValue
+                    processedParams[key] = stringValue
                 }
             } 
         }
         
         // If all parameters were invalid/cleared, clear all default parameters
-        if sanitizedParams.isEmpty {
+        if processedParams.isEmpty {
             logger?.warn(category: LogCategory.firebase, "All parameters were invalid - command skipped")
             return false
         } else {
-            logger?.debug(category: LogCategory.firebase, "Setting \(sanitizedParams.count) default parameter(s): \(sanitizedParams.keys.joined(separator: ", "))")
-            firebaseInstance.setDefaultEventParameters(sanitizedParams)
+            logger?.debug(category: LogCategory.firebase, "Setting \(processedParams.count) default parameter(s): \(processedParams.keys.joined(separator: ", "))")
+            firebaseInstance.setDefaultEventParameters(processedParams)
         }
         
         return true

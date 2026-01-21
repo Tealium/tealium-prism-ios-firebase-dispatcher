@@ -13,20 +13,17 @@ import XCTest
 final class LogEventCommandTests: XCTestCase {
     
     var mockFirebase: MockFirebaseCommand!
-    var validator: FirebaseValidator!
     var command: LogEventCommand!
     
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        validator = FirebaseValidator(logger: nil)
-        command = LogEventCommand(firebaseInstance: mockFirebase, validator: validator, logger: nil)
+        command = LogEventCommand(firebaseInstance: mockFirebase, logger: nil)
     }
     
     override func tearDown() {
         command = nil
         mockFirebase = nil
-        validator = nil
         super.tearDown()
     }
     
@@ -249,74 +246,5 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertNil(items[2]["item_name"])
     }
     
-    // MARK: - Validation Tests
     
-    func test_execute_with_reserved_event_name_returns_false() {
-        let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "session_start"  // Reserved by Firebase
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
-        XCTAssertFalse(mockFirebase.logEventCalled)
-    }
-    
-    func test_execute_sanitizes_event_name() {
-        let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "my-event.name"
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        XCTAssertEqual(mockFirebase.lastEventName, "my_event_name")
-    }
-    
-    func test_execute_truncates_long_parameter_value() {
-        let longValue = String(repeating: "x", count: 150)
-        let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    "long_param": longValue
-                ] as DataObject
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        guard let paramValue = mockFirebase.lastEventParameters?["long_param"] as? String else {
-            XCTFail("Parameter should be present")
-            return
-        }
-        
-        XCTAssertEqual(paramValue.count, 100)  // Standard limit
-    }
-    
-    // MARK: - Parameter Limit Tests
-    
-    func test_execute_enforces_parameter_limit() {
-        // Build params dictionary with 30 parameters
-        var paramsDict: [String: DataInputConvertible] = [:]
-        for i in 1...30 {
-            paramsDict["param_\(i)"] = "value_\(i)"
-        }
-        
-        let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event",
-                FirebaseConstants.LogEvent.Param.eventParams: DataObject(dictionary: paramsDict)
-            ] as DataObject
-        ]
-        
-        _ = command.execute(payload: payload)
-        
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
-        XCTAssertLessThanOrEqual(mockFirebase.lastEventParameters?.count ?? 0, 25)
-    }
 }

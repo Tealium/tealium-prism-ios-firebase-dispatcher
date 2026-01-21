@@ -20,7 +20,6 @@ class FirebaseDispatcher: Dispatcher {
     // MARK: - Dependencies
     
     private let firebaseInstance: FirebaseCommand
-    private let validator: FirebaseValidator
     private let commandRegistry: FirebaseCommandRegistry
     private let logger: LoggerProtocol?
     
@@ -29,12 +28,10 @@ class FirebaseDispatcher: Dispatcher {
     /// Internal initializer with explicit dependencies (for testing)
     init(id: String = FirebaseConstants.moduleType,
          firebaseInstance: FirebaseCommand = FirebaseInstance(),
-         validator: FirebaseValidator = FirebaseValidator(),
          commandRegistry: FirebaseCommandRegistry = FirebaseCommandRegistry(),
          logger: LoggerProtocol? = nil) {
         self.id = id
         self.firebaseInstance = firebaseInstance
-        self.validator = validator
         self.commandRegistry = commandRegistry
         self.logger = logger
         
@@ -50,15 +47,12 @@ class FirebaseDispatcher: Dispatcher {
     
     private func registerCommands() {
         commandRegistry.registerAll([
-            // Configuration commands
             SetSessionTimeoutCommand(firebaseInstance: firebaseInstance, logger: logger),
             SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance, logger: logger),
-            // Commands with validator
-            LogEventCommand(firebaseInstance: firebaseInstance, validator: validator, logger: logger),
-            SetUserPropertyCommand(firebaseInstance: firebaseInstance, validator: validator, logger: logger),
-            SetUserPropertiesCommand(firebaseInstance: firebaseInstance, validator: validator, logger: logger),
-            SetDefaultParametersCommand(firebaseInstance: firebaseInstance, validator: validator, logger: logger),
-            // Commands without validator
+            LogEventCommand(firebaseInstance: firebaseInstance, logger: logger),
+            SetUserPropertyCommand(firebaseInstance: firebaseInstance, logger: logger),
+            SetUserPropertiesCommand(firebaseInstance: firebaseInstance, logger: logger),
+            SetDefaultParametersCommand(firebaseInstance: firebaseInstance, logger: logger),
             SetUserIdCommand(firebaseInstance: firebaseInstance, logger: logger),
             ResetDataCommand(firebaseInstance: firebaseInstance, logger: logger),
             SetConsentCommand(firebaseInstance: firebaseInstance, logger: logger),
@@ -139,16 +133,13 @@ class FirebaseDispatcher: Dispatcher {
             configureLogLevel(logLevel)
         }
         
-        // 2. Configure validator settings
-        configureValidator(from: configuration)
-        
-        // 3. Configure session timeout
+        // 2. Configure session timeout
         if let sessionTimeout = extractSessionTimeout(from: configuration) {
             firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
             logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds from configuration")
         }
         
-        // 4. Configure analytics collection
+        // 3. Configure analytics collection
         if let analyticsEnabled = configuration.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
             logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled) from configuration")
@@ -170,23 +161,6 @@ class FirebaseDispatcher: Dispatcher {
         let loggerLevel = FirebaseLogLevel.map(levelString)
         firebaseInstance.setLoggerLevel(loggerLevel)
         logger?.debug(category: LogCategory.firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel)) from configuration")
-    }
-    
-    /// Configures validator with GA360 mode and invalid character strategy.
-    private func configureValidator(from configuration: DataObject) {
-        // Configure GA360 mode
-        if let ga360Mode = configuration.get(key: FirebaseConstants.Initialize.Param.ga360Mode, as: Bool.self) {
-            validator.setGA360Mode(ga360Mode)
-            logger?.debug(category: LogCategory.firebase, 
-                "GA360 mode: \(ga360Mode) (parameter value limit: \(ga360Mode ? 500 : 100) characters) from configuration")
-        }
-        
-        // Configure invalid character strategy
-        if let strategy = configuration.get(key: FirebaseConstants.Initialize.Param.invalidCharStrategy, as: String.self) {
-            validator.setInvalidCharStrategy(strategy)
-            logger?.debug(category: LogCategory.firebase, 
-                "Invalid character strategy set to '\(strategy)' from configuration")
-        }
     }
     
     /// Extracts session timeout from configuration, supporting both numeric types and string conversion.
