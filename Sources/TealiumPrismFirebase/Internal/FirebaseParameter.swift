@@ -17,7 +17,7 @@ import FirebaseAnalytics
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
-struct FirebaseParameter {
+enum FirebaseParameter {
     
     /// Maps param_* keys to Firebase Analytics parameter constants.
     /// Example: `param_currency` → `"currency"`

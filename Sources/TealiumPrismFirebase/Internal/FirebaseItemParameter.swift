@@ -19,7 +19,7 @@ import FirebaseAnalytics
 /// Reference:
 /// - https://developers.google.com/analytics/devguides/collection/ga4/reference/events#item-parameters
 /// - https://developers.google.com/analytics/devguides/collection/ga4/item-scoped-ecommerce
-struct FirebaseItemParameter {
+enum FirebaseItemParameter {
     
     /// Maps param_items_* keys to Firebase Analytics item parameter constants.
     /// Example: `param_items_item_id` → `"item_id"`
