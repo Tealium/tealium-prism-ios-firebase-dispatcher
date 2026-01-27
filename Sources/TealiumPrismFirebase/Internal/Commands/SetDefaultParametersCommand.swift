@@ -43,12 +43,13 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.SetDefaultParameters.name
+    typealias Param = FirebaseConstants.SetDefaultParameters.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetDefaultParameters command")
         
         // Empty payload [] -> clear all default parameters (intended behavior)
-        guard let commandData = payload.getDataItem(key: FirebaseConstants.SetDefaultParameters.name)?
+        guard let commandData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             logger?.debug(category: LogCategory.firebase, "Clearing all default parameters (empty payload)")
             firebaseInstance.setDefaultEventParameters(nil)
@@ -56,7 +57,7 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
         }
         
         // setdefaultparameters exists but firebase_params is missing -> error (not intended)
-        guard let paramsData = commandData[FirebaseConstants.SetDefaultParameters.Param.params] else {
+        guard let paramsData = commandData[Param.params] else {
             logger?.warn(category: LogCategory.firebase, "Missing 'firebase_params' in setdefaultparameters - command skipped")
             return false
         }

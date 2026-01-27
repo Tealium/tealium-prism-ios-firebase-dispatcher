@@ -46,31 +46,32 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.InitiateConversionMeasurement.name
+    typealias Param = FirebaseConstants.InitiateConversionMeasurement.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing InitiateConversionMeasurement command")
         
-        guard let commandData = payload.getDataItem(key: FirebaseConstants.InitiateConversionMeasurement.name)?
+        guard let commandData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
             return false
         }
         
         // Priority: hashed_email > hashed_phone > email > phone
-        if let hashedEmail = commandData.get(key: FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress, as: String.self) {
+        if let hashedEmail = commandData.get(key: Param.hashedEmailAddress, as: String.self) {
             return initiateWithHashedEmail(hashedEmail)
-        } else if let hashedPhone = commandData.get(key: FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber, as: String.self) {
+        } else if let hashedPhone = commandData.get(key: Param.hashedPhoneNumber, as: String.self) {
             return initiateWithHashedPhone(hashedPhone)
-        } else if let email = commandData.get(key: FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress, as: String.self) {
+        } else if let email = commandData.get(key: Param.emailAddress, as: String.self) {
             return initiateWithEmail(email)
-        } else if let phone = commandData.get(key: FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber, as: String.self) {
+        } else if let phone = commandData.get(key: Param.phoneNumber, as: String.self) {
             return initiateWithPhone(phone)
         } else {
             logger?.warn(category: LogCategory.firebase,
-                "No valid parameter found. Expected one of: '\(FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress)', " +
-                "'\(FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber)', " +
-                "'\(FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress)', " +
-                "'\(FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber)' - command skipped")
+                "No valid parameter found. Expected one of: '\(Param.emailAddress)', " +
+                "'\(Param.phoneNumber)', " +
+                "'\(Param.hashedEmailAddress)', " +
+                "'\(Param.hashedPhoneNumber)' - command skipped")
             return false
         }
     }

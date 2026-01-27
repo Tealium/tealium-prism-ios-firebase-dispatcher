@@ -40,22 +40,23 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     }
 
     public let name = FirebaseConstants.SetUserProperty.name
+    typealias Param = FirebaseConstants.SetUserProperty.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
         
-        guard let propertyData = payload.getDataItem(key: FirebaseConstants.SetUserProperty.name)?
+        guard let propertyData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             return false
         }
         
-        guard let name = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyName, as: String.self) else {
+        guard let name = propertyData.get(key: Param.propertyName, as: String.self) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing property name - command skipped")
             return false
         }
         
-        let value = propertyData.get(key: FirebaseConstants.SetUserProperty.Param.propertyValue, as: String.self)
+        let value = propertyData.get(key: Param.propertyValue, as: String.self)
         
         // Empty string or nil removes the property
         if let value = value, !value.isEmpty {

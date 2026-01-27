@@ -49,11 +49,12 @@ class LogEventCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.LogEvent.name
+    typealias Param = FirebaseConstants.LogEvent.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing LogEvent command")
         
-        guard let logEventData = payload.getDataItem(key: FirebaseConstants.LogEvent.name)?
+        guard let logEventData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             return false
         }
@@ -74,7 +75,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Extracts the event name from logevent data.
     private func extractEventName(from logEventData: [String: DataItem]) -> String? {
-        guard let rawEventName = logEventData.get(key: FirebaseConstants.LogEvent.Param.eventName, as: String.self) else {
+        guard let rawEventName = logEventData.get(key: Param.eventName, as: String.self) else {
             logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
             return nil
         }
@@ -84,7 +85,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Builds all Firebase parameters from logevent data (including items).
     private func buildParameters(from logEventData: [String: DataItem], eventName: String) -> [String: Any] {
-        guard let eventParamsDict = logEventData.getDataItem(key: FirebaseConstants.LogEvent.Param.eventParams)?
+        guard let eventParamsDict = logEventData.getDataItem(key: Param.eventParams)?
             .getDataDictionary() else {
             return [:]
         }
@@ -110,7 +111,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         for (key, value) in params {
             // Skip items - handled separately (both Tealium and Firebase conventions)
-            guard key != FirebaseConstants.LogEvent.Param.items,
+            guard key != Param.items,
                   key != AnalyticsParameterItems else { 
                 continue 
             }
@@ -131,7 +132,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Supports both Tealium convention (`param_items`) and Firebase convention (`items`).
     private func buildItems(from eventParamsDict: [String: DataItem], eventName: String) -> [[String: Any]]? {
         // Try Tealium convention first: "param_items"
-        var itemsData = eventParamsDict.getDataItem(key: FirebaseConstants.LogEvent.Param.items)
+        var itemsData = eventParamsDict.getDataItem(key: Param.items)
         
         // If not found, try Firebase convention: "items"
         if itemsData == nil {

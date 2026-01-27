@@ -38,11 +38,12 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.SetSessionTimeout.name
+    typealias Param = FirebaseConstants.SetSessionTimeout.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
         
-        guard let commandData = payload.getDataItem(key: FirebaseConstants.SetSessionTimeout.name)?
+        guard let commandData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
             return false
@@ -50,7 +51,7 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
         
         guard let sessionTimeout = extractSessionTimeout(from: commandData) else {
             logger?.warn(category: LogCategory.firebase, 
-                "Missing or invalid '\(FirebaseConstants.SetSessionTimeout.Param.sessionTimeout)' parameter. " +
+                "Missing or invalid '\(Param.sessionTimeout)' parameter. " +
                 "Expected numeric value (seconds)")
             return false
         }
@@ -66,17 +67,17 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     /// Extracts session timeout from command data, supporting both numeric types and string conversion.
     private func extractSessionTimeout(from commandData: [String: DataItem]) -> TimeInterval? {
         // Try as Double first
-        if let timeout = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Double.self) {
+        if let timeout = commandData.get(key: Param.sessionTimeout, as: Double.self) {
             return timeout
         }
         
         // Try as Int
-        if let timeout = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: Int.self) {
+        if let timeout = commandData.get(key: Param.sessionTimeout, as: Int.self) {
             return TimeInterval(timeout)
         }
         
         // Try as String and convert
-        if let timeoutString = commandData.get(key: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, as: String.self),
+        if let timeoutString = commandData.get(key: Param.sessionTimeout, as: String.self),
            let timeout = Double(timeoutString) {
             return timeout
         }

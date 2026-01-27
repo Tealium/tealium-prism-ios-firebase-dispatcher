@@ -12,6 +12,10 @@ import TealiumPrismCore
 /// Firebase Analytics Dispatcher for Tealium Prism SDK
 class FirebaseDispatcher: Dispatcher {
     
+    // MARK: - Type Aliases
+    
+    typealias InitializeParam = FirebaseConstants.Initialize.Param
+    
     // MARK: - Module Properties
     
     public let id: String
@@ -129,7 +133,7 @@ class FirebaseDispatcher: Dispatcher {
         logger?.debug(category: LogCategory.firebase, "Applying configuration settings")
         
         // 1. Configure log level (must be done before Firebase is configured)
-        if let logLevel = configuration.get(key: FirebaseConstants.Initialize.Param.logLevel, as: String.self) {
+        if let logLevel = configuration.get(key: InitializeParam.logLevel, as: String.self) {
             configureLogLevel(logLevel)
         }
         
@@ -140,7 +144,7 @@ class FirebaseDispatcher: Dispatcher {
         }
         
         // 3. Configure analytics collection
-        if let analyticsEnabled = configuration.get(key: FirebaseConstants.Initialize.Param.analyticsEnabled, as: Bool.self) {
+        if let analyticsEnabled = configuration.get(key: InitializeParam.analyticsEnabled, as: Bool.self) {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
             logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled) from configuration")
         }
@@ -166,17 +170,17 @@ class FirebaseDispatcher: Dispatcher {
     /// Extracts session timeout from configuration, supporting both numeric types and string conversion.
     private func extractSessionTimeout(from configuration: DataObject) -> TimeInterval? {
         // Try as Double first
-        if let timeout = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Double.self) {
+        if let timeout = configuration.get(key: InitializeParam.sessionTimeout, as: Double.self) {
             return timeout
         }
         
         // Try as Int
-        if let timeout = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: Int.self) {
+        if let timeout = configuration.get(key: InitializeParam.sessionTimeout, as: Int.self) {
             return TimeInterval(timeout)
         }
         
         // Try as String and convert
-        if let timeoutString = configuration.get(key: FirebaseConstants.Initialize.Param.sessionTimeout, as: String.self),
+        if let timeoutString = configuration.get(key: InitializeParam.sessionTimeout, as: String.self),
            let timeout = Double(timeoutString) {
             return timeout
         }

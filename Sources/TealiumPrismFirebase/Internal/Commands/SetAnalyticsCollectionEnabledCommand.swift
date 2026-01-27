@@ -38,11 +38,12 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
+    typealias Param = FirebaseConstants.SetAnalyticsCollectionEnabled.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetAnalyticsCollectionEnabled command")
         
-        guard let commandData = payload.getDataItem(key: FirebaseConstants.SetAnalyticsCollectionEnabled.name)?
+        guard let commandData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
             return false
@@ -50,7 +51,7 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
         
         guard let enabled = extractAnalyticsEnabled(from: commandData) else {
             logger?.warn(category: LogCategory.firebase, 
-                "Missing or invalid '\(FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled)' parameter. " +
+                "Missing or invalid '\(Param.analyticsEnabled)' parameter. " +
                 "Expected boolean value (true/false)")
             return false
         }
@@ -66,17 +67,17 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     /// Extracts analytics enabled flag from command data, supporting both boolean and string conversion.
     private func extractAnalyticsEnabled(from commandData: [String: DataItem]) -> Bool? {
         // Try as Bool first
-        if let enabled = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Bool.self) {
+        if let enabled = commandData.get(key: Param.analyticsEnabled, as: Bool.self) {
             return enabled
         }
         
         // Try as String and convert
-        if let enabledString = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: String.self) {
+        if let enabledString = commandData.get(key: Param.analyticsEnabled, as: String.self) {
             return enabledString.lowercased() == "true" || enabledString == "1"
         }
         
         // Try as Int (0 = false, non-zero = true)
-        if let enabledInt = commandData.get(key: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, as: Int.self) {
+        if let enabledInt = commandData.get(key: Param.analyticsEnabled, as: Int.self) {
             return enabledInt != 0
         }
         

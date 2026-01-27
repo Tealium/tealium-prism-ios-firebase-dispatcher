@@ -39,22 +39,23 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.SetUserProperties.name
+    typealias Param = FirebaseConstants.SetUserProperties.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
         
-        guard let propertyData = payload.getDataItem(key: FirebaseConstants.SetUserProperties.name)?
+        guard let propertyData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             return false
         }
         
-        guard let names = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
+        guard let names = propertyData.getArray(key: Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property names array - command skipped")
             return false
         }
         
-        guard let values = propertyData.getArray(key: FirebaseConstants.SetUserProperties.Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
+        guard let values = propertyData.getArray(key: Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property values array - command skipped")
             return false

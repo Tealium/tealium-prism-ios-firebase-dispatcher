@@ -39,16 +39,17 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     }
 
     public let name = FirebaseConstants.SetUserId.name
+    typealias Param = FirebaseConstants.SetUserId.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserId command")
         
-        guard let userIdData = payload.getDataItem(key: FirebaseConstants.SetUserId.name)?
+        guard let userIdData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             return false
         }
         
-        guard let userId = userIdData.get(key: FirebaseConstants.SetUserId.Param.userId,
+        guard let userId = userIdData.get(key: Param.userId,
                                           as: String.self) else {
             return false
         }

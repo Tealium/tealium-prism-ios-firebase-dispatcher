@@ -45,11 +45,12 @@ class SetConsentCommand: FirebaseCommandProtocol {
     }
     
     public let name = FirebaseConstants.SetConsent.name
+    typealias Param = FirebaseConstants.SetConsent.Param
     
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetConsent command")
         
-        guard let consentData = payload.getDataItem(key: FirebaseConstants.SetConsent.name)?
+        guard let consentData = payload.getDataItem(key: name)?
             .getDataDictionary() else {
             return false
         }
