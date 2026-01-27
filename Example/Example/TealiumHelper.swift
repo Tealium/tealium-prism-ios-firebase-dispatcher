@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FirebaseCore
 import TealiumPrismCore
 import TealiumPrismFirebase
 
@@ -26,7 +27,7 @@ class TealiumHelper {
                     builder
                         .setSessionTimeout(1800)
                         .setAnalyticsEnabled(true)
-                        .setLogLevel("debug")
+                        .setLogLevel(.debug)
                         .setMappings([
                             // LogEvent Command
                             .mapFirebaseLogEventCommand(),

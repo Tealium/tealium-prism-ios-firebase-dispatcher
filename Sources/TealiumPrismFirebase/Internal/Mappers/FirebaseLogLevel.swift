@@ -73,4 +73,34 @@ struct FirebaseLogLevel {
     
     /// All valid log level names in order from least to most verbose.
     static let allLevels: [String] = ["min", "error", "warning", "notice", "info", "debug", "max"]
+    
+    /// Returns the string representation for the given FirebaseLoggerLevel enum value.
+    ///
+    /// Maps FirebaseLoggerLevel enum values back to their string names.
+    ///
+    /// - Parameter loggerLevel: The FirebaseLoggerLevel enum value
+    /// - Returns: The corresponding string representation (e.g., "error", "warning", "debug")
+    ///
+    /// Example:
+    /// ```swift
+    /// let levelString = FirebaseLogLevel.string(from: .debug)  // Returns "debug"
+    /// ```
+    static func string(from loggerLevel: FirebaseLoggerLevel) -> String {
+        // Handle the distinct enum cases
+        // Note: .min == .error and .max == .debug, so we can't distinguish them
+        switch loggerLevel {
+        case .min, .error:
+            return "error"
+        case .warning:
+            return "warning"
+        case .notice:
+            return "notice"
+        case .info:
+            return "info"
+        case .max, .debug:
+            return "debug"
+        @unknown default:
+            return "notice"
+        }
+    }
 }

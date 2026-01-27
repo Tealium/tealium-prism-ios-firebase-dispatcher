@@ -8,6 +8,7 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+import FirebaseCore
 import XCTest
 
 final class FirebaseSettingsBuilderTests: XCTestCase {
@@ -16,7 +17,7 @@ final class FirebaseSettingsBuilderTests: XCTestCase {
         let settings = FirebaseSettingsBuilder()
             .setSessionTimeout(1800)
             .setAnalyticsEnabled(true)
-            .setLogLevel("debug")
+            .setLogLevel(.debug)
             .build()
         
         XCTAssertEqual(settings, [

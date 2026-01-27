@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FirebaseCore
 import TealiumPrismCore
 
 /// Builder for Firebase Dispatcher configuration settings.
@@ -70,13 +71,13 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     /// Set the Firebase internal log level.
     ///
     /// Controls the verbosity of Firebase SDK logging.
-    /// Valid values: "min", "error", "warning", "notice", "info", "debug", "max"
     ///
-    /// - Parameter level: The log level string.
+    /// - Parameter level: The FirebaseLoggerLevel enum value.
     /// - Returns: Self for method chaining.
     @discardableResult
-    public func setLogLevel(_ level: String) -> Self {
-        _configurationObject.set(level, key: FirebaseConstants.Initialize.Param.logLevel)
+    public func setLogLevel(_ level: FirebaseLoggerLevel) -> Self {
+        let levelString = FirebaseLogLevel.string(from: level)
+        _configurationObject.set(levelString, key: FirebaseConstants.Initialize.Param.logLevel)
         return self
     }
 }
