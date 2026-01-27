@@ -25,9 +25,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should be added because tealium_event == "screen_view"
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "screen_view"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "screen_view"
         ])
     }
     
@@ -43,9 +41,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should NOT be added because tealium_event != "screen_view"
         // But event name should still be mapped
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "purchase"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "purchase"
         ])
     }
     
@@ -61,9 +57,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Both command and event name should be added
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "screen_view"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "screen_view"
         ])
     }
     
@@ -102,12 +96,8 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
                 FirebaseConstants.LogEvent.name,
                 FirebaseConstants.SetUserId.name
             ],
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "login"
-            ] as DataObject,
-            FirebaseConstants.SetUserId.name: [
-                FirebaseConstants.SetUserId.Param.userId: "USER_123"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "login",
+            FirebaseConstants.SetUserId.Param.userId: "USER_123"
         ])
     }
     
@@ -124,9 +114,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "special_screen"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "special_screen"
         ])
     }
 }

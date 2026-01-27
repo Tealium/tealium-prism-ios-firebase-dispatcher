@@ -22,10 +22,8 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "setuserproperties",
-///     "setuserproperties": [
-///         "firebase_property_names": ["subscription_tier", "user_level", "account_type"],
-///         "firebase_property_values": ["premium", "expert", "business"]
-///     ]
+///     "firebase_property_names": ["subscription_tier", "user_level", "account_type"],
+///     "firebase_property_values": ["premium", "expert", "business"]
 /// ]
 /// ```
 class SetUserPropertiesCommand: FirebaseCommandProtocol {
@@ -44,18 +42,13 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
         
-        guard let propertyData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            return false
-        }
-        
-        guard let names = propertyData.getArray(key: Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
+        guard let names = payload.getArray(key: Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property names array - command skipped")
             return false
         }
         
-        guard let values = propertyData.getArray(key: Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
+        guard let values = payload.getArray(key: Param.propertyValues, of: String.self)?.compactMap({ $0 }) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing or invalid property values array - command skipped")
             return false

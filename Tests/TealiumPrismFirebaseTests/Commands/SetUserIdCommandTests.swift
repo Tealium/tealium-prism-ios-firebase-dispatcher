@@ -42,9 +42,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_sets_user_id() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserId.name: [
-                FirebaseConstants.SetUserId.Param.userId: "user@example.com"
-            ] as DataObject
+            FirebaseConstants.SetUserId.Param.userId: "user@example.com"
         ]
         
         let result = command.execute(payload: payload)
@@ -58,9 +56,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_clears_user_id_with_empty_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserId.name: [
-                FirebaseConstants.SetUserId.Param.userId: ""
-            ] as DataObject
+            FirebaseConstants.SetUserId.Param.userId: ""
         ]
         
         let result = command.execute(payload: payload)

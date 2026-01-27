@@ -40,9 +40,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_without_property_names_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
         ]
         
         let result = command.execute(payload: payload)
@@ -52,9 +50,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_without_property_values_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2"]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2"]
         ]
         
         let result = command.execute(payload: payload)
@@ -66,10 +62,8 @@ final class SetUserPropertiesCommandTests: XCTestCase {
         let emptyNamesArray: [String] = []
         let emptyValuesArray: [String] = []
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: emptyNamesArray,
-                FirebaseConstants.SetUserProperties.Param.propertyValues: emptyValuesArray
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: emptyNamesArray,
+            FirebaseConstants.SetUserProperties.Param.propertyValues: emptyValuesArray
         ]
         
         let result = command.execute(payload: payload)
@@ -79,10 +73,8 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_with_mismatched_array_lengths_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2", "prop3"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2", "prop3"],
+            FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
         ]
         
         let result = command.execute(payload: payload)
@@ -94,10 +86,8 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_sets_single_property() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium"]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier"],
+            FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium"]
         ]
         
         let result = command.execute(payload: payload)
@@ -113,10 +103,8 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_sets_multiple_properties() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier", "user_level", "account_type"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "business"]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: ["subscription_tier", "user_level", "account_type"],
+            FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "business"]
         ]
         
         let result = command.execute(payload: payload)
@@ -135,10 +123,8 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     func test_execute_clears_property_with_empty_value() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperties.name: [
-                FirebaseConstants.SetUserProperties.Param.propertyNames: ["to_clear"],
-                FirebaseConstants.SetUserProperties.Param.propertyValues: [""]
-            ] as DataObject
+            FirebaseConstants.SetUserProperties.Param.propertyNames: ["to_clear"],
+            FirebaseConstants.SetUserProperties.Param.propertyValues: [""]
         ]
         
         let result = command.execute(payload: payload)

@@ -22,12 +22,10 @@ import FirebaseAnalytics
 /// ```
 /// payload = [
 ///     "command": "setconsent",
-///     "setconsent": [
-///         "ad_storage": "granted",
-///         "analytics_storage": "granted",
-///         "ad_user_data": "denied",
-///         "ad_personalization": "denied"
-///     ]
+///     "ad_storage": "granted",
+///     "analytics_storage": "granted",
+///     "ad_user_data": "denied",
+///     "ad_personalization": "denied"
 /// ]
 /// ```
 ///
@@ -50,23 +48,19 @@ class SetConsentCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetConsent command")
         
-        guard let consentData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            return false
-        }
-        
         var consentSettings: [ConsentType: ConsentStatus] = [:]
         
-        for key in consentData.keys {
-            guard let consentType = ConsentType.from(key) else {
-                logger?.warn(category: LogCategory.firebase, 
-                           "Invalid consent type '\(key)' - ignoring")
+        // Check for known consent parameter keys
+        let consentKeys = [Param.adStorage, Param.analyticsStorage, Param.adUserData, Param.adPersonalization]
+        
+        for key in consentKeys {
+            guard let stringValue = payload.get(key: key, as: String.self) else {
                 continue
             }
             
-            guard let stringValue = consentData.get(key: key, as: String.self) else {
+            guard let consentType = ConsentType.from(key) else {
                 logger?.warn(category: LogCategory.firebase, 
-                           "Unexpected data type for consent '\(key)' - expected String, ignoring")
+                           "Invalid consent type '\(key)' - ignoring")
                 continue
             }
         

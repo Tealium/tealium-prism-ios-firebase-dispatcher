@@ -36,23 +36,11 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertFalse(result)
     }
     
-    func test_execute_without_any_parameter_returns_false() {
-        let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [:] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
-    }
-    
     // MARK: - Email Address Tests
     
     func test_execute_with_email_address() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
         ]
         
         let result = command.execute(payload: payload)
@@ -64,9 +52,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_email_address_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: ""
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: ""
         ]
         
         let result = command.execute(payload: payload)
@@ -79,9 +65,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_phone_number() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
         ]
         
         let result = command.execute(payload: payload)
@@ -93,9 +77,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_phone_number_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: ""
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: ""
         ]
         
         let result = command.execute(payload: payload)
@@ -108,9 +90,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_hashed_email_address() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmailString123"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmailString123"
         ]
         
         let result = command.execute(payload: payload)
@@ -122,9 +102,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_email_address_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: ""
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: ""
         ]
         
         let result = command.execute(payload: payload)
@@ -137,9 +115,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_hashed_phone_number() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhoneString123"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhoneString123"
         ]
         
         let result = command.execute(payload: payload)
@@ -151,9 +127,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_phone_number_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: ""
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: ""
         ]
         
         let result = command.execute(payload: payload)
@@ -166,10 +140,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_prioritizes_hashed_email_over_hashed_phone() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone"
         ]
         
         let result = command.execute(payload: payload)
@@ -181,10 +153,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_prioritizes_hashed_phone_over_email() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
-                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
+            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
         ]
         
         let result = command.execute(payload: payload)
@@ -196,10 +166,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_prioritizes_email_over_phone() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
-                FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
+            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
         ]
         
         let result = command.execute(payload: payload)
@@ -212,12 +180,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     func test_execute_full_priority_chain() {
         // All parameters provided - should use hashed_email (highest priority)
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.name: [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
-                FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
-                FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
-            ] as DataObject
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
+            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
+            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
         ]
         
         let result = command.execute(payload: payload)

@@ -23,10 +23,8 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "setuserproperty",
-///     "setuserproperty": [
-///         "firebase_property_name": "tier",
-///         "firebase_property_value": "premium"  // Empty string removes property
-///     ]
+///     "firebase_property_name": "tier",
+///     "firebase_property_value": "premium"  // Empty string removes property
 /// ]
 /// ```
 class SetUserPropertyCommand: FirebaseCommandProtocol {
@@ -45,26 +43,21 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
         
-        guard let propertyData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            return false
-        }
-        
-        guard let name = propertyData.get(key: Param.propertyName, as: String.self) else {
+        guard let propertyName = payload.get(key: Param.propertyName, as: String.self) else {
             logger?.warn(category: LogCategory.firebase, 
                        "Missing property name - command skipped")
             return false
         }
         
-        let value = propertyData.get(key: Param.propertyValue, as: String.self)
+        let value = payload.get(key: Param.propertyValue, as: String.self)
         
         // Empty string or nil removes the property
         if let value = value, !value.isEmpty {
-            logger?.debug(category: LogCategory.firebase, "Setting user property '\(name)' = '\(value)'")
-            firebaseInstance.setUserProperty(value, forName: name)
+            logger?.debug(category: LogCategory.firebase, "Setting user property '\(propertyName)' = '\(value)'")
+            firebaseInstance.setUserProperty(value, forName: propertyName)
         } else {
-            logger?.debug(category: LogCategory.firebase, "Removing user property '\(name)'")
-            firebaseInstance.setUserProperty(nil, forName: name)
+            logger?.debug(category: LogCategory.firebase, "Removing user property '\(propertyName)'")
+            firebaseInstance.setUserProperty(nil, forName: propertyName)
         }
         return true
     }

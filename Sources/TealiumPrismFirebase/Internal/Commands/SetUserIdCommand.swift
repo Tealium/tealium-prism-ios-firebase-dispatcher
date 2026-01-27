@@ -23,9 +23,7 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "setuserid",
-///     "setuserid": [
-///         "firebase_user_id": "USER_12345"  // Empty string clears user ID
-///     ]
+///     "firebase_user_id": "USER_12345"  // Empty string clears user ID
 /// ]
 /// ```
 class SetUserIdCommand: FirebaseCommandProtocol {
@@ -44,19 +42,7 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserId command")
         
-        guard let userIdData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            return false
-        }
-        
-        guard let userId = userIdData.get(key: Param.userId,
-                                          as: String.self) else {
-            return false
-        }
-        
-        guard userId.count <= 256 else {
-            logger?.warn(category: LogCategory.firebase, 
-                       "User ID exceeds 256 characters limit - command skipped")
+        guard let userId = payload.get(key: Param.userId, as: String.self) else {
             return false
         }
         

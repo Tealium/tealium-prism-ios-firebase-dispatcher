@@ -38,24 +38,11 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
     }
     
-    func test_execute_without_timeout_parameter_returns_false() {
-        let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.name: [:] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
-    }
-    
     // MARK: - Double Value Tests
     
     func test_execute_sets_timeout_from_double() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.name: [
-                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 1800.5
-            ] as DataObject
+            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 1800.5
         ]
         
         let result = command.execute(payload: payload)
@@ -69,9 +56,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_int() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.name: [
-                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
-            ] as DataObject
+            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
         ]
         
         let result = command.execute(payload: payload)
@@ -85,9 +70,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.name: [
-                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "1800.5"
-            ] as DataObject
+            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "1800.5"
         ]
         
         let result = command.execute(payload: payload)
@@ -99,9 +82,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_returns_false_for_invalid_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.name: [
-                FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "invalid"
-            ] as DataObject
+            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "invalid"
         ]
         
         let result = command.execute(payload: payload)

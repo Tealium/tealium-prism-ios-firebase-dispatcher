@@ -22,9 +22,7 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "setsessiontimeout",
-///     "setsessiontimeout": [
-///         "firebase_session_timeout_seconds": 3600
-///     ]
+///     "firebase_session_timeout_seconds": 3600
 /// ]
 /// ```
 class SetSessionTimeoutCommand: FirebaseCommandProtocol {
@@ -43,13 +41,7 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
         
-        guard let commandData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
-            return false
-        }
-        
-        guard let sessionTimeout = commandData.getNumeric(key: Param.sessionTimeout, as: TimeInterval.self) else {
+        guard let sessionTimeout = payload.getNumeric(key: Param.sessionTimeout, as: Double.self) else {
             logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(Param.sessionTimeout)' parameter. " +
                 "Expected numeric value (seconds)")

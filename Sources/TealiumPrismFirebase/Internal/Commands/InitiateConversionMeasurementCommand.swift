@@ -25,12 +25,10 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "initiateconversionmeasurement",
-///     "initiateconversionmeasurement": [
-///         "param_email_address": "user@example.com"
-///         // OR "param_phone_number": "+1234567890"
-///         // OR "param_hashed_email_address": "hashedEmailString"
-///         // OR "param_hashed_phone_number": "hashedPhoneString"
-///     ]
+///     "param_email_address": "user@example.com"
+///     // OR "param_phone_number": "+1234567890"
+///     // OR "param_hashed_email_address": "hashedEmailString"
+///     // OR "param_hashed_phone_number": "hashedPhoneString"
 /// ]
 /// ```
 ///
@@ -51,20 +49,14 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing InitiateConversionMeasurement command")
         
-        guard let commandData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            logger?.warn(category: LogCategory.firebase, "Missing command data - command skipped")
-            return false
-        }
-        
         // Priority: hashed_email > hashed_phone > email > phone
-        if let hashedEmail = commandData.get(key: Param.hashedEmailAddress, as: String.self) {
+        if let hashedEmail = payload.get(key: Param.hashedEmailAddress, as: String.self) {
             return initiateWithHashedEmail(hashedEmail)
-        } else if let hashedPhone = commandData.get(key: Param.hashedPhoneNumber, as: String.self) {
+        } else if let hashedPhone = payload.get(key: Param.hashedPhoneNumber, as: String.self) {
             return initiateWithHashedPhone(hashedPhone)
-        } else if let email = commandData.get(key: Param.emailAddress, as: String.self) {
+        } else if let email = payload.get(key: Param.emailAddress, as: String.self) {
             return initiateWithEmail(email)
-        } else if let phone = commandData.get(key: Param.phoneNumber, as: String.self) {
+        } else if let phone = payload.get(key: Param.phoneNumber, as: String.self) {
             return initiateWithPhone(phone)
         } else {
             logger?.warn(category: LogCategory.firebase,

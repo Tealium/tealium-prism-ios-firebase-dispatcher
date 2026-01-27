@@ -38,24 +38,11 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
         XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
     }
     
-    func test_execute_without_enabled_parameter_returns_false() {
-        let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [:] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
-    }
-    
     // MARK: - Boolean Value Tests
     
     func test_execute_enables_analytics_collection_with_true() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: true
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: true
         ]
         
         let result = command.execute(payload: payload)
@@ -67,9 +54,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection_with_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: false
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: false
         ]
         
         let result = command.execute(payload: payload)
@@ -83,9 +68,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection_with_string_true() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "true"
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "true"
         ]
         
         let result = command.execute(payload: payload)
@@ -97,9 +80,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection_with_string_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "false"
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "false"
         ]
         
         let result = command.execute(payload: payload)
@@ -111,9 +92,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection_with_string_1() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "1"
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "1"
         ]
         
         let result = command.execute(payload: payload)
@@ -124,9 +103,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection_with_string_0() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "0"
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "0"
         ]
         
         let result = command.execute(payload: payload)
@@ -137,9 +114,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_handles_string_true_case_insensitive() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "TRUE"
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "TRUE"
         ]
         
         let result = command.execute(payload: payload)
@@ -152,9 +127,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection_with_int_1() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 1
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 1
         ]
         
         let result = command.execute(payload: payload)
@@ -165,9 +138,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection_with_int_0() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 0
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 0
         ]
         
         let result = command.execute(payload: payload)
@@ -178,9 +149,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection_with_non_zero_int() {
         let payload: DataObject = [
-            FirebaseConstants.SetAnalyticsCollectionEnabled.name: [
-                FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 42
-            ] as DataObject
+            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 42
         ]
         
         let result = command.execute(payload: payload)

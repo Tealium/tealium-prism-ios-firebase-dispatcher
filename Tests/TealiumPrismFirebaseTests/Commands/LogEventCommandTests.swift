@@ -42,9 +42,7 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_simple_event() {
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ]
         
         let result = command.execute(payload: payload)
@@ -58,9 +56,7 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_maps_event_name() {
         // "event_purchase" should map to Firebase's AnalyticsEventPurchase ("purchase")
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "event_purchase"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "event_purchase"
         ]
         
         let result = command.execute(payload: payload)
@@ -73,11 +69,9 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_string_parameter() {
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    "param_currency": "USD"
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                "param_currency": "USD"
             ] as DataObject
         ]
         
@@ -90,12 +84,10 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_numeric_parameters() {
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "purchase",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    "param_value": 99.99,
-                    "param_quantity": 2
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "purchase",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                "param_value": 99.99,
+                "param_quantity": 2
             ] as DataObject
         ]
         
@@ -109,11 +101,9 @@ final class LogEventCommandTests: XCTestCase {
     
     func test_execute_logs_event_with_boolean_parameter() {
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    "is_first_time": true
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                "is_first_time": true
             ] as DataObject
         ]
         
@@ -136,13 +126,11 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "purchase",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    "param_value": 99.99,
-                    "param_currency": "USD",
-                    FirebaseConstants.LogEvent.Param.items: itemsObject
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "purchase",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                "param_value": 99.99,
+                "param_currency": "USD",
+                FirebaseConstants.LogEvent.Param.items: itemsObject
             ] as DataObject
         ]
         
@@ -185,11 +173,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "add_to_cart",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    FirebaseConstants.LogEvent.Param.items: itemsObject
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "add_to_cart",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                FirebaseConstants.LogEvent.Param.items: itemsObject
             ] as DataObject
         ]
         
@@ -217,11 +203,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         let payload: DataObject = [
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "purchase",
-                FirebaseConstants.LogEvent.Param.eventParams: [
-                    FirebaseConstants.LogEvent.Param.items: itemsObject
-                ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "purchase",
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                FirebaseConstants.LogEvent.Param.items: itemsObject
             ] as DataObject
         ]
         

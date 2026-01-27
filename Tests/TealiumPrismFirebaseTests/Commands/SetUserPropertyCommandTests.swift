@@ -40,9 +40,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_without_property_name_returns_false() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperty.name: [
-                FirebaseConstants.SetUserProperty.Param.propertyValue: "value"
-            ] as DataObject
+            FirebaseConstants.SetUserProperty.Param.propertyValue: "value"
         ]
         
         let result = command.execute(payload: payload)
@@ -54,10 +52,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_sets_user_property() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperty.name: [
-                FirebaseConstants.SetUserProperty.Param.propertyName: "tier",
-                FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
-            ] as DataObject
+            FirebaseConstants.SetUserProperty.Param.propertyName: "tier",
+            FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
         ]
         
         let result = command.execute(payload: payload)
@@ -71,10 +67,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     func test_execute_clears_property_without_value_or_empty_string() {
         // Empty string clears the property
         let payload: DataObject = [
-            FirebaseConstants.SetUserProperty.name: [
-                FirebaseConstants.SetUserProperty.Param.propertyName: "tier",
-                FirebaseConstants.SetUserProperty.Param.propertyValue: ""
-            ] as DataObject
+            FirebaseConstants.SetUserProperty.Param.propertyName: "tier",
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ""
         ]
         
         let result = command.execute(payload: payload)

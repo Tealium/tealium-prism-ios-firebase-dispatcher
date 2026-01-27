@@ -39,22 +39,9 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         XCTAssertNil(mockFirebase.lastDefaultParameters)
     }
     
-    func test_execute_without_firebase_params_returns_false() {
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [:] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
-        XCTAssertFalse(mockFirebase.setDefaultEventParametersCalled)
-    }
-    
     func test_execute_with_empty_firebase_params_clears_parameters() {
         let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [:] as DataObject
-            ] as DataObject
+            FirebaseConstants.SetDefaultParameters.Param.params: [:] as DataObject
         ]
         
         let result = command.execute(payload: payload)
@@ -68,11 +55,9 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_string_parameters() {
         let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "version": "2.1.0",
-                    "language": "en"
-                ] as DataObject
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "version": "2.1.0",
+                "language": "en"
             ] as DataObject
         ]
         
@@ -88,10 +73,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_int_parameters() {
         let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "count": 42
-                ] as DataObject
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "count": 42
             ] as DataObject
         ]
         
@@ -103,10 +86,8 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_double_parameters() {
         let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "price": 99.99
-                ] as DataObject
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "price": 99.99
             ] as DataObject
         ]
         

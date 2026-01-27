@@ -67,43 +67,26 @@ class FirebaseDispatcher: Dispatcher {
     // MARK: - Dispatcher Protocol
     
     func dispatch(_ data: [Dispatch], completion: @escaping ([Dispatch]) -> Void) -> Disposable {
-        var processedDispatches: [Dispatch] = []
-        
         for dispatch in data {
             processDispatch(dispatch)
-            processedDispatches.append(dispatch)
         }
         
-        completion(processedDispatches)
+        completion(data)
         return Disposables.disposed()
     }
     
     // MARK: - Private Methods
     
     private func processDispatch(_ dispatch: Dispatch) {
-        let payload = dispatch.payload
-        
-        // Get command name(s) from payload - supports both single command and array of commands
-        // Commands are mapped to the "command" key by Mappings (not tealium_event)
-        let commands: [String]
-        if let commandArray = payload.getArray(key: FirebaseConstants.commandKey, of: String.self) {
-            // getArray returns [String?]?, so we need to compact map to remove nils
-            commands = commandArray.compactMap { $0 }
-            guard !commands.isEmpty else {
-                logger?.debug(category: LogCategory.firebase,
-                             "Empty command array in dispatch \(dispatch.logDescription())")
-                return
-            }
-        } else if let singleCommand = payload.get(key: FirebaseConstants.commandKey, as: String.self) {
-            commands = [singleCommand]
-        } else {
-            logger?.debug(category: LogCategory.firebase, 
+        let commands = dispatch.getCommands()
+        guard !commands.isEmpty else {
+            logger?.debug(category: LogCategory.firebase,
                          "No command in dispatch \(dispatch.logDescription())")
             return
         }
-        
         logger?.debug(category: LogCategory.firebase, 
                      "Processing dispatch \(dispatch.logDescription()) with commands: \(commands)")
+        let payload = dispatch.payload
         
         // Execute each command
         for commandName in commands {
@@ -138,7 +121,7 @@ class FirebaseDispatcher: Dispatcher {
         }
         
         // 2. Configure session timeout
-        if let sessionTimeout = extractSessionTimeout(from: configuration) {
+        if let sessionTimeout = configuration.getNumeric(key: InitializeParam.sessionTimeout, as: Double.self) {
             firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
             logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds from configuration")
         }
@@ -165,27 +148,6 @@ class FirebaseDispatcher: Dispatcher {
         let loggerLevel = FirebaseLogLevel.map(levelString)
         firebaseInstance.setLoggerLevel(loggerLevel)
         logger?.debug(category: LogCategory.firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel)) from configuration")
-    }
-    
-    /// Extracts session timeout from configuration, supporting both numeric types and string conversion.
-    private func extractSessionTimeout(from configuration: DataObject) -> TimeInterval? {
-        // Try as Double first
-        if let timeout = configuration.get(key: InitializeParam.sessionTimeout, as: Double.self) {
-            return timeout
-        }
-        
-        // Try as Int
-        if let timeout = configuration.get(key: InitializeParam.sessionTimeout, as: Int.self) {
-            return TimeInterval(timeout)
-        }
-        
-        // Try as String and convert
-        if let timeoutString = configuration.get(key: InitializeParam.sessionTimeout, as: String.self),
-           let timeout = Double(timeoutString) {
-            return timeout
-        }
-        
-        return nil
     }
     
     func shutdown() {

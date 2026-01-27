@@ -71,7 +71,7 @@ public extension Mappings {
     /// - Parameter eventKey: The source key containing the event name. Defaults to `tealium_event`.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventName(eventKey: String = TealiumDataKey.event) -> VariableOptions {
-        .from(eventKey, to: FirebaseConstants.LogEvent.Path.eventName)
+        .from(eventKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventName])
     }
     
     /// Maps a source JSONPath to the Firebase event name parameter.
@@ -79,17 +79,15 @@ public extension Mappings {
     /// - Parameter eventPath: The source path containing the event name.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventName(eventPath: JSONObjectPath) -> VariableOptions {
-        .from(eventPath, to: FirebaseConstants.LogEvent.Path.eventName)
+        .from(eventPath, to: JSONPath[FirebaseConstants.LogEvent.Param.eventName])
     }
     
     /// Maps a source key to the Firebase event parameters.
     ///
-    /// The parameters will be nested under the "logevent" container.
-    ///
     /// - Parameter parametersKey: The source key containing event parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventParameters(parametersKey: String) -> VariableOptions {
-        .from(parametersKey, to: FirebaseConstants.LogEvent.Path.eventParams)
+        .from(parametersKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams])
     }
     
     /// Maps a source JSONPath to the Firebase event parameters.
@@ -97,7 +95,7 @@ public extension Mappings {
     /// - Parameter parametersPath: The source path containing event parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventParameters(parametersPath: JSONObjectPath) -> VariableOptions {
-        .from(parametersPath, to: FirebaseConstants.LogEvent.Path.eventParams)
+        .from(parametersPath, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams])
     }
     
     /// Maps a source key to a specific event parameter.
@@ -107,7 +105,7 @@ public extension Mappings {
     ///   - parameterName: The name of the Firebase event parameter.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseEventParameter(from sourceKey: String, to parameterName: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.LogEvent.Path.eventParams[parameterName])
+        .from(sourceKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams][parameterName])
     }
     
     /// Maps a source key containing parallel arrays to a specific item parameter.
@@ -119,7 +117,7 @@ public extension Mappings {
     ///   - itemParameterName: The name of the Firebase item parameter (e.g., "item_id").
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseItemParameter(from sourceKey: String, to itemParameterName: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.LogEvent.Path.items[itemParameterName])
+        .from(sourceKey, to: JSONPath[FirebaseConstants.LogEvent.Param.items][itemParameterName])
     }
     
     // MARK: - SetUserId Command
@@ -149,7 +147,7 @@ public extension Mappings {
     /// - Parameter userIdKey: The source key containing the user ID.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserId(userIdKey: String) -> VariableOptions {
-        .from(userIdKey, to: FirebaseConstants.SetUserId.Path.userId)
+        .from(userIdKey, to: JSONPath[FirebaseConstants.SetUserId.Param.userId])
     }
     
     /// Maps a source JSONPath to the Firebase user ID parameter.
@@ -157,7 +155,7 @@ public extension Mappings {
     /// - Parameter userIdPath: The source path containing the user ID.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserId(userIdPath: JSONObjectPath) -> VariableOptions {
-        .from(userIdPath, to: FirebaseConstants.SetUserId.Path.userId)
+        .from(userIdPath, to: JSONPath[FirebaseConstants.SetUserId.Param.userId])
     }
     
     // MARK: - SetUserProperty Command
@@ -186,7 +184,7 @@ public extension Mappings {
     /// - Parameter propertyNameKey: The source key containing the property name.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyName(propertyNameKey: String) -> VariableOptions {
-        .from(propertyNameKey, to: FirebaseConstants.SetUserProperty.Path.propertyName)
+        .from(propertyNameKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyName])
     }
     
     /// Maps a source key to the Firebase user property value.
@@ -194,7 +192,7 @@ public extension Mappings {
     /// - Parameter propertyValueKey: The source key containing the property value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyValue(propertyValueKey: String) -> VariableOptions {
-        .from(propertyValueKey, to: FirebaseConstants.SetUserProperty.Path.propertyValue)
+        .from(propertyValueKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyValue])
     }
     
     // MARK: - SetUserProperties Command
@@ -226,7 +224,7 @@ public extension Mappings {
     /// - Parameter propertyNamesKey: The source key containing the property names array.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyNames(propertyNamesKey: String) -> VariableOptions {
-        .from(propertyNamesKey, to: FirebaseConstants.SetUserProperties.Path.propertyNames)
+        .from(propertyNamesKey, to: JSONPath[FirebaseConstants.SetUserProperties.Param.propertyNames])
     }
     
     /// Maps a source key to the Firebase user property values array.
@@ -234,7 +232,7 @@ public extension Mappings {
     /// - Parameter propertyValuesKey: The source key containing the property values array.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyValues(propertyValuesKey: String) -> VariableOptions {
-        .from(propertyValuesKey, to: FirebaseConstants.SetUserProperties.Path.propertyValues)
+        .from(propertyValuesKey, to: JSONPath[FirebaseConstants.SetUserProperties.Param.propertyValues])
     }
     
     // MARK: - SetDefaultParameters Command
@@ -264,7 +262,7 @@ public extension Mappings {
     /// - Parameter paramsKey: The source key containing the default parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseDefaultParameters(paramsKey: String) -> VariableOptions {
-        .from(paramsKey, to: FirebaseConstants.SetDefaultParameters.Path.params)
+        .from(paramsKey, to: JSONPath[FirebaseConstants.SetDefaultParameters.Param.params])
     }
     
     /// Maps a source key to a specific default parameter.
@@ -274,7 +272,7 @@ public extension Mappings {
     ///   - parameterName: The name of the default parameter.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseDefaultParameter(from sourceKey: String, to parameterName: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetDefaultParameters.Path.params[parameterName])
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetDefaultParameters.Param.params][parameterName])
     }
     
     // MARK: - SetConsent Command
@@ -308,7 +306,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Path.adStorage)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adStorage])
     }
     
     /// Maps a source key to the Firebase analytics_storage consent setting.
@@ -316,7 +314,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAnalyticsStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Path.analyticsStorage)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.analyticsStorage])
     }
     
     /// Maps a source key to the Firebase ad_user_data consent setting.
@@ -324,7 +322,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdUserData(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Path.adUserData)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adUserData])
     }
     
     /// Maps a source key to the Firebase ad_personalization consent setting.
@@ -332,7 +330,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdPersonalization(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Path.adPersonalization)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adPersonalization])
     }
     
     // MARK: - ResetData Command
@@ -380,7 +378,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the session timeout value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseSetSessionTimeoutValue(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetSessionTimeout.Path.sessionTimeout)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetSessionTimeout.Param.sessionTimeout])
     }
     
     // MARK: - SetAnalyticsCollectionEnabled Command
@@ -408,7 +406,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the enabled value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseSetAnalyticsCollectionEnabledValue(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetAnalyticsCollectionEnabled.Path.analyticsEnabled)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled])
     }
     
     // MARK: - InitiateConversionMeasurement Command
@@ -438,7 +436,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the email address.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionEmailAddress(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Path.emailAddress)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress])
     }
     
     /// Maps a source key to the phone number parameter for conversion measurement.
@@ -446,7 +444,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the phone number.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionPhoneNumber(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Path.phoneNumber)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber])
     }
     
     /// Maps a source key to the hashed email address parameter for conversion measurement.
@@ -454,7 +452,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the hashed email address.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionHashedEmailAddress(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Path.hashedEmailAddress)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress])
     }
     
     /// Maps a source key to the hashed phone number parameter for conversion measurement.
@@ -462,6 +460,6 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the hashed phone number.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionHashedPhoneNumber(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Path.hashedPhoneNumber)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber])
     }
 }

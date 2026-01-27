@@ -23,16 +23,14 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "logevent",
-///     "logevent": [
-///         "firebase_event_name": "purchase",
-///         "firebase_event_params": [
-///             "param_value": 99.99,
-///             "param_currency": "USD",
-///             "param_items": [
-///                 "param_items_item_id": ["SKU001", "SKU002"],
-///                 "param_items_item_name": ["Widget", "Gadget"],
-///                 "param_items_price": [29.99, 70.00]
-///             ]
+///     "firebase_event_name": "purchase",
+///     "firebase_event_params": [
+///         "param_value": 99.99,
+///         "param_currency": "USD",
+///         "param_items": [
+///             "param_items_item_id": ["SKU001", "SKU002"],
+///             "param_items_item_name": ["Widget", "Gadget"],
+///             "param_items_price": [29.99, 70.00]
 ///         ]
 ///     ]
 /// ]
@@ -54,18 +52,13 @@ class LogEventCommand: FirebaseCommandProtocol {
     public func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing LogEvent command")
         
-        guard let logEventData = payload.getDataItem(key: name)?
-            .getDataDictionary() else {
-            return false
-        }
-        
         // 1. Extract event name
-        guard let eventName = extractEventName(from: logEventData) else {
+        guard let eventName = extractEventName(from: payload) else {
             return false
         }
         
-        // 2. Build parameters from logevent data
-        let parameters = buildParameters(from: logEventData, eventName: eventName)
+        // 2. Build parameters from payload
+        let parameters = buildParameters(from: payload, eventName: eventName)
         
         // 3. Log the event
         logEvent(eventName, with: parameters)
@@ -73,20 +66,20 @@ class LogEventCommand: FirebaseCommandProtocol {
         return true
     }
     
-    /// Extracts the event name from logevent data.
-    private func extractEventName(from logEventData: [String: DataItem]) -> String? {
-        guard let rawEventName = logEventData.get(key: Param.eventName, as: String.self) else {
-            logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in logevent data")
+    /// Extracts the event name from payload.
+    private func extractEventName(from payload: DataObject) -> String? {
+        guard let rawEventName = payload.get(key: Param.eventName, as: String.self) else {
+            logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in payload")
             return nil
         }
         
         return FirebaseEvent.map(rawEventName)
     }
     
-    /// Builds all Firebase parameters from logevent data (including items).
-    private func buildParameters(from logEventData: [String: DataItem], eventName: String) -> [String: Any] {
-        guard let eventParamsDict = logEventData.getDataItem(key: Param.eventParams)?
-            .getDataDictionary() else {
+    /// Builds all Firebase parameters from payload (including items).
+    private func buildParameters(from payload: DataObject, eventName: String) -> [String: Any] {
+        guard let eventParamsData = payload.getDataItem(key: Param.eventParams),
+              let eventParamsDict = eventParamsData.getDataDictionary() else {
             return [:]
         }
         

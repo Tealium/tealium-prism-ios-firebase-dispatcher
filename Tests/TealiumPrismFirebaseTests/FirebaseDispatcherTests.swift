@@ -60,9 +60,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -79,9 +77,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -102,12 +98,8 @@ final class FirebaseDispatcherTests: XCTestCase {
                 FirebaseConstants.LogEvent.name,
                 FirebaseConstants.SetUserId.name
             ] as [String],
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event"
-            ] as DataObject,
-            FirebaseConstants.SetUserId.name: [
-                FirebaseConstants.SetUserId.Param.userId: "user123"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event",
+            FirebaseConstants.SetUserId.Param.userId: "user123"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -125,16 +117,12 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "event_one"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "event_one"
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
             FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "event_two"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "event_two"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -205,9 +193,7 @@ final class FirebaseDispatcherTests: XCTestCase {
                 "invalid_command",
                 FirebaseConstants.LogEvent.name
             ] as [String],
-            FirebaseConstants.LogEvent.name: [
-                FirebaseConstants.LogEvent.Param.eventName: "test_event"
-            ] as DataObject
+            FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")

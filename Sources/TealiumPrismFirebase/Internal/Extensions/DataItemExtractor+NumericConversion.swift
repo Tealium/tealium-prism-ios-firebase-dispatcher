@@ -20,14 +20,15 @@ import TealiumPrismCore
 /// let timeout1 = data.getNumeric(key: "timeout", as: TimeInterval.self)  // 1800.5 or "1800.5"
 /// let enabled = data.getBoolValue(key: "enabled")  // true or "true"
 /// ```
-extension Dictionary where Key == String, Value == DataItem {
+extension DataItemExtractor {
     
     // MARK: - Numeric Conversion
     
-    /// Extracts a Double value with automatic String → Double conversion.
+    /// Extracts a Double value with automatic Int → Double and String → Double conversion.
     ///
     /// This method first attempts to get the value as a Double.
-    /// If that fails, it attempts to get the value as a String and convert it.
+    /// If that fails, it attempts to get the value as an Int and convert it to Double.
+    /// If that also fails, it attempts to get the value as a String and convert it.
     ///
     /// - Parameters:
     ///   - key: The key to look up
@@ -36,9 +37,14 @@ extension Dictionary where Key == String, Value == DataItem {
     ///
     /// - Note: TimeInterval is a typealias for Double, so this works for both
     func getNumeric(key: String, as type: Double.Type) -> Double? {
-        // Try direct numeric extraction first (handles Int, Double, etc.)
+        // Try direct numeric extraction first (handles Double)
         if let value = get(key: key, as: Double.self) {
             return value
+        }
+        
+        // Try Int → Double conversion
+        if let intValue = get(key: key, as: Int.self) {
+            return Double(intValue)
         }
         
         // Fall back to string conversion

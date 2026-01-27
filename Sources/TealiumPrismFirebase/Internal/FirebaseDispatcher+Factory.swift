@@ -11,23 +11,20 @@ import TealiumPrismCore
 
 extension FirebaseDispatcher {
     
-    /// Factory for creating FirebaseDispatcher instances
     public class Factory: ModuleFactory {
         
         public static let moduleType: String = FirebaseConstants.moduleType
         public var moduleType: String { Self.moduleType }
         
-        public let allowsMultipleInstances: Bool = false
+        public let allowsMultipleInstances: Bool = true
         
-        private let enforcedSettings: DataObject?
+        let enforcedSettings: [DataObject]
+        typealias SettingsBuilderBlock = Modules.EnforcingSettings<FirebaseSettingsBuilder>
         
-        /// Initialize with optional enforced settings
-        /// - Parameter enforcedSettings: Optional settings to enforce on all created instances
-        public init(enforcedSettings: DataObject? = nil) {
-            self.enforcedSettings = enforcedSettings
+        public init(forcingSettings blocks: [SettingsBuilderBlock?] = []) {
+            self.enforcedSettings = blocks.compactMap { block in block?(FirebaseSettingsBuilder()).build() }
         }
         
-        /// Create a new FirebaseDispatcher instance
         public func create(moduleId: String, 
                           context: TealiumContext, 
                           moduleConfiguration: DataObject) -> FirebaseDispatcher? {
@@ -35,12 +32,8 @@ extension FirebaseDispatcher {
                               logger: context.logger)
         }
         
-        /// Return enforced settings if configured
         public func getEnforcedSettings() -> [DataObject] {
-            if let settings = enforcedSettings {
-                return [settings]
-            }
-            return []
+            enforcedSettings
         }
     }
 }
