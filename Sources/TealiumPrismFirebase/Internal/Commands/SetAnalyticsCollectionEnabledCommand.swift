@@ -49,7 +49,7 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
             return false
         }
         
-        guard let enabled = extractAnalyticsEnabled(from: commandData) else {
+        guard let enabled = commandData.getBoolValue(key: Param.analyticsEnabled) else {
             logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(Param.analyticsEnabled)' parameter. " +
                 "Expected boolean value (true/false)")
@@ -60,28 +60,6 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
         logger?.debug(category: LogCategory.firebase, "Analytics collection \(enabled ? "enabled" : "disabled")")
         
         return true
-    }
-    
-    // MARK: - Private Methods
-    
-    /// Extracts analytics enabled flag from command data, supporting both boolean and string conversion.
-    private func extractAnalyticsEnabled(from commandData: [String: DataItem]) -> Bool? {
-        // Try as Bool first
-        if let enabled = commandData.get(key: Param.analyticsEnabled, as: Bool.self) {
-            return enabled
-        }
-        
-        // Try as String and convert
-        if let enabledString = commandData.get(key: Param.analyticsEnabled, as: String.self) {
-            return enabledString.lowercased() == "true" || enabledString == "1"
-        }
-        
-        // Try as Int (0 = false, non-zero = true)
-        if let enabledInt = commandData.get(key: Param.analyticsEnabled, as: Int.self) {
-            return enabledInt != 0
-        }
-        
-        return nil
     }
 }
 

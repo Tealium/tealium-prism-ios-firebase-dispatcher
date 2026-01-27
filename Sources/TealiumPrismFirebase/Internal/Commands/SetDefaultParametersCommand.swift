@@ -79,34 +79,11 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
         var processedParams: [String: Any] = [:]
         
         for (key, value) in defaultParams {
-            // Firebase supports String, Int, and Double only
-            // Note: Check Double first because DataItem.get(as: Int.self) truncates decimals
-            // e.g., 99.99 would return 99 if Int is checked first
-            if let doubleValue = value.get(as: Double.self) {
-                // Check if it's a whole number - store as Int for cleaner Firebase data
-                if doubleValue.truncatingRemainder(dividingBy: 1) == 0 {
-                    processedParams[key] = Int(doubleValue)
-                } else {
-                    processedParams[key] = doubleValue
-                }
-            } else if let stringValue = value.get(as: String.self) {
-                // Empty string clears the parameter
-                if stringValue.isEmpty {
-                    processedParams[key] = NSNull()
-                } else {
-                    processedParams[key] = stringValue
-                }
-            } 
+            processedParams[key] = value.toDataInput()
         }
         
-        // If all parameters were invalid/cleared, clear all default parameters
-        if processedParams.isEmpty {
-            logger?.warn(category: LogCategory.firebase, "All parameters were invalid - command skipped")
-            return false
-        } else {
-            logger?.debug(category: LogCategory.firebase, "Setting \(processedParams.count) default parameter(s): \(processedParams.keys.joined(separator: ", "))")
-            firebaseInstance.setDefaultEventParameters(processedParams)
-        }
+        logger?.debug(category: LogCategory.firebase, "Setting \(processedParams.count) default parameter(s): \(processedParams.keys.joined(separator: ", "))")
+        firebaseInstance.setDefaultEventParameters(processedParams)
         
         return true
     }

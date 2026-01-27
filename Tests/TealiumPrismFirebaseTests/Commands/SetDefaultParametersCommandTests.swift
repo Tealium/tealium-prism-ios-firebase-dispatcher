@@ -84,21 +84,6 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["language"] as? String, "en")
     }
     
-    func test_execute_sets_empty_string_as_nsnull() {
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "to_clear": ""
-                ] as DataObject
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        XCTAssertTrue(mockFirebase.lastDefaultParameters?["to_clear"] is NSNull)
-    }
-    
     // MARK: - Numeric Parameter Tests
     
     func test_execute_sets_int_parameters() {
@@ -128,24 +113,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         let result = command.execute(payload: payload)
         
         XCTAssertTrue(result)
-        // Double with fractional part should be stored as Double
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["price"] as? Double, 99.99)
-    }
-    
-    func test_execute_sets_whole_number_double_as_int() {
-        let payload: DataObject = [
-            FirebaseConstants.SetDefaultParameters.name: [
-                FirebaseConstants.SetDefaultParameters.Param.params: [
-                    "quantity": 100.0  // Whole number double
-                ] as DataObject
-            ] as DataObject
-        ]
-        
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
-        // Whole number doubles should be stored as Int for cleaner Firebase data
-        XCTAssertEqual(mockFirebase.lastDefaultParameters?["quantity"] as? Int, 100)
     }
         
 }

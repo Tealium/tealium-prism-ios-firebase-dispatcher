@@ -49,7 +49,7 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
             return false
         }
         
-        guard let sessionTimeout = extractSessionTimeout(from: commandData) else {
+        guard let sessionTimeout = commandData.getNumeric(key: Param.sessionTimeout, as: TimeInterval.self) else {
             logger?.warn(category: LogCategory.firebase, 
                 "Missing or invalid '\(Param.sessionTimeout)' parameter. " +
                 "Expected numeric value (seconds)")
@@ -60,29 +60,6 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
         logger?.debug(category: LogCategory.firebase, "Session timeout updated to \(sessionTimeout) seconds")
         
         return true
-    }
-    
-    // MARK: - Private Methods
-    
-    /// Extracts session timeout from command data, supporting both numeric types and string conversion.
-    private func extractSessionTimeout(from commandData: [String: DataItem]) -> TimeInterval? {
-        // Try as Double first
-        if let timeout = commandData.get(key: Param.sessionTimeout, as: Double.self) {
-            return timeout
-        }
-        
-        // Try as Int
-        if let timeout = commandData.get(key: Param.sessionTimeout, as: Int.self) {
-            return TimeInterval(timeout)
-        }
-        
-        // Try as String and convert
-        if let timeoutString = commandData.get(key: Param.sessionTimeout, as: String.self),
-           let timeout = Double(timeoutString) {
-            return timeout
-        }
-        
-        return nil
     }
 }
 

@@ -117,10 +117,7 @@ class LogEventCommand: FirebaseCommandProtocol {
             }
             
             let paramName = FirebaseParameter.map(key)
-            guard let convertedValue = convertValue(value, for: paramName) else {
-                continue
-            }
-            result[paramName] = convertedValue
+            result[paramName] = value
         }
         
         return result
@@ -184,10 +181,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         for (key, array) in arrays where index < array.count {
             let paramName = FirebaseItemParameter.map(key)
-            guard let value = convertValue(array[index], for: paramName) else {
-                continue
-            }
-            item[paramName] = value
+             item[paramName] = array[index]
         }
         
         return item
@@ -196,34 +190,6 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Extracts only array values from dictionary.
     private func extractArrays(from dict: [String: DataInput]) -> [String: [DataInput]] {
         dict.compactMapValues { $0 as? [DataInput] }
-    }
-    
-    /// Converts a value to Firebase-compatible type (String, Int, Double, Float, Int64, Bool, NSNumber).
-    private func convertValue(_ value: DataInput, for parameterName: String) -> Any? {
-        switch value {
-        case let intValue as Int:
-            return intValue
-        case let int64Value as Int64:
-            return int64Value
-        case let doubleValue as Double:
-            return doubleValue
-        case let floatValue as Float:
-            return floatValue
-        case let boolValue as Bool:
-            return boolValue
-        case let stringValue as String:
-            return stringValue
-        case let nsNumberValue as NSNumber:
-            // NSNumber can represent various numeric types - pass through as-is
-            // Firebase SDK will handle the conversion
-            return nsNumberValue
-        default:
-            let valueType = String(describing: type(of: value))
-            logger?.warn(category: LogCategory.firebase,
-                "Parameter '\(parameterName)' has unsupported type '\(valueType)'. " +
-                "Firebase supports String, Int, Int64, Double, Float, Bool, NSNumber. Skipping.")
-            return nil
-        }
     }
     
     /// Logs the event to Firebase.
