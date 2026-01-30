@@ -27,20 +27,15 @@ import TealiumPrismCore
 class ResetDataCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
 
     let name = FirebaseConstants.ResetData.name
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing ResetData command")
+    func execute(payload: DataObject) throws {
         firebaseInstance.resetAnalyticsData()
-        logger?.debug(category: LogCategory.firebase, "Firebase Analytics data reset completed")
-        return true
     }
 }
 

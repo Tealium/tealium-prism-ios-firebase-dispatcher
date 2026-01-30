@@ -28,30 +28,23 @@ import TealiumPrismCore
 class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.SetSessionTimeout.name
     typealias Param = FirebaseConstants.SetSessionTimeout.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
-        
+    func execute(payload: DataObject) throws {
         guard let sessionTimeout = payload.getNumeric(key: Param.sessionTimeout, as: Double.self) else {
-            logger?.warn(category: LogCategory.firebase, 
-                "Missing or invalid '\(Param.sessionTimeout)' parameter. " +
-                "Expected numeric value (seconds)")
-            return false
+            throw FirebaseCommandError.invalidParameterType(
+                parameter: Param.sessionTimeout,
+                expectedType: "numeric value (seconds)"
+            )
         }
         
         firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
-        logger?.debug(category: LogCategory.firebase, "Session timeout updated to \(sessionTimeout) seconds")
-        
-        return true
     }
 }
 

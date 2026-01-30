@@ -19,7 +19,7 @@ final class SetConsentCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetConsentCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetConsentCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -30,12 +30,20 @@ final class SetConsentCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_consent_data_returns_false() {
+    func test_execute_without_consent_data_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .noValidConsentSettings = commandError {
+                // Success
+            } else {
+                XCTFail("Expected noValidConsentSettings error")
+            }
+        }
         XCTAssertFalse(mockFirebase.setConsentCalled)
     }
     
@@ -46,9 +54,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adStorage: "granted"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setConsentCalled)
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
     }
@@ -58,9 +64,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adStorage: "denied"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .denied)
     }
     
@@ -69,9 +73,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.analyticsStorage: "granted"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.analyticsStorage], .granted)
     }
     
@@ -80,9 +82,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adUserData: "granted"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adUserData], .granted)
     }
     
@@ -91,9 +91,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adPersonalization: "granted"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adPersonalization], .granted)
     }
     
@@ -107,9 +105,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adPersonalization: "denied"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setConsentCalled)
         
         let consentSettings = mockFirebase.lastConsentSettings!
@@ -128,9 +124,7 @@ final class SetConsentCommandTests: XCTestCase {
             "invalid_type": "granted"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 1)
     }
     
@@ -140,32 +134,38 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.analyticsStorage: "invalid_status"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 1)
     }
     
-    func test_execute_returns_false_when_all_values_are_invalid() {
+    func test_execute_throws_error_when_all_values_are_invalid() {
         let payload: DataObject = [
             "invalid_type": "granted",
             "another_invalid": "denied"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .noValidConsentSettings = commandError {
+                // Success
+            } else {
+                XCTFail("Expected noValidConsentSettings error")
+            }
+        }
         XCTAssertFalse(mockFirebase.setConsentCalled)
     }
     
-    func test_execute_ignores_non_string_value() {
+    func test_execute_throws_error_for_non_string_value() {
         let payload: DataObject = [
             FirebaseConstants.SetConsent.Param.adStorage: 123
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setConsentCalled)
     }
     
@@ -176,9 +176,7 @@ final class SetConsentCommandTests: XCTestCase {
             FirebaseConstants.SetConsent.Param.adStorage: "GRANTED"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
     }
 }

@@ -29,11 +29,11 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
     // MARK: - Initialization Tests
     
     func test_init_with_all_values() throws {
-        let dataObject = try DataItem(serializing: [
+        let dataObject: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 3600,
             FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false,
             FirebaseDispatcherConfiguration.Keys.logLevel: "debug"
-        ])
+        ]
         
         let config = FirebaseDispatcherConfiguration(configuration: dataObject)
         
@@ -43,9 +43,9 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
     }
     
     func test_init_with_partial_values() throws {
-        let dataObject = try DataItem(serializing: [
+        let dataObject: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800
-        ])
+        ]
         
         let config = FirebaseDispatcherConfiguration(configuration: dataObject)
         
@@ -65,9 +65,9 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
     }
     
     func test_init_sessionTimeout_numeric_conversion_from_int() throws {
-        let dataObject = try DataItem(serializing: [
+        let dataObject: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800
-        ])
+        ]
         
         let config = FirebaseDispatcherConfiguration(configuration: dataObject)
         
@@ -75,9 +75,9 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
     }
     
     func test_init_sessionTimeout_numeric_conversion_from_string() throws {
-        let dataObject = try DataItem(serializing: [
+        let dataObject: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: "2400"
-        ])
+        ]
         
         let config = FirebaseDispatcherConfiguration(configuration: dataObject)
         

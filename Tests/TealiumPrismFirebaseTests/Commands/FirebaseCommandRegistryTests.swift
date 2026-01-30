@@ -31,9 +31,8 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         registry.register(command)
         
         let payload: DataObject = [:]
-        let result = registry.execute(commandName: "test", payload: payload)
         
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try registry.execute(commandName: "test", payload: payload))
         XCTAssertTrue(command.executeCalled)
     }
     
@@ -46,9 +45,9 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         
         let payload: DataObject = [:]
         
-        XCTAssertTrue(registry.execute(commandName: "command1", payload: payload))
-        XCTAssertTrue(registry.execute(commandName: "command2", payload: payload))
-        XCTAssertTrue(registry.execute(commandName: "command3", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "command1", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "command2", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "command3", payload: payload))
         
         XCTAssertTrue(command1.executeCalled)
         XCTAssertTrue(command2.executeCalled)
@@ -63,7 +62,7 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         registry.register(newCommand)
         
         let payload: DataObject = [:]
-        _ = registry.execute(commandName: "test", payload: payload)
+        XCTAssertNoThrow(try registry.execute(commandName: "test", payload: payload))
         
         XCTAssertFalse(originalCommand.executeCalled)
         XCTAssertTrue(newCommand.executeCalled)
@@ -71,10 +70,20 @@ final class FirebaseCommandRegistryTests: XCTestCase {
     
     // MARK: - Execution Tests
     
-    func test_execute_unknown_command_returns_false() {
+    func test_execute_unknown_command_throws_error() {
         let payload: DataObject = [:]
-        let result = registry.execute(commandName: "unknown", payload: payload)
-        XCTAssertFalse(result)
+        
+        XCTAssertThrowsError(try registry.execute(commandName: "unknown", payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .commandNotFound(let name) = commandError {
+                XCTAssertEqual(name, "unknown")
+            } else {
+                XCTFail("Expected commandNotFound error")
+            }
+        }
     }
     
     func test_execute_normalizes_command_name_to_lowercase() {
@@ -83,9 +92,9 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         
         let payload: DataObject = [:]
         
-        XCTAssertTrue(registry.execute(commandName: "TEST", payload: payload))
-        XCTAssertTrue(registry.execute(commandName: "Test", payload: payload))
-        XCTAssertTrue(registry.execute(commandName: "TeSt", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "TEST", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "Test", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "TeSt", payload: payload))
     }
     
     func test_execute_trims_whitespace_from_command_name() {
@@ -94,8 +103,8 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         
         let payload: DataObject = [:]
         
-        XCTAssertTrue(registry.execute(commandName: "  test  ", payload: payload))
-        XCTAssertTrue(registry.execute(commandName: "\ttest\t", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "  test  ", payload: payload))
+        XCTAssertNoThrow(try registry.execute(commandName: "\ttest\t", payload: payload))
     }
     
     func test_execute_passes_payload_to_command() {
@@ -104,32 +113,52 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         
         let payload: DataObject = ["key": "value", "number": 42]
         
-        _ = registry.execute(commandName: "test", payload: payload)
+        XCTAssertNoThrow(try registry.execute(commandName: "test", payload: payload))
         
         XCTAssertEqual(command.lastPayload, payload)
     }
     
-    func test_execute_returns_command_result() {
-        let successCommand = MockCommand(name: "success", returnValue: true)
-        let failureCommand = MockCommand(name: "failure", returnValue: false)
+    func test_execute_propagates_command_error() {
+        let failureCommand = MockCommand(name: "failure", shouldThrow: true)
         
-        registry.register(successCommand)
         registry.register(failureCommand)
         
         let payload: DataObject = [:]
         
-        XCTAssertTrue(registry.execute(commandName: "success", payload: payload))
-        XCTAssertFalse(registry.execute(commandName: "failure", payload: payload))
+        XCTAssertThrowsError(try registry.execute(commandName: "failure", payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
     }
     
-    func test_execute_empty_command_name_returns_false() {
+    func test_execute_empty_command_name_throws_error() {
         let command = MockCommand(name: "test")
         registry.register(command)
         
         let payload: DataObject = [:]
         
-        XCTAssertFalse(registry.execute(commandName: "", payload: payload))
-        XCTAssertFalse(registry.execute(commandName: "   ", payload: payload))
+        XCTAssertThrowsError(try registry.execute(commandName: "", payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .commandNotFound = commandError {
+                // Success - empty name is not found
+            } else {
+                XCTFail("Expected commandNotFound error")
+            }
+        }
+        
+        XCTAssertThrowsError(try registry.execute(commandName: "   ", payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .commandNotFound = commandError {
+                // Success - whitespace name is not found
+            } else {
+                XCTFail("Expected commandNotFound error")
+            }
+        }
     }
 }
 

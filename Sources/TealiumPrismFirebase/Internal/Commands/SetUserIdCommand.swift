@@ -29,34 +29,22 @@ import TealiumPrismCore
 class SetUserIdCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
 
     let name = FirebaseConstants.SetUserId.name
     typealias Param = FirebaseConstants.SetUserId.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetUserId command")
-        
+    func execute(payload: DataObject) throws {
         guard let userId = payload.get(key: Param.userId, as: String.self) else {
-            return false
+            throw FirebaseCommandError.missingParameter(Param.userId)
         }
         
         // Empty string clears the user ID
         let userIdToSet = userId.isEmpty ? nil : userId
         
-        if let userIdToSet = userIdToSet {
-            logger?.debug(category: LogCategory.firebase, "Setting user ID: '\(userIdToSet)'")
-        } else {
-            logger?.debug(category: LogCategory.firebase, "Clearing user ID")
-        }
-        
         firebaseInstance.setUserId(userIdToSet)
-        
-        return true
     }
 }

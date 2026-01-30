@@ -18,7 +18,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -29,12 +29,12 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_command_data_returns_false() {
+    func test_execute_without_command_data_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
     }
     
@@ -45,9 +45,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
             FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 1800.5
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
@@ -59,9 +57,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
             FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
     }
@@ -73,21 +69,19 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
             FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "1800.5"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
     
-    func test_execute_returns_false_for_invalid_string() {
+    func test_execute_throws_error_for_invalid_string() {
         let payload: DataObject = [
             FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "invalid"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
     }
     

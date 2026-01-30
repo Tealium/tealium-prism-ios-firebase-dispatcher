@@ -28,30 +28,23 @@ import TealiumPrismCore
 class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
     typealias Param = FirebaseConstants.SetAnalyticsCollectionEnabled.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetAnalyticsCollectionEnabled command")
-        
+    func execute(payload: DataObject) throws {
         guard let enabled = payload.getBoolValue(key: Param.analyticsEnabled) else {
-            logger?.warn(category: LogCategory.firebase, 
-                "Missing or invalid '\(Param.analyticsEnabled)' parameter. " +
-                "Expected boolean value (true/false)")
-            return false
+            throw FirebaseCommandError.invalidParameterType(
+                parameter: Param.analyticsEnabled,
+                expectedType: "boolean (true/false)"
+            )
         }
         
         firebaseInstance.setAnalyticsCollectionEnabled(enabled)
-        logger?.debug(category: LogCategory.firebase, "Analytics collection \(enabled ? "enabled" : "disabled")")
-        
-        return true
     }
 }
 

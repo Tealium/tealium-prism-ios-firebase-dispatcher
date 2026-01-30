@@ -20,6 +20,7 @@ import TealiumPrismCore
 ///
 /// ## Expected Payload
 ///
+/// ### Format 1: Object of Arrays (Tealium convention - most common)
 /// ```
 /// payload = [
 ///     "command": "logevent",
@@ -35,131 +36,165 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
+///
+/// ### Format 2: Array of Objects (Firebase-ready format)
+/// ```
+/// payload = [
+///     "command": "logevent",
+///     "firebase_event_name": "purchase",
+///     "firebase_event_params": [
+///         "param_value": 99.99,
+///         "param_currency": "USD",
+///         "param_items": [
+///             ["item_id": "SKU001", "item_name": "Widget", "price": 29.99],
+///             ["item_id": "SKU002", "item_name": "Gadget", "price": 70.00]
+///         ]
+///     ]
+/// ]
+/// ```
 class LogEventCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.LogEvent.name
     typealias Param = FirebaseConstants.LogEvent.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing LogEvent command")
-        
+    func execute(payload: DataObject) throws {
         // 1. Extract event name
-        guard let eventName = extractEventName(from: payload) else {
-            return false
-        }
+        let eventName = try extractEventName(from: payload)
         
-        // 2. Build parameters from payload
-        let parameters = buildParameters(from: payload, eventName: eventName)
+        // 2. Build parameters from payload (may throw if item arrays are mismatched)
+        let parameters = try buildParameters(from: payload, eventName: eventName)
         
-        // 3. Log the event
-        logEvent(eventName, with: parameters)
-        
-        return true
+        // 3. Log the event to Firebase
+        firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
     }
     
     /// Extracts the event name from payload.
-    private func extractEventName(from payload: DataObject) -> String? {
+    private func extractEventName(from payload: DataObject) throws -> String {
         guard let rawEventName = payload.get(key: Param.eventName, as: String.self) else {
-            logger?.warn(category: LogCategory.firebase, "Missing 'firebase_event_name' in payload")
-            return nil
+            throw FirebaseCommandError.missingParameter(Param.eventName)
         }
         
         return FirebaseEvent.map(rawEventName)
     }
     
     /// Builds all Firebase parameters from payload (including items).
-    private func buildParameters(from payload: DataObject, eventName: String) -> [String: Any] {
-        guard let eventParamsData = payload.getDataItem(key: Param.eventParams),
-              let eventParamsDict = eventParamsData.getDataDictionary() else {
+    /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
+    private func buildParameters(from payload: DataObject, eventName: String) throws -> [String: Any] {
+        guard let eventParamsData = payload.getDataDictionary(key: Param.eventParams) else {
             return [:]
         }
         
         var parameters: [String: Any] = [:]
         
         // Build items first (if present)
-        if let items = buildItems(from: eventParamsDict, eventName: eventName) {
+        if let items = try buildItems(from: eventParamsData, eventName: eventName) {
             parameters[AnalyticsParameterItems] = items  // Use Firebase SDK constant "items"
         }
         
         // Build regular parameters
-        let regularParams = buildRegularParameters(from: eventParamsDict)
+        let regularParams = buildRegularParameters(from: eventParamsData)
         parameters.merge(regularParams) { _, new in new }
         
         return parameters
     }
     
     /// Builds regular parameters (excluding items).
-    private func buildRegularParameters(from eventParamsDict: [String: DataItem]) -> [String: Any] {
-        let params = eventParamsDict.toDataObject().asDictionary()
+    private func buildRegularParameters(from eventParamsData: [String: DataItem]) -> [String: Any] {
         var result: [String: Any] = [:]
         
-        for (key, value) in params {
-            // Skip items - handled separately (both Tealium and Firebase conventions)
-            guard key != Param.items,
-                  key != AnalyticsParameterItems else { 
+        for (key, dataItem) in eventParamsData {
+            // Skip items - handled separately via param_items
+            guard key != Param.items else { 
                 continue 
             }
             
             let paramName = FirebaseParameter.map(key)
-            result[paramName] = value
+            result[paramName] = dataItem.toDataInput()
         }
         
         return result
     }
     
-    /// Builds Firebase items array from parallel arrays format.
+    /// Builds Firebase items array from either parallel arrays or array of objects format.
     /// - Returns: Array of item dictionaries, or nil if no items found.
+    /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
     ///
-    /// Supports both Tealium convention (`param_items`) and Firebase convention (`items`).
-    private func buildItems(from eventParamsDict: [String: DataItem], eventName: String) -> [[String: Any]]? {
-        // Try Tealium convention first: "param_items"
-        var itemsData = eventParamsDict.getDataItem(key: Param.items)
-        
-        // If not found, try Firebase convention: "items"
-        if itemsData == nil {
-            itemsData = eventParamsDict.getDataItem(key: AnalyticsParameterItems)
-        }
-        
-        guard let itemsData = itemsData,
-              let itemsDict = itemsData.getDataDictionary() else {
+    /// Only checks `param_items` key. This allows users to use "items" as a regular parameter if needed.
+    ///
+    /// Supported formats:
+    /// 1. Object of arrays (Tealium): `{"param_items_item_id": ["SKU1", "SKU2"], ...}`
+    /// 2. Array of objects (Firebase-ready): `[{"item_id": "SKU1"}, {"item_id": "SKU2"}]`
+    private func buildItems(from eventParamsData: [String: DataItem], eventName: String) throws -> [[String: Any]]? {
+        guard let itemsData = eventParamsData[Param.items] else {
             return nil
         }
         
-        let parallelArrays = itemsDict.toDataObject().asDictionary()
-        let items = buildItemsFromParallelArrays(parallelArrays)
+        // Detect format and handle accordingly
+        if let arrayOfObjects = itemsData.getDataArray() {
+            // Format: [{"item_id": "SKU1"}, {"item_id": "SKU2"}]
+            // Already in Firebase array format - validate and map parameter names
+            let items = buildItemsFromArrayOfObjects(arrayOfObjects)
+            return items.isEmpty ? nil : items
+        } else if let objectOfArrays = itemsData.getDataDictionary() {
+            // Format: {"param_items_item_id": ["SKU1", "SKU2"]}
+            // Tealium parallel arrays format - needs conversion
+            let items = try buildItemsFromParallelArrays(objectOfArrays)
+            return items.isEmpty ? nil : items
+        }
         
-        guard !items.isEmpty else { return nil }
-        
-        logger?.debug(category: LogCategory.firebase, "Event '\(eventName)' includes \(items.count) item(s)")
-        return items
+        return nil
+    }
+    
+    /// Converts array of objects to Firebase items format with parameter name mapping.
+    /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
+    /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
+    ///
+    /// Maps parameter names through FirebaseItemParameter.map() to support both:
+    /// - Firebase convention: "item_id" → "item_id"
+    /// - Tealium convention: "param_items_item_id" → "item_id"
+    private func buildItemsFromArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
+        return arrayOfObjects.compactMap { itemData in
+            guard let itemDict = itemData.getDataDictionary() else {
+                return nil
+            }
+            
+            var mappedItem: [String: Any] = [:]
+            for (key, value) in itemDict {
+                let paramName = FirebaseItemParameter.map(key)
+                mappedItem[paramName] = value.toDataInput()
+            }
+            
+            return mappedItem.isEmpty ? nil : mappedItem
+        }
     }
     
     /// Converts parallel arrays to array of item dictionaries.
     /// Input:  { "param_items_item_id": ["SKU1", "SKU2"], "param_items_item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
-    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataInput]) -> [[String: Any]] {
+    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws -> [[String: Any]] {
         let arrays = extractArrays(from: parallelArrays)
         
         guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {
             return []
         }
         
-        // Warn if arrays have mismatched lengths
-        if !arrays.values.allSatisfy({ $0.count == itemCount }) {
-            let mismatchedKeys = arrays.filter { $0.value.count != itemCount }.map(\.key)
-            logger?.warn(category: LogCategory.firebase,
-                "Item arrays have mismatched lengths (expected: \(itemCount)). " +
-                "Arrays with shorter lengths will have missing values for some items. " +
-                "Mismatched keys: \(mismatchedKeys.joined(separator: ", "))")
+        // Validate all arrays have the same length
+        if let mismatch = arrays.first(where: { $0.value.count != itemCount }) {
+            // Find the expected length array for comparison
+            if let expected = arrays.first(where: { $0.value.count == itemCount }) {
+                throw FirebaseCommandError.arrayLengthMismatch(
+                    array1: expected.key,
+                    count1: expected.value.count,
+                    array2: mismatch.key,
+                    count2: mismatch.value.count
+                )
+            }
         }
         
         return (0..<itemCount).compactMap { index in
@@ -174,27 +209,15 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         for (key, array) in arrays where index < array.count {
             let paramName = FirebaseItemParameter.map(key)
-             item[paramName] = array[index]
+            item[paramName] = array[index]
         }
         
         return item
     }
     
-    /// Extracts only array values from dictionary.
-    private func extractArrays(from dict: [String: DataInput]) -> [String: [DataInput]] {
-        dict.compactMapValues { $0 as? [DataInput] }
-    }
-    
-    /// Logs the event to Firebase.
-    private func logEvent(_ eventName: String, with parameters: [String: Any]) {
-        if parameters.isEmpty {
-            logger?.debug(category: LogCategory.firebase, "Logging event '\(eventName)' with no parameters")
-        } else {
-            logger?.debug(category: LogCategory.firebase,
-                "Logging event '\(eventName)' with \(parameters.count) parameter(s): \(parameters.keys.sorted().joined(separator: ", "))")
-        }
-        
-        firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
+    /// Extracts only array values from dictionary using safe DataItem methods.
+    private func extractArrays(from dict: [String: DataItem]) -> [String: [DataInput]] {
+        dict.compactMapValues { $0.getDataArray()?.map { $0.toDataInput() } }
     }
 }
 

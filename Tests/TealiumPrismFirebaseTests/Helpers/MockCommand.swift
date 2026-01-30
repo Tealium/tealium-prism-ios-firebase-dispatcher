@@ -11,25 +11,30 @@
 import Foundation
 
 /// Mock implementation of FirebaseCommandProtocol for testing command execution.
-/// Tracks execution calls and can be configured to succeed or fail.
+/// Tracks execution calls and can be configured to succeed or throw an error.
 class MockCommand: FirebaseCommandProtocol {
     
     let name: String
-    let returnValue: Bool
+    let shouldThrow: Bool
+    let errorToThrow: Error?
     
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
     
-    init(name: String, returnValue: Bool = true) {
+    init(name: String, shouldThrow: Bool = false, errorToThrow: Error? = nil) {
         self.name = name
-        self.returnValue = returnValue
+        self.shouldThrow = shouldThrow
+        self.errorToThrow = errorToThrow
     }
     
-    func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) throws {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1
-        return returnValue
+        
+        if shouldThrow {
+            throw errorToThrow ?? FirebaseCommandError.missingParameter("test_param")
+        }
     }
 }

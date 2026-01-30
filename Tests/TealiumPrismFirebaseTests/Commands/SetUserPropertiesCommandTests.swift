@@ -18,7 +18,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetUserPropertiesCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -29,36 +29,36 @@ final class SetUserPropertiesCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_property_data_returns_false() {
+    func test_execute_without_property_data_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setUserPropertyCalled)
     }
     
-    func test_execute_without_property_names_returns_false() {
+    func test_execute_without_property_names_throws_error() {
         let payload: DataObject = [
             FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
     }
     
-    func test_execute_without_property_values_returns_false() {
+    func test_execute_without_property_values_throws_error() {
         let payload: DataObject = [
             FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2"]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
     }
     
-    func test_execute_with_empty_names_array_returns_false() {
+    func test_execute_with_empty_names_array_throws_error() {
         let emptyNamesArray: [String] = []
         let emptyValuesArray: [String] = []
         let payload: DataObject = [
@@ -66,20 +66,36 @@ final class SetUserPropertiesCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperties.Param.propertyValues: emptyValuesArray
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .emptyArray = commandError {
+                // Success
+            } else {
+                XCTFail("Expected emptyArray error")
+            }
+        }
     }
     
-    func test_execute_with_mismatched_array_lengths_returns_false() {
+    func test_execute_with_mismatched_array_lengths_throws_error() {
         let payload: DataObject = [
             FirebaseConstants.SetUserProperties.Param.propertyNames: ["prop1", "prop2", "prop3"],
             FirebaseConstants.SetUserProperties.Param.propertyValues: ["value1", "value2"]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .arrayLengthMismatch = commandError {
+                // Success
+            } else {
+                XCTFail("Expected arrayLengthMismatch error")
+            }
+        }
     }
     
     // MARK: - Single Property Tests
@@ -90,9 +106,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium"]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserPropertyCalled)
         XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 1)
         XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].name, "subscription_tier")
@@ -107,9 +121,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "business"]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 3)
         
         // Note: Order may vary, so we check by name
@@ -127,9 +139,7 @@ final class SetUserPropertiesCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperties.Param.propertyValues: [""]
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, nil)
     }
     

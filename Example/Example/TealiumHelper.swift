@@ -239,11 +239,9 @@ class TealiumHelper {
         ])
     }
     
-    /// Clear default parameters (empty dict removes all defaults)
+    /// Clear default parameters (omitting firebase_params passes nil to Firebase)
     func clearDefaultParameters() {
-        teal?.track("set_default_params", data: [
-            "default_params": [:] as DataObject
-        ])
+        teal?.track("set_default_params", data: [:])
     }
     
     // MARK: - SetConsentCommand

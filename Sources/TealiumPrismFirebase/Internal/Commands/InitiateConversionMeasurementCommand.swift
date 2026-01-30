@@ -36,78 +36,62 @@ import TealiumPrismCore
 class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.InitiateConversionMeasurement.name
     typealias Param = FirebaseConstants.InitiateConversionMeasurement.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing InitiateConversionMeasurement command")
-        
+    func execute(payload: DataObject) throws {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.get(key: Param.hashedEmailAddress, as: String.self) {
-            return initiateWithHashedEmail(hashedEmail)
+            try initiateWithHashedEmail(hashedEmail)
         } else if let hashedPhone = payload.get(key: Param.hashedPhoneNumber, as: String.self) {
-            return initiateWithHashedPhone(hashedPhone)
+            try initiateWithHashedPhone(hashedPhone)
         } else if let email = payload.get(key: Param.emailAddress, as: String.self) {
-            return initiateWithEmail(email)
+            try initiateWithEmail(email)
         } else if let phone = payload.get(key: Param.phoneNumber, as: String.self) {
-            return initiateWithPhone(phone)
+            try initiateWithPhone(phone)
         } else {
-            logger?.warn(category: LogCategory.firebase,
-                "No valid parameter found. Expected one of: '\(Param.emailAddress)', " +
-                "'\(Param.phoneNumber)', " +
-                "'\(Param.hashedEmailAddress)', " +
-                "'\(Param.hashedPhoneNumber)' - command skipped")
-            return false
+            throw FirebaseCommandError.noValidParameters(expected: [
+                Param.emailAddress,
+                Param.phoneNumber,
+                Param.hashedEmailAddress,
+                Param.hashedPhoneNumber
+            ])
         }
     }
     
     // MARK: - Private Helpers
     
-    private func initiateWithEmail(_ email: String) -> Bool {
+    private func initiateWithEmail(_ email: String) throws {
         guard !email.isEmpty else {
-            logger?.warn(category: LogCategory.firebase, "Email address is empty - command skipped")
-            return false
+            throw FirebaseCommandError.emptyParameter(Param.emailAddress)
         }
-        logger?.debug(category: LogCategory.firebase, "Initiating conversion measurement with email address")
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
-        return true
     }
     
-    private func initiateWithPhone(_ phone: String) -> Bool {
+    private func initiateWithPhone(_ phone: String) throws {
         guard !phone.isEmpty else {
-            logger?.warn(category: LogCategory.firebase, "Phone number is empty - command skipped")
-            return false
+            throw FirebaseCommandError.emptyParameter(Param.phoneNumber)
         }
-        logger?.debug(category: LogCategory.firebase, "Initiating conversion measurement with phone number")
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
-        return true
     }
     
-    private func initiateWithHashedEmail(_ hashedEmail: String) -> Bool {
+    private func initiateWithHashedEmail(_ hashedEmail: String) throws {
         guard !hashedEmail.isEmpty else {
-            logger?.warn(category: LogCategory.firebase, "Hashed email address is empty - command skipped")
-            return false
+            throw FirebaseCommandError.emptyParameter(Param.hashedEmailAddress)
         }
-        logger?.debug(category: LogCategory.firebase, "Initiating conversion measurement with hashed email address")
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data(hashedEmail.utf8))
-        return true
     }
     
-    private func initiateWithHashedPhone(_ hashedPhone: String) -> Bool {
+    private func initiateWithHashedPhone(_ hashedPhone: String) throws {
         guard !hashedPhone.isEmpty else {
-            logger?.warn(category: LogCategory.firebase, "Hashed phone number is empty - command skipped")
-            return false
+            throw FirebaseCommandError.emptyParameter(Param.hashedPhoneNumber)
         }
-        logger?.debug(category: LogCategory.firebase, "Initiating conversion measurement with hashed phone number")
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: Data(hashedPhone.utf8))
-        return true
     }
 }
 

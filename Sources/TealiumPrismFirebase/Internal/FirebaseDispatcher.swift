@@ -47,16 +47,16 @@ class FirebaseDispatcher: Dispatcher {
     
     private func registerCommands() {
         commandRegistry.registerAll([
-            SetSessionTimeoutCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance, logger: logger),
-            LogEventCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetUserPropertyCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetUserPropertiesCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetDefaultParametersCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetUserIdCommand(firebaseInstance: firebaseInstance, logger: logger),
-            ResetDataCommand(firebaseInstance: firebaseInstance, logger: logger),
-            SetConsentCommand(firebaseInstance: firebaseInstance, logger: logger),
-            InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance, logger: logger)
+            SetSessionTimeoutCommand(firebaseInstance: firebaseInstance),
+            SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
+            LogEventCommand(firebaseInstance: firebaseInstance),
+            SetUserPropertyCommand(firebaseInstance: firebaseInstance),
+            SetUserPropertiesCommand(firebaseInstance: firebaseInstance),
+            SetDefaultParametersCommand(firebaseInstance: firebaseInstance),
+            SetUserIdCommand(firebaseInstance: firebaseInstance),
+            ResetDataCommand(firebaseInstance: firebaseInstance),
+            SetConsentCommand(firebaseInstance: firebaseInstance),
+            InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance)
         ])
     }
     
@@ -86,15 +86,16 @@ class FirebaseDispatcher: Dispatcher {
         
         // Execute each command
         for commandName in commands {
-            let success = commandRegistry.execute(
-                commandName: commandName,
-                payload: payload
-            )
-            
-            if success {
+            do {
+                try commandRegistry.execute(
+                    commandName: commandName,
+                    payload: payload
+                )
                 logger?.debug(category: LogCategory.firebase, "Command '\(commandName)' executed successfully")
-            } else {
-                logger?.warn(category: LogCategory.firebase, "Command '\(commandName)' failed or was skipped")
+            } catch let error as FirebaseCommandError {
+                logger?.warn(category: LogCategory.firebase, "Command '\(commandName)' failed: \(error.message)")
+            } catch {
+                logger?.warn(category: LogCategory.firebase, "Command '\(commandName)' failed with unexpected error: \(error)")
             }
         }
     }

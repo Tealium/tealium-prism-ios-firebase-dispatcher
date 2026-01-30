@@ -35,52 +35,31 @@ import FirebaseAnalytics
 class SetConsentCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.SetConsent.name
     typealias Param = FirebaseConstants.SetConsent.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetConsent command")
-        
-        var consentSettings: [ConsentType: ConsentStatus] = [:]
-        
+    func execute(payload: DataObject) throws {
         // Check for known consent parameter keys
         let consentKeys = [Param.adStorage, Param.analyticsStorage, Param.adUserData, Param.adPersonalization]
         
-        for key in consentKeys {
-            guard let stringValue = payload.get(key: key, as: String.self) else {
-                continue
+        let consentSettings = Dictionary(uniqueKeysWithValues: consentKeys.compactMap { key -> (ConsentType, ConsentStatus)? in
+            guard let stringValue = payload.get(key: key, as: String.self),
+                  let consentType = ConsentType.from(key),
+                  let status = ConsentStatus.from(stringValue) else {
+                return nil
             }
-            
-            guard let consentType = ConsentType.from(key) else {
-                logger?.warn(category: LogCategory.firebase, 
-                           "Invalid consent type '\(key)' - ignoring")
-                continue
-            }
-        
-            guard let status = ConsentStatus.from(stringValue) else {
-                logger?.warn(category: LogCategory.firebase, 
-                           "Invalid consent status '\(stringValue)' for '\(key)' - expected 'granted' or 'denied', ignoring")
-                continue
-            }
-            
-            consentSettings[consentType] = status
-        }
+            return (consentType, status)
+        })
         
         guard !consentSettings.isEmpty else {
-            logger?.warn(category: LogCategory.firebase, 
-                       "No valid consent settings provided - command skipped")
-            return false
+            throw FirebaseCommandError.noValidConsentSettings
         }
         
-        logger?.debug(category: LogCategory.firebase, "Setting consent: \(consentSettings.map { "\($0.key.rawValue)=\($0.value.rawValue)" }.joined(separator: ", "))")
         firebaseInstance.setConsent(consentSettings)
-        return true
     }
 }

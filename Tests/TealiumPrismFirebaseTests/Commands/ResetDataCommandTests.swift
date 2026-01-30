@@ -18,7 +18,7 @@ final class ResetDataCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = ResetDataCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = ResetDataCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -32,17 +32,13 @@ final class ResetDataCommandTests: XCTestCase {
     func test_execute_calls_reset_analytics_data() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.resetAnalyticsDataCalled)
     }
     
-    func test_execute_always_returns_true() {
+    func test_execute_always_succeeds() {
         let payload: DataObject = ["some": "data"]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
     }
 }

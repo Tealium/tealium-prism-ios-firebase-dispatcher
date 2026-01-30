@@ -18,7 +18,7 @@ final class SetUserIdCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetUserIdCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetUserIdCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -29,12 +29,20 @@ final class SetUserIdCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_user_id_returns_false() {
+    func test_execute_without_user_id_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .missingParameter = commandError {
+                // Success
+            } else {
+                XCTFail("Expected missingParameter error")
+            }
+        }
         XCTAssertFalse(mockFirebase.setUserIdCalled)
     }
     
@@ -45,9 +53,7 @@ final class SetUserIdCommandTests: XCTestCase {
             FirebaseConstants.SetUserId.Param.userId: "user@example.com"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserIdCalled)
         XCTAssertEqual(mockFirebase.lastUserId, "user@example.com")
     }
@@ -59,9 +65,7 @@ final class SetUserIdCommandTests: XCTestCase {
             FirebaseConstants.SetUserId.Param.userId: ""
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserIdCalled)
         XCTAssertNil(mockFirebase.lastUserId)
     }

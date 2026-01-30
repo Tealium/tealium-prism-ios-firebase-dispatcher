@@ -18,7 +18,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetUserPropertyCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetUserPropertyCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -29,23 +29,23 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_property_data_returns_false() {
+    func test_execute_without_property_data_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setUserPropertyCalled)
     }
     
-    func test_execute_without_property_name_returns_false() {
+    func test_execute_without_property_name_throws_error() {
         let payload: DataObject = [
             FirebaseConstants.SetUserProperty.Param.propertyValue: "value"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
     }
     
     // MARK: - Set Property Tests
@@ -56,9 +56,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserPropertyCalled)
         XCTAssertEqual(mockFirebase.lastUserPropertyName, "tier")
         XCTAssertEqual(mockFirebase.lastUserPropertyValue, "premium")
@@ -71,9 +69,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
             FirebaseConstants.SetUserProperty.Param.propertyValue: ""
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserPropertyCalled)
         XCTAssertEqual(mockFirebase.lastUserPropertyName, "tier")
         XCTAssertNil(mockFirebase.lastUserPropertyValue)

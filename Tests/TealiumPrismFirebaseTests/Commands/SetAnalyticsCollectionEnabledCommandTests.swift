@@ -18,7 +18,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
-        command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase, logger: nil)
+        command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase)
     }
     
     override func tearDown() {
@@ -29,12 +29,12 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     // MARK: - Basic Tests
     
-    func test_execute_without_command_data_returns_false() {
+    func test_execute_without_command_data_throws_error() {
         let payload: DataObject = [:]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertFalse(result)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is FirebaseCommandError)
+        }
         XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
     }
     
@@ -45,9 +45,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: true
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
@@ -57,9 +55,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: false
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
@@ -71,9 +67,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "true"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
@@ -83,9 +77,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "false"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
@@ -95,9 +87,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "1"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     
@@ -106,9 +96,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "0"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
     
@@ -117,9 +105,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: "TRUE"
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     
@@ -130,9 +116,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 1
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     
@@ -141,9 +125,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 0
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
     
@@ -152,9 +134,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
             FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: 42
         ]
         
-        let result = command.execute(payload: payload)
-        
-        XCTAssertTrue(result)
+        XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
     

@@ -30,36 +30,27 @@ import TealiumPrismCore
 class SetUserPropertyCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
 
     let name = FirebaseConstants.SetUserProperty.name
     typealias Param = FirebaseConstants.SetUserProperty.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
-        
+    func execute(payload: DataObject) throws {
         guard let propertyName = payload.get(key: Param.propertyName, as: String.self) else {
-            logger?.warn(category: LogCategory.firebase, 
-                       "Missing property name - command skipped")
-            return false
+            throw FirebaseCommandError.missingParameter(Param.propertyName)
         }
         
         let value = payload.get(key: Param.propertyValue, as: String.self)
         
         // Empty string or nil removes the property
         if let value = value, !value.isEmpty {
-            logger?.debug(category: LogCategory.firebase, "Setting user property '\(propertyName)' = '\(value)'")
             firebaseInstance.setUserProperty(value, forName: propertyName)
         } else {
-            logger?.debug(category: LogCategory.firebase, "Removing user property '\(propertyName)'")
             firebaseInstance.setUserProperty(nil, forName: propertyName)
         }
-        return true
     }
 }
 

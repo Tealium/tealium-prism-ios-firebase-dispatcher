@@ -13,7 +13,7 @@ import TealiumPrismCore
 ///
 /// Default parameters are automatically included with every event logged to Firebase.
 /// These parameters persist across app runs and are of lower precedence than event parameters.
-/// Empty dictionary or missing payload clears all default parameters.
+/// Missing payload (nil) clears all default parameters.
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
@@ -33,50 +33,24 @@ import TealiumPrismCore
 class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     private let firebaseInstance: FirebaseCommand
-    private let logger: LoggerProtocol?
     
-    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand) {
         self.firebaseInstance = firebaseInstance
-        self.logger = logger
     }
     
     let name = FirebaseConstants.SetDefaultParameters.name
     typealias Param = FirebaseConstants.SetDefaultParameters.Param
     
-    func execute(payload: DataObject) -> Bool {
-        logger?.debug(category: LogCategory.firebase, "Executing SetDefaultParameters command")
-        
-        // firebase_params is missing -> clear all default parameters (intended behavior)
-        guard let paramsData = payload.getDataItem(key: Param.params) else {
-            logger?.debug(category: LogCategory.firebase, "Clearing all default parameters (firebase_params missing)")
+    func execute(payload: DataObject) throws {
+        // firebase_params is missing -> clear all default parameters
+        guard let defaultParamsData = payload.getDataDictionary(key: Param.params) else {
             firebaseInstance.setDefaultEventParameters(nil)
-            return true
+            return
         }
         
-        // firebase_params exists but is not a dictionary -> error
-        guard let defaultParams = paramsData.getDataDictionary() else {
-            logger?.warn(category: LogCategory.firebase, "Invalid 'firebase_params' type - expected dictionary - command skipped")
-            return false
-        }
+        let defaultParams = defaultParamsData.mapValues { $0.toDataInput() }
         
-        // firebase_params is empty dictionary {} -> clear all default parameters (intended behavior)
-        if defaultParams.isEmpty {
-            logger?.debug(category: LogCategory.firebase, "Clearing all default parameters (empty firebase_params)")
-            firebaseInstance.setDefaultEventParameters(nil)
-            return true
-        }
-        
-        // Process parameters
-        var processedParams: [String: Any] = [:]
-        
-        for (key, value) in defaultParams {
-            processedParams[key] = value.toDataInput()
-        }
-        
-        logger?.debug(category: LogCategory.firebase, "Setting \(processedParams.count) default parameter(s): \(processedParams.keys.joined(separator: ", "))")
-        firebaseInstance.setDefaultEventParameters(processedParams)
-        
-        return true
+        firebaseInstance.setDefaultEventParameters(defaultParams)
     }
 }
 

@@ -30,16 +30,16 @@ class FirebaseCommandRegistry {
         commandList.forEach { register($0) }
     }
     
-    /// Execute a command by name
-    /// - Returns: true if command executed successfully, false otherwise
-    @discardableResult
-    public func execute(commandName: String, payload: DataObject) -> Bool {
+    /// Execute a command by name.
+    /// - Throws: `FirebaseCommandError.commandNotFound` if command not found in registry
+    /// - Throws: `FirebaseCommandError` if command validation fails
+    public func execute(commandName: String, payload: DataObject) throws {
         let normalizedName = commandName.trimmingCharacters(in: .whitespaces).lowercased()
         
         guard let command = commands[normalizedName] else {
-            return false
+            throw FirebaseCommandError.commandNotFound(commandName)
         }
         
-        return command.execute(payload: payload)
+        try command.execute(payload: payload)
     }
 }
