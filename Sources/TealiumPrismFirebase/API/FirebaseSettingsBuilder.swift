@@ -33,6 +33,8 @@ import TealiumPrismCore
 /// ```
 public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     
+    typealias Keys = FirebaseDispatcherConfiguration.Keys
+    
     public override init() {
         super.init()
     }
@@ -48,7 +50,7 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     /// - Returns: Self for method chaining.
     @discardableResult
     public func setSessionTimeout(_ seconds: Int) -> Self {
-        _configurationObject.set(seconds, key: FirebaseConstants.Initialize.Param.sessionTimeout)
+        _configurationObject.set(seconds, key: Keys.sessionTimeout)
         return self
     }
     
@@ -62,7 +64,7 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     /// - Returns: Self for method chaining.
     @discardableResult
     public func setAnalyticsEnabled(_ enabled: Bool) -> Self {
-        _configurationObject.set(enabled, key: FirebaseConstants.Initialize.Param.analyticsEnabled)
+        _configurationObject.set(enabled, key: Keys.analyticsEnabled)
         return self
     }
     
@@ -77,7 +79,7 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     @discardableResult
     public func setLogLevel(_ level: FirebaseLoggerLevel) -> Self {
         let levelString = FirebaseLogLevel.string(from: level)
-        _configurationObject.set(levelString, key: FirebaseConstants.Initialize.Param.logLevel)
+        _configurationObject.set(levelString, key: Keys.logLevel)
         return self
     }
 }

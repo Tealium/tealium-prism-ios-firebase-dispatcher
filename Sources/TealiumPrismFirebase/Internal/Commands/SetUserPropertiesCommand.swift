@@ -31,15 +31,15 @@ class SetUserPropertiesCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.SetUserProperties.name
+    let name = FirebaseConstants.SetUserProperties.name
     typealias Param = FirebaseConstants.SetUserProperties.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperties command")
         
         guard let names = payload.getArray(key: Param.propertyNames, of: String.self)?.compactMap({ $0 }) else {

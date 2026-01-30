@@ -59,7 +59,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
@@ -76,7 +76,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
@@ -94,7 +94,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_command_array_executes_all_commands() {
         let dispatch = Dispatch(name: "multi_command", data: [
-            FirebaseConstants.commandKey: [
+            FirebaseConstants.commandName: [
                 FirebaseConstants.LogEvent.name,
                 FirebaseConstants.SetUserId.name
             ] as [String],
@@ -116,12 +116,12 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "event_one"
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "event_two"
         ])
         
@@ -156,7 +156,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_empty_command_array_does_not_execute() {
         let dispatch = Dispatch(name: "empty_commands", data: [
-            FirebaseConstants.commandKey: [] as [String]
+            FirebaseConstants.commandName: [] as [String]
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -172,7 +172,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_unknown_command_does_not_execute() {
         let dispatch = Dispatch(name: "unknown", data: [
-            FirebaseConstants.commandKey: "unknowncommand"
+            FirebaseConstants.commandName: "unknowncommand"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -189,7 +189,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
         let dispatch = Dispatch(name: "mixed", data: [
-            FirebaseConstants.commandKey: [
+            FirebaseConstants.commandName: [
                 "invalid_command",
                 FirebaseConstants.LogEvent.name
             ] as [String],
@@ -208,7 +208,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_command_as_number_does_not_crash() {
         let dispatch = Dispatch(name: "invalid_type", data: [
-            FirebaseConstants.commandKey: 123  // Wrong type
+            FirebaseConstants.commandName: 123  // Wrong type
         ])
         
         let completionCalled = expectation(description: "Completion called")

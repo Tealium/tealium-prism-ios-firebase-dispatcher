@@ -13,26 +13,8 @@ final class FirebaseConstantsTests: XCTestCase {
     
     // MARK: - Module Metadata
     
-    func test_command_key() {
-        XCTAssertEqual(FirebaseConstants.commandKey, "command")
-    }
-    
-    // MARK: - Initialize Command
-    
-    func test_initialize_name() {
-        XCTAssertEqual(FirebaseConstants.Initialize.name, "initialize")
-    }
-    
-    func test_initialize_log_level() {
-        XCTAssertEqual(FirebaseConstants.Initialize.Param.logLevel, "firebase_log_level")
-    }
-    
-    func test_initialize_session_timeout() {
-        XCTAssertEqual(FirebaseConstants.Initialize.Param.sessionTimeout, "firebase_session_timeout_seconds")
-    }
-    
-    func test_initialize_analytics_enabled() {
-        XCTAssertEqual(FirebaseConstants.Initialize.Param.analyticsEnabled, "firebase_analytics_collection_enabled")
+    func test_command_name() {
+        XCTAssertEqual(FirebaseConstants.commandName, "command_name")
     }
     
     // MARK: - SetSessionTimeout Command

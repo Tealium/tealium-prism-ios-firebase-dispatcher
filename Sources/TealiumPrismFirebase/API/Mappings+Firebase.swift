@@ -60,7 +60,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseLogEventCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.LogEvent.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.LogEvent.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase event name parameter.
@@ -139,7 +139,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetUserIdCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetUserId.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetUserId.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase user ID parameter.
@@ -176,7 +176,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetUserPropertyCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetUserProperty.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetUserProperty.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase user property name.
@@ -216,7 +216,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetUserPropertiesCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetUserProperties.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetUserProperties.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase user property names array.
@@ -254,7 +254,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetDefaultParametersCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetDefaultParameters.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetDefaultParameters.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase default parameters.
@@ -298,7 +298,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetConsentCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetConsent.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetConsent.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the Firebase ad_storage consent setting.
@@ -350,7 +350,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseResetDataCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.ResetData.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.ResetData.name, to: FirebaseConstants.commandName)
     }
     
     // MARK: - SetSessionTimeout Command
@@ -370,7 +370,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetSessionTimeoutCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetSessionTimeout.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetSessionTimeout.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the session timeout parameter for the SetSessionTimeout command.
@@ -398,7 +398,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseSetAnalyticsCollectionEnabledCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetAnalyticsCollectionEnabled.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.SetAnalyticsCollectionEnabled.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the analytics enabled parameter for the SetAnalyticsCollectionEnabled command.
@@ -428,7 +428,7 @@ public extension Mappings {
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
     static func mapFirebaseInitiateConversionMeasurementCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.InitiateConversionMeasurement.name, to: FirebaseConstants.commandKey)
+        .constant(FirebaseConstants.InitiateConversionMeasurement.name, to: FirebaseConstants.commandName)
     }
     
     /// Maps a source key to the email address parameter for conversion measurement.

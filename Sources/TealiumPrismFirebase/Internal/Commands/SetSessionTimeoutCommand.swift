@@ -30,15 +30,15 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.SetSessionTimeout.name
+    let name = FirebaseConstants.SetSessionTimeout.name
     typealias Param = FirebaseConstants.SetSessionTimeout.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetSessionTimeout command")
         
         guard let sessionTimeout = payload.getNumeric(key: Param.sessionTimeout, as: Double.self) else {

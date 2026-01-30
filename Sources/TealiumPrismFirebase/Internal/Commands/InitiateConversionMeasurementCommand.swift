@@ -38,15 +38,15 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.InitiateConversionMeasurement.name
+    let name = FirebaseConstants.InitiateConversionMeasurement.name
     typealias Param = FirebaseConstants.InitiateConversionMeasurement.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing InitiateConversionMeasurement command")
         
         // Priority: hashed_email > hashed_phone > email > phone

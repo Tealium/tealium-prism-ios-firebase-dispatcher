@@ -30,15 +30,15 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
+    let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
     typealias Param = FirebaseConstants.SetAnalyticsCollectionEnabled.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetAnalyticsCollectionEnabled command")
         
         guard let enabled = payload.getBoolValue(key: Param.analyticsEnabled) else {

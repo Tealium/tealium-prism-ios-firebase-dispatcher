@@ -32,15 +32,15 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
 
-    public let name = FirebaseConstants.SetUserProperty.name
+    let name = FirebaseConstants.SetUserProperty.name
     typealias Param = FirebaseConstants.SetUserProperty.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserProperty command")
         
         guard let propertyName = payload.get(key: Param.propertyName, as: String.self) else {

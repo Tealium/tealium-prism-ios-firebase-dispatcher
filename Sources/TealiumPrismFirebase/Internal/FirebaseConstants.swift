@@ -21,27 +21,9 @@ enum FirebaseConstants {
     
     static let version = "1.0.0"
     static let moduleType = "FirebaseDispatcher"
-    static let tag = "TealiumPrismFirebase"
     
     /// The key used to identify the command to execute in mapped payload
-    static let commandKey = "command"
-    
-    // MARK: - Initialize Command
-    
-    /// Initialize command for Firebase Analytics settings.
-    ///
-    /// Firebase SDK References:
-    /// - setSessionTimeoutInterval: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setsessiontimeoutinterval_:
-    /// - setAnalyticsCollectionEnabled: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setanalyticscollectionenabled_:
-    enum Initialize {
-        static let name = "initialize"
-        
-        enum Param {
-            static let logLevel = "firebase_log_level"
-            static let sessionTimeout = "firebase_session_timeout_seconds"
-            static let analyticsEnabled = "firebase_analytics_collection_enabled"
-        }
-    }
+    static let commandName = "command_name"
     
     // MARK: - SetSessionTimeout Command
     

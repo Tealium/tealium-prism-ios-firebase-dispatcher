@@ -41,15 +41,15 @@ class LogEventCommand: FirebaseCommandProtocol {
     private let logger: LoggerProtocol?
     
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.LogEvent.name
+    let name = FirebaseConstants.LogEvent.name
     typealias Param = FirebaseConstants.LogEvent.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing LogEvent command")
         
         // 1. Extract event name

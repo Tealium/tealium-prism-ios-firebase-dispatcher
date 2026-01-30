@@ -24,7 +24,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Command should be added because tealium_event == "screen_view"
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "screen_view"
         ])
     }
@@ -56,7 +56,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Both command and event name should be added
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "screen_view"
         ])
     }
@@ -72,7 +72,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         
         // Command should be added, but event name should NOT be mapped
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name
         ])
     }
     
@@ -92,7 +92,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Both commands should be in payload
         // When multiple commands are added to the same key, they are combined into an array
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: [
+            FirebaseConstants.commandName: [
                 FirebaseConstants.LogEvent.name,
                 FirebaseConstants.SetUserId.name
             ],
@@ -113,7 +113,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         ])
         
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandKey: FirebaseConstants.LogEvent.name,
+            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "special_screen"
         ])
     }

@@ -12,10 +12,6 @@ import TealiumPrismCore
 /// Firebase Analytics Dispatcher for Tealium Prism SDK
 class FirebaseDispatcher: Dispatcher {
     
-    // MARK: - Type Aliases
-    
-    typealias InitializeParam = FirebaseConstants.Initialize.Param
-    
     // MARK: - Module Properties
     
     public let id: String
@@ -115,19 +111,21 @@ class FirebaseDispatcher: Dispatcher {
     private func applyConfigurationSettings(_ configuration: DataObject) {
         logger?.debug(category: LogCategory.firebase, "Applying configuration settings")
         
+        let config = FirebaseDispatcherConfiguration(configuration: configuration)
+        
         // 1. Configure log level (must be done before Firebase is configured)
-        if let logLevel = configuration.get(key: InitializeParam.logLevel, as: String.self) {
+        if let logLevel = config.logLevel {
             configureLogLevel(logLevel)
         }
         
         // 2. Configure session timeout
-        if let sessionTimeout = configuration.getNumeric(key: InitializeParam.sessionTimeout, as: Double.self) {
+        if let sessionTimeout = config.sessionTimeout {
             firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
             logger?.debug(category: LogCategory.firebase, "Session timeout set to \(sessionTimeout) seconds from configuration")
         }
         
         // 3. Configure analytics collection
-        if let analyticsEnabled = configuration.get(key: InitializeParam.analyticsEnabled, as: Bool.self) {
+        if let analyticsEnabled = config.analyticsEnabled {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
             logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled) from configuration")
         }

@@ -35,15 +35,15 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.SetDefaultParameters.name
+    let name = FirebaseConstants.SetDefaultParameters.name
     typealias Param = FirebaseConstants.SetDefaultParameters.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetDefaultParameters command")
         
         // firebase_params is missing -> clear all default parameters (intended behavior)

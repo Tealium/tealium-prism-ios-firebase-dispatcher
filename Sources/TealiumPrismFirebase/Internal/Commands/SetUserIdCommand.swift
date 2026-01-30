@@ -31,15 +31,15 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
 
-    public let name = FirebaseConstants.SetUserId.name
+    let name = FirebaseConstants.SetUserId.name
     typealias Param = FirebaseConstants.SetUserId.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetUserId command")
         
         guard let userId = payload.get(key: Param.userId, as: String.self) else {

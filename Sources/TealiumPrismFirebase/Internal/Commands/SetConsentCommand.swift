@@ -37,15 +37,15 @@ class SetConsentCommand: FirebaseCommandProtocol {
     private let firebaseInstance: FirebaseCommand
     private let logger: LoggerProtocol?
     
-    public init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
+    init(firebaseInstance: FirebaseCommand, logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.logger = logger
     }
     
-    public let name = FirebaseConstants.SetConsent.name
+    let name = FirebaseConstants.SetConsent.name
     typealias Param = FirebaseConstants.SetConsent.Param
     
-    public func execute(payload: DataObject) -> Bool {
+    func execute(payload: DataObject) -> Bool {
         logger?.debug(category: LogCategory.firebase, "Executing SetConsent command")
         
         var consentSettings: [ConsentType: ConsentStatus] = [:]
