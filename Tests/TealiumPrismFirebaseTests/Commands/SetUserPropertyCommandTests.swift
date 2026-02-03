@@ -48,9 +48,9 @@ final class SetUserPropertyCommandTests: XCTestCase {
         }
     }
     
-    // MARK: - Set Property Tests
+    // MARK: - Single Property Tests
     
-    func test_execute_sets_user_property() {
+    func test_execute_sets_single_property() {
         let payload: DataObject = [
             FirebaseConstants.SetUserProperty.Param.propertyName: "tier",
             FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
@@ -73,6 +73,87 @@ final class SetUserPropertyCommandTests: XCTestCase {
         XCTAssertTrue(mockFirebase.setUserPropertyCalled)
         XCTAssertEqual(mockFirebase.lastUserPropertyName, "tier")
         XCTAssertNil(mockFirebase.lastUserPropertyValue)
+    }
+    
+    // MARK: - Multiple Properties Tests (Array Format)
+    
+    func test_execute_with_empty_names_array_throws_error() {
+        let emptyNamesArray: [String] = []
+        let emptyValuesArray: [String] = []
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: emptyNamesArray,
+            FirebaseConstants.SetUserProperty.Param.propertyValue: emptyValuesArray
+        ]
+        
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .emptyArray = commandError {
+                // Success
+            } else {
+                XCTFail("Expected emptyArray error")
+            }
+        }
+    }
+    
+    func test_execute_with_mismatched_array_lengths_throws_error() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["prop1", "prop2", "prop3"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["value1", "value2"]
+        ]
+        
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError")
+                return
+            }
+            if case .arrayLengthMismatch = commandError {
+                // Success
+            } else {
+                XCTFail("Expected arrayLengthMismatch error")
+            }
+        }
+    }
+    
+    func test_execute_sets_single_property_with_array_format() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["subscription_tier"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["premium"]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.setUserPropertyCalled)
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 1)
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].name, "subscription_tier")
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, "premium")
+    }
+    
+    func test_execute_sets_multiple_properties() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["subscription_tier", "user_level", "account_type"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["premium", "expert", "business"]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 3)
+        
+        // Note: Order may vary, so we check by name
+        let propDict = Dictionary(uniqueKeysWithValues: mockFirebase.setUserPropertyCalls.map { ($0.name, $0.value) })
+        XCTAssertEqual(propDict["subscription_tier"], "premium")
+        XCTAssertEqual(propDict["user_level"], "expert")
+        XCTAssertEqual(propDict["account_type"], "business")
+    }
+    
+    func test_execute_clears_property_with_empty_value_in_array_format() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["to_clear"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: [""]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, nil)
     }
     
 }

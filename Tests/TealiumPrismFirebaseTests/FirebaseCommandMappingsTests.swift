@@ -307,7 +307,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
     }
     
-    // MARK: - SetUserProperties Command Tests
+    // MARK: - SetUserProperty Command Tests (Multiple Properties)
     
     func test_setUserProperties_basic_mapping() {
         let dispatch = Dispatch(name: "bulk_props", type: .event, data: [
@@ -316,15 +316,15 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
         
         let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetUserPropertiesCommand(),
-            .mapFirebaseUserPropertyNames(propertyNamesKey: "prop_names"),
-            .mapFirebaseUserPropertyValues(propertyValuesKey: "prop_values")
+            .mapFirebaseSetUserPropertyCommand(),
+            .mapFirebaseUserPropertyName(propertyNameKey: "prop_names"),
+            .mapFirebaseUserPropertyValue(propertyValueKey: "prop_values")
         ])
         
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetUserProperties.name,
-            FirebaseConstants.SetUserProperties.Param.propertyNames: ["tier", "level", "status"],
-            FirebaseConstants.SetUserProperties.Param.propertyValues: ["premium", "expert", "active"]
+            FirebaseConstants.commandName: FirebaseConstants.SetUserProperty.name,
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["tier", "level", "status"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["premium", "expert", "active"]
         ])
     }
     

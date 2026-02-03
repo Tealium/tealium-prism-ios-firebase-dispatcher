@@ -79,20 +79,6 @@ final class FirebaseConstantsTests: XCTestCase {
         XCTAssertEqual(FirebaseConstants.SetUserProperty.Param.propertyValue, "firebase_property_value")
     }
     
-    // MARK: - SetUserProperties Command
-    
-    func test_setuserproperties_name() {
-        XCTAssertEqual(FirebaseConstants.SetUserProperties.name, "setuserproperties")
-    }
-    
-    func test_setuserproperties_property_names() {
-        XCTAssertEqual(FirebaseConstants.SetUserProperties.Param.propertyNames, "firebase_property_names")
-    }
-    
-    func test_setuserproperties_property_values() {
-        XCTAssertEqual(FirebaseConstants.SetUserProperties.Param.propertyValues, "firebase_property_values")
-    }
-    
     // MARK: - ResetData Command
     
     func test_resetdata_name() {

@@ -51,7 +51,6 @@ class FirebaseDispatcher: Dispatcher {
             SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
             LogEventCommand(firebaseInstance: firebaseInstance),
             SetUserPropertyCommand(firebaseInstance: firebaseInstance),
-            SetUserPropertiesCommand(firebaseInstance: firebaseInstance),
             SetDefaultParametersCommand(firebaseInstance: firebaseInstance),
             SetUserIdCommand(firebaseInstance: firebaseInstance),
             ResetDataCommand(firebaseInstance: firebaseInstance),

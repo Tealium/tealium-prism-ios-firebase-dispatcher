@@ -160,8 +160,12 @@ public extension Mappings {
     
     // MARK: - SetUserProperty Command
     
-    /// Set a single Firebase user property.
+    /// Set Firebase user property (single or multiple).
     ///
+    /// This command automatically handles both single properties and multiple properties
+    /// based on whether the mapped data is a single value or an array.
+    ///
+    /// **Single property:**
     /// ```swift
     /// // Mappings:
     /// .mapFirebaseSetUserPropertyCommand()
@@ -171,39 +175,13 @@ public extension Mappings {
     /// // Tracking:
     /// tealium.track("set_tier", data: ["prop_name": "tier", "prop_value": "premium"])
     /// ```
-    
-    /// Maps the "setuserproperty" command constant to the command key.
     ///
-    /// - Returns: A `ConstantOptions` mapping builder.
-    static func mapFirebaseSetUserPropertyCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetUserProperty.name, to: FirebaseConstants.commandName)
-    }
-    
-    /// Maps a source key to the Firebase user property name.
-    ///
-    /// - Parameter propertyNameKey: The source key containing the property name.
-    /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseUserPropertyName(propertyNameKey: String) -> VariableOptions {
-        .from(propertyNameKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyName])
-    }
-    
-    /// Maps a source key to the Firebase user property value.
-    ///
-    /// - Parameter propertyValueKey: The source key containing the property value.
-    /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseUserPropertyValue(propertyValueKey: String) -> VariableOptions {
-        .from(propertyValueKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyValue])
-    }
-    
-    // MARK: - SetUserProperties Command
-    
-    /// Set multiple Firebase user properties using parallel arrays.
-    ///
+    /// **Multiple properties:**
     /// ```swift
     /// // Mappings:
-    /// .mapFirebaseSetUserPropertiesCommand()
-    /// .mapFirebaseUserPropertyNames(propertyNamesKey: "names"),
-    /// .mapFirebaseUserPropertyValues(propertyValuesKey: "values")
+    /// .mapFirebaseSetUserPropertyCommand()
+    /// .mapFirebaseUserPropertyName(propertyNameKey: "names"),
+    /// .mapFirebaseUserPropertyValue(propertyValueKey: "values")
     ///
     /// // Tracking:
     /// tealium.track("bulk_props", data: [
@@ -212,27 +190,27 @@ public extension Mappings {
     /// ])
     /// ```
     
-    /// Maps the "setuserproperties" command constant to the command key.
+    /// Maps the "setuserproperty" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
-    static func mapFirebaseSetUserPropertiesCommand() -> ConstantOptions {
-        .constant(FirebaseConstants.SetUserProperties.name, to: FirebaseConstants.commandName)
+    static func mapFirebaseSetUserPropertyCommand() -> ConstantOptions {
+        .constant(FirebaseConstants.SetUserProperty.name, to: FirebaseConstants.commandName)
     }
     
-    /// Maps a source key to the Firebase user property names array.
+    /// Maps a source key to the Firebase user property name(s).
     ///
-    /// - Parameter propertyNamesKey: The source key containing the property names array.
+    /// - Parameter propertyNameKey: The source key containing the property name(s).
     /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseUserPropertyNames(propertyNamesKey: String) -> VariableOptions {
-        .from(propertyNamesKey, to: JSONPath[FirebaseConstants.SetUserProperties.Param.propertyNames])
+    static func mapFirebaseUserPropertyName(propertyNameKey: String) -> VariableOptions {
+        .from(propertyNameKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyName])
     }
     
-    /// Maps a source key to the Firebase user property values array.
+    /// Maps a source key to the Firebase user property value(s).
     ///
-    /// - Parameter propertyValuesKey: The source key containing the property values array.
+    /// - Parameter propertyValueKey: The source key containing the property value(s).
     /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseUserPropertyValues(propertyValuesKey: String) -> VariableOptions {
-        .from(propertyValuesKey, to: JSONPath[FirebaseConstants.SetUserProperties.Param.propertyValues])
+    static func mapFirebaseUserPropertyValue(propertyValueKey: String) -> VariableOptions {
+        .from(propertyValueKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyValue])
     }
     
     // MARK: - SetDefaultParameters Command

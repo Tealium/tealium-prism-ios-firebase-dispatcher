@@ -69,17 +69,17 @@ class TealiumHelper {
                                 .ifValueIn("tealium_event", equals: "set_user_id"),
                             .mapFirebaseUserId(userIdKey: "user_id"),
                             
-                            // SetUserProperty Command
+                            // SetUserProperty Command (handles both single and multiple properties)
                             .mapFirebaseSetUserPropertyCommand()
                                 .ifValueIn("tealium_event", equals: "set_user_property"),
                             .mapFirebaseUserPropertyName(propertyNameKey: "property_name"),
                             .mapFirebaseUserPropertyValue(propertyValueKey: "property_value"),
                             
-                            // SetUserProperties Command
-                            .mapFirebaseSetUserPropertiesCommand()
+                            // SetUserProperty Command (multiple properties)
+                            .mapFirebaseSetUserPropertyCommand()
                                 .ifValueIn("tealium_event", equals: "set_user_properties"),
-                            .mapFirebaseUserPropertyNames(propertyNamesKey: "property_names"),
-                            .mapFirebaseUserPropertyValues(propertyValuesKey: "property_values"),
+                            .mapFirebaseUserPropertyName(propertyNameKey: "property_names"),
+                            .mapFirebaseUserPropertyValue(propertyValueKey: "property_values"),
                             
                             // SetDefaultParameters Command
                             .mapFirebaseSetDefaultParametersCommand()
