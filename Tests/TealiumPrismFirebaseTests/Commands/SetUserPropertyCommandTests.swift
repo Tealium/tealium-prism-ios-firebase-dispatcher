@@ -155,5 +155,52 @@ final class SetUserPropertyCommandTests: XCTestCase {
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, nil)
     }
-    
+
+    // MARK: - Nil in Arrays Tests
+
+    func test_execute_with_nil_in_names_array_skips_that_pair() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["prop_a", nil, "prop_c"] as [String?],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["value_a", "value_b", "value_c"]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 2)
+        let propDict = Dictionary(uniqueKeysWithValues: mockFirebase.setUserPropertyCalls.map { ($0.name, $0.value) })
+        XCTAssertEqual(propDict["prop_a"], "value_a")
+        XCTAssertEqual(propDict["prop_c"], "value_c")
+    }
+
+    func test_execute_with_nil_in_values_array_clears_that_property() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["prop_a", "prop_b", "prop_c"],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["value_a", nil, "value_c"] as [String?]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 3)
+        
+        // Verify each call individually
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].name, "prop_a")
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[0].value, "value_a")
+        
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[1].name, "prop_b")
+        XCTAssertNil(mockFirebase.setUserPropertyCalls[1].value)
+        
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[2].name, "prop_c")
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls[2].value, "value_c")
+    }
+
+    func test_execute_with_nil_in_both_arrays_at_same_index_skips_pair() {
+        let payload: DataObject = [
+            FirebaseConstants.SetUserProperty.Param.propertyName: ["prop_a", nil, "prop_c"] as [String?],
+            FirebaseConstants.SetUserProperty.Param.propertyValue: ["value_a", nil, "value_c"] as [String?]
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 2)
+        let propDict = Dictionary(uniqueKeysWithValues: mockFirebase.setUserPropertyCalls.map { ($0.name, $0.value) })
+        XCTAssertEqual(propDict["prop_a"], "value_a")
+        XCTAssertEqual(propDict["prop_c"], "value_c")
+    }
 }

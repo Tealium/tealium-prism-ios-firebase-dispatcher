@@ -41,7 +41,7 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.SetDefaultParameters.name
     typealias Param = FirebaseConstants.SetDefaultParameters.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         // firebase_params is missing -> clear all default parameters
         guard let defaultParamsData = payload.getDataDictionary(key: Param.params) else {
             firebaseInstance.setDefaultEventParameters(nil)

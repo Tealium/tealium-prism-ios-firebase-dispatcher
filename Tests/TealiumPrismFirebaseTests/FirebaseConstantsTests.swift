@@ -24,7 +24,7 @@ final class FirebaseConstantsTests: XCTestCase {
     }
     
     func test_setsessiontimeout_session_timeout() {
-        XCTAssertEqual(FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, "firebase_session_timeout_seconds")
+        XCTAssertEqual(FirebaseConstants.SetSessionTimeout.Param.sessionTimeout, "session_timeout_seconds")
     }
     
     // MARK: - SetAnalyticsCollectionEnabled Command
@@ -34,7 +34,7 @@ final class FirebaseConstantsTests: XCTestCase {
     }
     
     func test_setanalyticscollectionenabled_analytics_enabled() {
-        XCTAssertEqual(FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, "firebase_analytics_collection_enabled")
+        XCTAssertEqual(FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled, "analytics_collection_enabled")
     }
     
     // MARK: - LogEvent Command

@@ -16,31 +16,43 @@ class FirebaseDispatcher: Dispatcher {
     
     public let id: String
     public let version: String = FirebaseConstants.version
+    public let dispatchLimit: Int = 1
     
     // MARK: - Dependencies
     
     private let firebaseInstance: FirebaseCommand
     private let commandRegistry: FirebaseCommandRegistry
     private let logger: LoggerProtocol?
+    private var configuration: FirebaseDispatcherConfiguration
     
     // MARK: - Initialization
     
-    /// Internal initializer with explicit dependencies (for testing)
-    init(id: String = FirebaseConstants.moduleType,
-         firebaseInstance: FirebaseCommand = FirebaseInstance(),
-         commandRegistry: FirebaseCommandRegistry = FirebaseCommandRegistry(),
-         logger: LoggerProtocol? = nil) {
-        self.id = id
-        self.firebaseInstance = firebaseInstance
-        self.commandRegistry = commandRegistry
-        self.logger = logger
-        
-        registerCommands()
+    /// Generic `Dispatcher` initializer called by the `FirebaseDispatcher.Factory`.
+    required convenience init?(moduleId: String, context: TealiumContext, moduleConfiguration: DataObject) {
+        self.init(moduleId: moduleId,
+                  firebaseInstance: FirebaseInstance(),
+                  commandRegistry: FirebaseCommandRegistry(),
+                  configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
+                  logger: context.logger)
     }
     
-    /// Initialize with moduleId and logger (used by Factory)
-    convenience init(moduleId: String, logger: LoggerProtocol?) {
-        self.init(id: moduleId, logger: logger)
+    /// Internal initializer called by the generic one and by the tests.
+    init?(moduleId: String = FirebaseConstants.moduleType,
+          firebaseInstance: FirebaseCommand,
+          commandRegistry: FirebaseCommandRegistry,
+          configuration: FirebaseDispatcherConfiguration,
+          logger: LoggerProtocol?) {
+        self.id = moduleId
+        self.firebaseInstance = firebaseInstance
+        self.commandRegistry = commandRegistry
+        self.configuration = configuration
+        self.logger = logger
+        
+        // Apply initial configuration settings
+        applyConfigurationSettings(configuration)
+        
+        // Register commands after configuration is applied
+        registerCommands()
     }
     
     // MARK: - Command Registration
@@ -91,10 +103,8 @@ class FirebaseDispatcher: Dispatcher {
                     payload: payload
                 )
                 logger?.debug(category: LogCategory.firebase, "Command '\(commandName)' executed successfully")
-            } catch let error as FirebaseCommandError {
+            } catch let error {
                 logger?.warn(category: LogCategory.firebase, "Command '\(commandName)' failed: \(error.message)")
-            } catch {
-                logger?.warn(category: LogCategory.firebase, "Command '\(commandName)' failed with unexpected error: \(error)")
             }
         }
     }
@@ -102,20 +112,21 @@ class FirebaseDispatcher: Dispatcher {
     // MARK: - Module Protocol
     
     func updateConfiguration(_ configuration: DataObject) -> Self? {
-        applyConfigurationSettings(configuration)
+        self.configuration = FirebaseDispatcherConfiguration(configuration: configuration)
+        applyConfigurationSettings(self.configuration)
         return self
     }
     
     /// Apply configuration settings to Firebase
     /// This method applies settings from builder/enforced/local/remote configuration
-    private func applyConfigurationSettings(_ configuration: DataObject) {
+    private func applyConfigurationSettings(_ config: FirebaseDispatcherConfiguration) {
         logger?.debug(category: LogCategory.firebase, "Applying configuration settings")
         
-        let config = FirebaseDispatcherConfiguration(configuration: configuration)
-        
-        // 1. Configure log level (must be done before Firebase is configured)
+        // 1. Configure log level
         if let logLevel = config.logLevel {
-            configureLogLevel(logLevel)
+            firebaseInstance.setLoggerLevel(logLevel.value)
+            logger?.debug(category: LogCategory.firebase,
+                "Firebase log level set to \(logLevel.stringValue) from configuration")
         }
         
         // 2. Configure session timeout
@@ -129,23 +140,6 @@ class FirebaseDispatcher: Dispatcher {
             firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
             logger?.debug(category: LogCategory.firebase, "Analytics collection enabled: \(analyticsEnabled) from configuration")
         }
-    }
-    
-    // MARK: - Private Configuration Methods
-    
-    /// Configures Firebase log level with validation.
-    private func configureLogLevel(_ levelString: String) {
-        guard FirebaseLogLevel.isValid(levelString) else {
-            logger?.warn(category: LogCategory.firebase, 
-                "Unknown log level '\(levelString)', using 'notice' as default. " +
-                "Valid values: \(FirebaseLogLevel.allLevels.joined(separator: ", "))")
-            firebaseInstance.setLoggerLevel(.notice)
-            return
-        }
-        
-        let loggerLevel = FirebaseLogLevel.map(levelString)
-        firebaseInstance.setLoggerLevel(loggerLevel)
-        logger?.debug(category: LogCategory.firebase, "Firebase log level set to '\(levelString)' (\(loggerLevel)) from configuration")
     }
     
     func shutdown() {

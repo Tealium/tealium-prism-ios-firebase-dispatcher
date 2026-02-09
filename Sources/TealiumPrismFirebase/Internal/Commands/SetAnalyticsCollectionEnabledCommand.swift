@@ -22,7 +22,7 @@ import TealiumPrismCore
 /// ```
 /// payload = [
 ///     "command": "setanalyticscollectionenabled",
-///     "firebase_analytics_collection_enabled": true
+///     "analytics_collection_enabled": true
 /// ]
 /// ```
 class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
@@ -36,7 +36,7 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.SetAnalyticsCollectionEnabled.name
     typealias Param = FirebaseConstants.SetAnalyticsCollectionEnabled.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         guard let enabled = payload.getBoolValue(key: Param.analyticsEnabled) else {
             throw FirebaseCommandError.invalidParameterType(
                 parameter: Param.analyticsEnabled,

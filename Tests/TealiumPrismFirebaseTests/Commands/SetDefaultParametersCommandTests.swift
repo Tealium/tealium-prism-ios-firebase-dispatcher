@@ -30,11 +30,20 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     // MARK: - Basic Tests
     
     func test_execute_without_command_data_clears_parameters() {
+        // Set some parameters first so we can verify they get cleared
+        let payloadWithParams: DataObject = [
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "version": "1.0"
+            ] as DataObject
+        ]
+        XCTAssertNoThrow(try command.execute(payload: payloadWithParams))
+        XCTAssertNotNil(mockFirebase.lastDefaultParameters, "Sanity: params should be set before clear test")
+
+        // Now clear by executing with payload that has no firebase_params
         let payload: DataObject = [:]
-        
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
-        XCTAssertNil(mockFirebase.lastDefaultParameters)
+        XCTAssertNil(mockFirebase.lastDefaultParameters, "Empty payload should clear default parameters")
     }
     
     func test_execute_with_empty_firebase_params_sets_empty_parameters() {
@@ -89,27 +98,52 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["price"] as? Double, 99.99)
     }
     
-    // MARK: - Nil vs Empty Dictionary Tests
+    // MARK: - Bool Parameter Tests
     
-    func test_nil_vs_empty_dictionary_behavior() {
-        // Test 1: Missing key passes nil to Firebase (clears all parameters)
-        let payloadWithoutKey: DataObject = [:]
-        XCTAssertNoThrow(try command.execute(payload: payloadWithoutKey))
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
-        XCTAssertNil(mockFirebase.lastDefaultParameters, "Missing firebase_params key should pass nil to Firebase")
-        
-        // Reset mock
-        mockFirebase.setDefaultEventParametersCalled = false
-        mockFirebase.lastDefaultParameters = nil
-        
-        // Test 2: Empty dictionary passes empty dict to Firebase (does NOT clear)
-        let payloadWithEmptyDict: DataObject = [
-            FirebaseConstants.SetDefaultParameters.Param.params: [:] as DataObject
+    func test_execute_sets_bool_parameters() {
+        let payload: DataObject = [
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "is_premium": true,
+                "opted_out": false
+            ] as DataObject
         ]
-        XCTAssertNoThrow(try command.execute(payload: payloadWithEmptyDict))
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
-        XCTAssertNotNil(mockFirebase.lastDefaultParameters, "Empty firebase_params dict should NOT pass nil to Firebase")
-        XCTAssertEqual(mockFirebase.lastDefaultParameters?.count, 0, "Empty firebase_params dict should pass empty dict (not nil)")
-    }
         
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastDefaultParameters?["is_premium"] as? Bool, true)
+        XCTAssertEqual(mockFirebase.lastDefaultParameters?["opted_out"] as? Bool, false)
+    }
+    
+    // MARK: - Array Parameter Tests
+    
+    func test_execute_sets_array_parameters() {
+        let payload: DataObject = [
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "tags": ["sale", "featured", "new"] as [String],
+                "counts": [1, 2, 3] as [Int]
+            ] as DataObject
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastDefaultParameters?["tags"] as? [String], ["sale", "featured", "new"])
+        XCTAssertEqual(mockFirebase.lastDefaultParameters?["counts"] as? [Int], [1, 2, 3])
+    }
+    
+    // MARK: - Dictionary Parameter Tests
+    
+    func test_execute_sets_dictionary_parameters() {
+        let payload: DataObject = [
+            FirebaseConstants.SetDefaultParameters.Param.params: [
+                "metadata": [
+                    "source": "app",
+                    "campaign_id": 42
+                ] as DataObject
+            ] as DataObject
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        let nested = mockFirebase.lastDefaultParameters?["metadata"] as? [String: Any]
+        XCTAssertNotNil(nested)
+        XCTAssertEqual(nested?["source"] as? String, "app")
+        XCTAssertEqual(nested?["campaign_id"] as? Int, 42)
+    }
 }

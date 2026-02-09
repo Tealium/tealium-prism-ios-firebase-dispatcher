@@ -100,6 +100,6 @@ struct FirebaseParameter {
     /// - Parameter paramName: The Tealium parameter name (e.g., "param_currency" or custom "my_param")
     /// - Returns: The Firebase Analytics parameter constant, or the original name for custom parameters
     static func map(_ paramName: String) -> String {
-        return mapping[paramName] ?? paramName
+        return mapping[paramName.lowercased()] ?? paramName
     }
 }

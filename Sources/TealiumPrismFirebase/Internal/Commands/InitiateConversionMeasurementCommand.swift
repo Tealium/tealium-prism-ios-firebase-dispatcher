@@ -44,7 +44,7 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.InitiateConversionMeasurement.name
     typealias Param = FirebaseConstants.InitiateConversionMeasurement.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.get(key: Param.hashedEmailAddress, as: String.self) {
             try initiateWithHashedEmail(hashedEmail)
@@ -66,28 +66,28 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     // MARK: - Private Helpers
     
-    private func initiateWithEmail(_ email: String) throws {
+    private func initiateWithEmail(_ email: String) throws(FirebaseCommandError) {
         guard !email.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.emailAddress)
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
     }
     
-    private func initiateWithPhone(_ phone: String) throws {
+    private func initiateWithPhone(_ phone: String) throws(FirebaseCommandError) {
         guard !phone.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.phoneNumber)
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
     }
     
-    private func initiateWithHashedEmail(_ hashedEmail: String) throws {
+    private func initiateWithHashedEmail(_ hashedEmail: String) throws(FirebaseCommandError) {
         guard !hashedEmail.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.hashedEmailAddress)
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data(hashedEmail.utf8))
     }
     
-    private func initiateWithHashedPhone(_ hashedPhone: String) throws {
+    private func initiateWithHashedPhone(_ hashedPhone: String) throws(FirebaseCommandError) {
         guard !hashedPhone.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.hashedPhoneNumber)
         }

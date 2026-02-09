@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9E354F0C2F10284600A9F761 /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */; };
-		9E52A8FD2F1A7E0000BB0AED /* TealiumPrismCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E52A8FC2F1A7E0000BB0AED /* TealiumPrismCore */; };
-		9E52A8FF2F1A7E0000BB0AED /* TealiumPrismLifecycle in Frameworks */ = {isa = PBXBuildFile; productRef = 9E52A8FE2F1A7E0000BB0AED /* TealiumPrismLifecycle */; };
+		9EF4470B2F363E1A00FFCCC8 /* TealiumPrismCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470A2F363E1A00FFCCC8 /* TealiumPrismCore */; };
+		9EF4470D2F363E1A00FFCCC8 /* TealiumPrismLifecycle in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470C2F363E1A00FFCCC8 /* TealiumPrismLifecycle */; };
+		9EF4470F2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470E2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI */; };
+		9EF447122F363E6200FFCCC8 /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF447112F363E6200FFCCC8 /* TealiumPrismFirebase */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,9 +30,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				9E354F0C2F10284600A9F761 /* TealiumPrismFirebase in Frameworks */,
-				9E52A8FF2F1A7E0000BB0AED /* TealiumPrismLifecycle in Frameworks */,
-				9E52A8FD2F1A7E0000BB0AED /* TealiumPrismCore in Frameworks */,
+				9EF4470D2F363E1A00FFCCC8 /* TealiumPrismLifecycle in Frameworks */,
+				9EF4470B2F363E1A00FFCCC8 /* TealiumPrismCore in Frameworks */,
+				9EF4470F2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI in Frameworks */,
+				9EF447122F363E6200FFCCC8 /* TealiumPrismFirebase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,9 +84,10 @@
 			);
 			name = Example;
 			packageProductDependencies = (
-				9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */,
-				9E52A8FC2F1A7E0000BB0AED /* TealiumPrismCore */,
-				9E52A8FE2F1A7E0000BB0AED /* TealiumPrismLifecycle */,
+				9EF4470A2F363E1A00FFCCC8 /* TealiumPrismCore */,
+				9EF4470C2F363E1A00FFCCC8 /* TealiumPrismLifecycle */,
+				9EF4470E2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI */,
+				9EF447112F363E6200FFCCC8 /* TealiumPrismFirebase */,
 			);
 			productName = Example;
 			productReference = 9E354EC62F1024E400A9F761 /* Example.app */;
@@ -115,8 +118,8 @@
 			mainGroup = 9E354EBD2F1024E400A9F761;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */,
-				9E354F0A2F10284600A9F761 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */,
+				9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */,
+				9EF447102F363E6200FFCCC8 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E354EC72F1024E400A9F761 /* Products */;
@@ -354,30 +357,42 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../tealium-swift-v3";
-		};
-		9E354F0A2F10284600A9F761 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */ = {
+		9EF447102F363E6200FFCCC8 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../tealium-prism-ios-firebase-dispatcher";
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCSwiftPackageProductDependency section */
-		9E354F0B2F10284600A9F761 /* TealiumPrismFirebase */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = TealiumPrismFirebase;
+/* Begin XCRemoteSwiftPackageReference section */
+		9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Tealium/tealium-prism-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.0;
+			};
 		};
-		9E52A8FC2F1A7E0000BB0AED /* TealiumPrismCore */ = {
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		9EF4470A2F363E1A00FFCCC8 /* TealiumPrismCore */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */;
+			package = 9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */;
 			productName = TealiumPrismCore;
 		};
-		9E52A8FE2F1A7E0000BB0AED /* TealiumPrismLifecycle */ = {
+		9EF4470C2F363E1A00FFCCC8 /* TealiumPrismLifecycle */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 9E354ED82F10257F00A9F761 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */;
+			package = 9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */;
 			productName = TealiumPrismLifecycle;
+		};
+		9EF4470E2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */;
+			productName = TealiumPrismMomentsAPI;
+		};
+		9EF447112F363E6200FFCCC8 /* TealiumPrismFirebase */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = TealiumPrismFirebase;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

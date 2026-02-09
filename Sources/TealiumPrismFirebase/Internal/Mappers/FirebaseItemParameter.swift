@@ -62,7 +62,7 @@ struct FirebaseItemParameter {
     /// - Parameter paramName: The item parameter name (e.g., "param_items_item_id" or "custom_color")
     /// - Returns: The Firebase Analytics item parameter constant, or original name for custom parameters
     static func map(_ paramName: String) -> String {
-        return mapping[paramName] ?? paramName
+        return mapping[paramName.lowercased()] ?? paramName
     }
 }
 

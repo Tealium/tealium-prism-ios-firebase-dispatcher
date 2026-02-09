@@ -37,7 +37,7 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.SetUserId.name
     typealias Param = FirebaseConstants.SetUserId.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         guard let userId = payload.get(key: Param.userId, as: String.self) else {
             throw FirebaseCommandError.missingParameter(Param.userId)
         }

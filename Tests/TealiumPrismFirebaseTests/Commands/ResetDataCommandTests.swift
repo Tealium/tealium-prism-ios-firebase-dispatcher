@@ -35,10 +35,4 @@ final class ResetDataCommandTests: XCTestCase {
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.resetAnalyticsDataCalled)
     }
-    
-    func test_execute_always_succeeds() {
-        let payload: DataObject = ["some": "data"]
-        
-        XCTAssertNoThrow(try command.execute(payload: payload))
-    }
 }

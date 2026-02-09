@@ -52,7 +52,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.SetUserProperty.name
     typealias Param = FirebaseConstants.SetUserProperty.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         let properties = try extractNamesAndValues(payload: payload)
         
         guard !properties.isEmpty else {
@@ -69,7 +69,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     
     /// Extracts property names and values from the payload.
     /// Automatically handles both single values and arrays.
-    private func extractNamesAndValues(payload: DataObject) throws -> [(name: String, value: String?)] {
+    private func extractNamesAndValues(payload: DataObject) throws(FirebaseCommandError) -> [(name: String, value: String?)] {
         guard let namesItem = payload.getDataItem(key: Param.propertyName),
               let valuesItem = payload.getDataItem(key: Param.propertyValue) else {
             return []
@@ -102,7 +102,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     
     private func setProperty(name: String, value: String?) {
         // Empty string or nil removes the property
-        if let value = value, !value.isEmpty {
+        if let value, !value.isEmpty {
             firebaseInstance.setUserProperty(value, forName: name)
         } else {
             firebaseInstance.setUserProperty(nil, forName: name)

@@ -120,8 +120,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
     
     func test_logEvent_with_items() { 
         let dispatch = Dispatch(name: "view_item_list", type: .event, data: [
-            "item_id": ["SKU001", "SKU002"] as [String],
-            "item_name": ["Widget", "Gadget"] as [String]
+            "item_id": ["SKU001", "SKU002"],
+            "item_name": ["Widget", "Gadget"]
         ])
         
         let result = map(dispatch: dispatch, mappings: [
@@ -135,8 +135,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
             FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "view_item_list",
             FirebaseConstants.LogEvent.Param.items: [
-                "item_id": ["SKU001", "SKU002"] as [String],
-                "item_name": ["Widget", "Gadget"] as [String]
+                "item_id": ["SKU001", "SKU002"],
+                "item_name": ["Widget", "Gadget"]
             ] as DataObject
         ])
     }

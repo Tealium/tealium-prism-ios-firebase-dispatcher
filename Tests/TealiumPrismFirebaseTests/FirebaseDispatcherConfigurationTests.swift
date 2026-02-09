@@ -8,6 +8,7 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+import FirebaseCore
 import XCTest
 
 final class FirebaseDispatcherConfigurationTests: XCTestCase {
@@ -15,15 +16,15 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
     // MARK: - Keys Tests
     
     func test_keys_sessionTimeout() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.sessionTimeout, "firebase_session_timeout_seconds")
+        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.sessionTimeout, "session_timeout_seconds")
     }
     
     func test_keys_analyticsEnabled() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.analyticsEnabled, "firebase_analytics_collection_enabled")
+        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.analyticsEnabled, "analytics_collection_enabled")
     }
     
     func test_keys_logLevel() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.logLevel, "firebase_log_level")
+        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.logLevel, "log_level")
     }
     
     // MARK: - Initialization Tests
@@ -39,7 +40,17 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
         
         XCTAssertEqual(config.sessionTimeout, 3600)
         XCTAssertEqual(config.analyticsEnabled, false)
-        XCTAssertEqual(config.logLevel, "debug")
+        XCTAssertEqual(config.logLevel, .debug)
+    }
+    
+    func test_init_with_invalid_logLevel_returns_nil() throws {
+        let dataObject: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.logLevel: "invalid_level"
+        ]
+        
+        let config = FirebaseDispatcherConfiguration(configuration: dataObject)
+        
+        XCTAssertNil(config.logLevel)
     }
     
     func test_init_with_partial_values() throws {
@@ -82,14 +93,5 @@ final class FirebaseDispatcherConfigurationTests: XCTestCase {
         let config = FirebaseDispatcherConfiguration(configuration: dataObject)
         
         XCTAssertEqual(config.sessionTimeout, 2400.0)
-    }
-    
-    // MARK: - Defaults Tests
-    
-    func test_defaults_are_nil() {
-        // Verify that defaults are nil to allow Firebase SDK defaults
-        XCTAssertNil(FirebaseDispatcherConfiguration.Defaults.sessionTimeout)
-        XCTAssertNil(FirebaseDispatcherConfiguration.Defaults.analyticsEnabled)
-        XCTAssertNil(FirebaseDispatcherConfiguration.Defaults.logLevel)
     }
 }

@@ -13,8 +13,7 @@ extension FirebaseDispatcher {
     
     public class Factory: ModuleFactory {
         
-        public static let moduleType: String = FirebaseConstants.moduleType
-        public var moduleType: String { Self.moduleType }
+        let moduleType: String = Modules.Types.firebaseDispatcher
         
         public let allowsMultipleInstances: Bool = true
         
@@ -29,7 +28,8 @@ extension FirebaseDispatcher {
                           context: TealiumContext, 
                           moduleConfiguration: DataObject) -> FirebaseDispatcher? {
             FirebaseDispatcher(moduleId: moduleId, 
-                              logger: context.logger)
+                              context: context,
+                              moduleConfiguration: moduleConfiguration)
         }
         
         public func getEnforcedSettings() -> [DataObject] {

@@ -43,7 +43,7 @@ class SetConsentCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.SetConsent.name
     typealias Param = FirebaseConstants.SetConsent.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         // Check for known consent parameter keys
         let consentKeys = [Param.adStorage, Param.analyticsStorage, Param.adUserData, Param.adPersonalization]
         

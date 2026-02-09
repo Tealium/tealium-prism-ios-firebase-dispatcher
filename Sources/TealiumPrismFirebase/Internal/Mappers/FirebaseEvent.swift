@@ -64,7 +64,7 @@ struct FirebaseEvent {
     /// - Parameter eventName: The Tealium event name (e.g., "event_purchase" or custom "my_event")
     /// - Returns: The Firebase Analytics event constant, or the original name for custom events
     static func map(_ eventName: String) -> String {
-        return mapping[eventName] ?? eventName
+        return mapping[eventName.lowercased()] ?? eventName
     }
     
 }

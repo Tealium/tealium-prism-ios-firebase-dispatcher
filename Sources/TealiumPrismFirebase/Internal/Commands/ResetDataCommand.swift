@@ -34,7 +34,7 @@ class ResetDataCommand: FirebaseCommandProtocol {
 
     let name = FirebaseConstants.ResetData.name
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         firebaseInstance.resetAnalyticsData()
     }
 }

@@ -17,7 +17,7 @@ import FirebaseAnalytics
 /// - ConsentType: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Type-Definitions#consenttype
 extension ConsentType {
     /// Creates a ConsentType from a string value
-    /// - Parameter consentString: The consent type string (e.g., "ad_storage", "analytics_storage")
+    /// - Parameter consentString: The consent type string (e.g., "ad_storage", "analytics_storage"), case-insensitive matching is supported
     /// - Returns: The corresponding ConsentType, or nil if the string is not a valid consent type
     static func from(_ consentString: String) -> ConsentType? {
         switch consentString.lowercased() {
@@ -43,7 +43,7 @@ extension ConsentType {
 /// - ConsentStatus: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Type-Definitions#consentstatus
 extension ConsentStatus {
     /// Creates a ConsentStatus from a string value
-    /// - Parameter statusString: The consent status string (e.g., "granted", "denied")
+    /// - Parameter statusString: The consent status string (e.g., "granted", "denied"), case-insensitive matching is supported
     /// - Returns: The corresponding ConsentStatus, or nil if the string is not a valid consent status
     static func from(_ statusString: String) -> ConsentStatus? {
         switch statusString.lowercased() {

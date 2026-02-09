@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import FirebaseCore
 import TealiumPrismCore
 
 /// Configuration for Firebase Dispatcher module.
@@ -17,29 +18,18 @@ struct FirebaseDispatcherConfiguration {
     let sessionTimeout: Double?
     /// Whether analytics collection is enabled.
     let analyticsEnabled: Bool?
-    /// Firebase internal log level string representation.
-    let logLevel: String?
+    /// Firebase internal log level. If nil (not provided or invalid), Firebase's default is used.
+    let logLevel: FirebaseLogLevel?
     
     enum Keys {
-        static let sessionTimeout = "firebase_session_timeout_seconds"
-        static let analyticsEnabled = "firebase_analytics_collection_enabled"
-        static let logLevel = "firebase_log_level"
-    }
-    
-    enum Defaults {
-        // Firebase SDK defaults:
-        // - Session timeout: 1800 seconds (30 minutes)
-        // - Analytics enabled: true
-        // - Log level: .notice
-        // We use nil defaults to allow Firebase SDK defaults unless explicitly configured
-        static let sessionTimeout: Double? = nil
-        static let analyticsEnabled: Bool? = nil
-        static let logLevel: String? = nil
+        static let sessionTimeout = "session_timeout_seconds"
+        static let analyticsEnabled = "analytics_collection_enabled"
+        static let logLevel = "log_level"
     }
     
     init(configuration: DataObject) {
-        sessionTimeout = configuration.getNumeric(key: Keys.sessionTimeout, as: Double.self) ?? Defaults.sessionTimeout
-        analyticsEnabled = configuration.get(key: Keys.analyticsEnabled) ?? Defaults.analyticsEnabled
-        logLevel = configuration.get(key: Keys.logLevel) ?? Defaults.logLevel
+        sessionTimeout = configuration.getAsDouble(key: Keys.sessionTimeout)
+        analyticsEnabled = configuration.get(key: Keys.analyticsEnabled)
+        logLevel = configuration.get(key: Keys.logLevel, as: String.self).flatMap { FirebaseLogLevel.map($0) }
     }
 }

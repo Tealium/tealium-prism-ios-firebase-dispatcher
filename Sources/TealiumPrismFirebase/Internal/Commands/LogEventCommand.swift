@@ -63,7 +63,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     let name = FirebaseConstants.LogEvent.name
     typealias Param = FirebaseConstants.LogEvent.Param
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         // 1. Extract event name
         let eventName = try extractEventName(from: payload)
         
@@ -75,7 +75,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     }
     
     /// Extracts the event name from payload.
-    private func extractEventName(from payload: DataObject) throws -> String {
+    private func extractEventName(from payload: DataObject) throws(FirebaseCommandError) -> String {
         guard let rawEventName = payload.get(key: Param.eventName, as: String.self) else {
             throw FirebaseCommandError.missingParameter(Param.eventName)
         }
@@ -85,7 +85,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Builds all Firebase parameters from payload (including items).
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
-    private func buildParameters(from payload: DataObject, eventName: String) throws -> [String: Any] {
+    private func buildParameters(from payload: DataObject, eventName: String) throws(FirebaseCommandError) -> [String: Any] {
         guard let eventParamsData = payload.getDataDictionary(key: Param.eventParams) else {
             return [:]
         }
@@ -130,25 +130,22 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Supported formats:
     /// 1. Object of arrays (Tealium): `{"param_items_item_id": ["SKU1", "SKU2"], ...}`
     /// 2. Array of objects (Firebase-ready): `[{"item_id": "SKU1"}, {"item_id": "SKU2"}]`
-    private func buildItems(from eventParamsData: [String: DataItem], eventName: String) throws -> [[String: Any]]? {
+    private func buildItems(from eventParamsData: [String: DataItem], eventName: String) throws(FirebaseCommandError) -> [[String: Any]]? {
         guard let itemsData = eventParamsData[Param.items] else {
             return nil
         }
-        
+        var items: [[String: Any]] = []
         // Detect format and handle accordingly
         if let arrayOfObjects = itemsData.getDataArray() {
             // Format: [{"item_id": "SKU1"}, {"item_id": "SKU2"}]
             // Already in Firebase array format - validate and map parameter names
-            let items = buildItemsFromArrayOfObjects(arrayOfObjects)
-            return items.isEmpty ? nil : items
+            items = buildItemsFromArrayOfObjects(arrayOfObjects)
         } else if let objectOfArrays = itemsData.getDataDictionary() {
             // Format: {"param_items_item_id": ["SKU1", "SKU2"]}
             // Tealium parallel arrays format - needs conversion
-            let items = try buildItemsFromParallelArrays(objectOfArrays)
-            return items.isEmpty ? nil : items
+            items = try buildItemsFromParallelArrays(objectOfArrays)
         }
-        
-        return nil
+        return items.isEmpty ? nil : items
     }
     
     /// Converts array of objects to Firebase items format with parameter name mapping.
@@ -177,7 +174,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Converts parallel arrays to array of item dictionaries.
     /// Input:  { "param_items_item_id": ["SKU1", "SKU2"], "param_items_item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
-    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws -> [[String: Any]] {
+    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]] {
         let arrays = extractArrays(from: parallelArrays)
         
         guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {

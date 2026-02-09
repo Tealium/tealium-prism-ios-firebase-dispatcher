@@ -28,102 +28,105 @@ class TealiumHelper {
                         .setSessionTimeout(1800)
                         .setAnalyticsEnabled(true)
                         .setLogLevel(.debug)
-                        .setMappings([
-                            // LogEvent Command
-                            .mapFirebaseLogEventCommand(),
-                            .mapFirebaseLogEventName(),
-                            .mapFirebaseLogEventParameters(parametersKey: "firebase_params"),
+                        // .setMappings([
+                        //     // LogEvent Command
+                        //     .mapFirebaseLogEventCommand(),
+                        //     .mapFirebaseLogEventName(),
+                        //     .mapFirebaseLogEventParameters(parametersKey: "firebase_params"),
                             
-                            // Event-level parameters
-                            .mapFirebaseEventParameter(from: "value", to: "value"),
-                            .mapFirebaseEventParameter(from: "currency", to: "currency"),
-                            .mapFirebaseEventParameter(from: "transaction_id", to: "transaction_id"),
-                            .mapFirebaseEventParameter(from: "shipping", to: "shipping"),
-                            .mapFirebaseEventParameter(from: "tax", to: "tax"),
-                            .mapFirebaseEventParameter(from: "affiliation", to: "affiliation"),
-                            .mapFirebaseEventParameter(from: "coupon", to: "coupon"),
-                            .mapFirebaseEventParameter(from: "custom_event_param_1", to: "custom_event_param_1"),
-                            .mapFirebaseEventParameter(from: "custom_event_param_2", to: "custom_event_param_2"),
-                            .mapFirebaseEventParameter(from: "custom_event_param_3", to: "custom_event_param_3"),
+                        //     // Event-level parameters
+                        //     .mapFirebaseEventParameter(from: "value", to: "value"),
+                        //     .mapFirebaseEventParameter(from: "currency", to: "currency"),
+                        //     .mapFirebaseEventParameter(from: "transaction_id", to: "transaction_id"),
+                        //     .mapFirebaseEventParameter(from: "shipping", to: "shipping"),
+                        //     .mapFirebaseEventParameter(from: "tax", to: "tax"),
+                        //     .mapFirebaseEventParameter(from: "affiliation", to: "affiliation"),
+                        //     .mapFirebaseEventParameter(from: "coupon", to: "coupon"),
+                        //     .mapFirebaseEventParameter(from: "custom_event_param_1", to: "custom_event_param_1"),
+                        //     .mapFirebaseEventParameter(from: "custom_event_param_2", to: "custom_event_param_2"),
+                        //     .mapFirebaseEventParameter(from: "custom_event_param_3", to: "custom_event_param_3"),
                             
-                            // Item parameters (parallel arrays)
-                            .mapFirebaseItemParameter(from: "product_ids", to: "item_id"),
-                            .mapFirebaseItemParameter(from: "product_names", to: "item_name"),
-                            .mapFirebaseItemParameter(from: "product_brands", to: "item_brand"),
-                            .mapFirebaseItemParameter(from: "product_categories", to: "item_category"),
-                            .mapFirebaseItemParameter(from: "product_category2", to: "item_category2"),
-                            .mapFirebaseItemParameter(from: "product_category3", to: "item_category3"),
-                            .mapFirebaseItemParameter(from: "prices", to: "price"),
-                            .mapFirebaseItemParameter(from: "quantities", to: "quantity"),
-                            .mapFirebaseItemParameter(from: "discounts", to: "discount"),
-                            .mapFirebaseItemParameter(from: "item_variants", to: "item_variant"),
-                            .mapFirebaseItemParameter(from: "item_list_ids", to: "item_list_id"),
-                            .mapFirebaseItemParameter(from: "item_list_names", to: "item_list_name"),
-                            .mapFirebaseItemParameter(from: "indices", to: "index"),
-                            .mapFirebaseItemParameter(from: "custom_item_color", to: "custom_item_color"),
-                            .mapFirebaseItemParameter(from: "custom_item_size", to: "custom_item_size"),
-                            .mapFirebaseItemParameter(from: "custom_item_material", to: "custom_item_material"),
+                        //     // Item parameters (parallel arrays)
+                        //     .mapFirebaseItemParameter(from: "product_ids", to: "item_id"),
+                        //     .mapFirebaseItemParameter(from: "product_names", to: "item_name"),
+                        //     .mapFirebaseItemParameter(from: "product_brands", to: "item_brand"),
+                        //     .mapFirebaseItemParameter(from: "product_categories", to: "item_category"),
+                        //     .mapFirebaseItemParameter(from: "product_category2", to: "item_category2"),
+                        //     .mapFirebaseItemParameter(from: "product_category3", to: "item_category3"),
+                        //     .mapFirebaseItemParameter(from: "prices", to: "price"),
+                        //     .mapFirebaseItemParameter(from: "quantities", to: "quantity"),
+                        //     .mapFirebaseItemParameter(from: "discounts", to: "discount"),
+                        //     .mapFirebaseItemParameter(from: "item_variants", to: "item_variant"),
+                        //     .mapFirebaseItemParameter(from: "item_list_ids", to: "item_list_id"),
+                        //     .mapFirebaseItemParameter(from: "item_list_names", to: "item_list_name"),
+                        //     .mapFirebaseItemParameter(from: "indices", to: "index"),
                             
-                            // SetUserId Command
-                            .mapFirebaseSetUserIdCommand()
-                                .ifValueIn("tealium_event", equals: "set_user_id"),
-                            .mapFirebaseUserId(userIdKey: "user_id"),
+                        //     // Custom item parameters (same parallel-array format: one value per item)
+                        //     .mapFirebaseItemParameter(from: "custom_item_color", to: "custom_item_color"),
+                        //     .mapFirebaseItemParameter(from: "custom_item_size", to: "custom_item_size"),
+                        //     .mapFirebaseItemParameter(from: "custom_item_material", to: "custom_item_material"),
                             
-                            // SetUserProperty Command (handles both single and multiple properties)
-                            .mapFirebaseSetUserPropertyCommand()
-                                .ifValueIn("tealium_event", equals: "set_user_property"),
-                            .mapFirebaseUserPropertyName(propertyNameKey: "property_name"),
-                            .mapFirebaseUserPropertyValue(propertyValueKey: "property_value"),
+                        //     // SetUserId Command
+                        //     .mapFirebaseSetUserIdCommand()
+                        //         .ifValueIn("tealium_event", equals: "set_user_id"),
+                        //     .mapFirebaseUserId(userIdKey: "user_id"),
                             
-                            // SetUserProperty Command (multiple properties)
-                            .mapFirebaseSetUserPropertyCommand()
-                                .ifValueIn("tealium_event", equals: "set_user_properties"),
-                            .mapFirebaseUserPropertyName(propertyNameKey: "property_names"),
-                            .mapFirebaseUserPropertyValue(propertyValueKey: "property_values"),
+                        //     // SetUserProperty Command (handles both single and multiple properties)
+                        //     .mapFirebaseSetUserPropertyCommand()
+                        //         .ifValueIn("tealium_event", equals: "set_user_property"),
+                        //     .mapFirebaseUserPropertyName(propertyNameKey: "property_name"),
+                        //     .mapFirebaseUserPropertyValue(propertyValueKey: "property_value"),
                             
-                            // SetDefaultParameters Command
-                            .mapFirebaseSetDefaultParametersCommand()
-                                .ifValueIn("tealium_event", equals: "set_default_params"),
-                            .mapFirebaseDefaultParameters(paramsKey: "default_params"),
+                        //     // SetUserProperty Command (multiple properties)
+                        //     .mapFirebaseSetUserPropertyCommand()
+                        //         .ifValueIn("tealium_event", equals: "set_user_properties"),
+                        //     .mapFirebaseUserPropertyName(propertyNameKey: "property_names"),
+                        //     .mapFirebaseUserPropertyValue(propertyValueKey: "property_values"),
                             
-                            // SetConsent Command
-                            .mapFirebaseSetConsentCommand()
-                                .ifValueIn("tealium_event", equals: "update_consent"),
-                            .mapFirebaseAnalyticsStorage(sourceKey: "analytics_storage"),
-                            .mapFirebaseAdStorage(sourceKey: "ad_storage"),
-                            .mapFirebaseAdUserData(sourceKey: "ad_user_data"),
-                            .mapFirebaseAdPersonalization(sourceKey: "ad_personalization"),
+                        //     // SetDefaultParameters Command
+                        //     .mapFirebaseSetDefaultParametersCommand()
+                        //         .ifValueIn("tealium_event", equals: "set_default_params"),
+                        //     .mapFirebaseDefaultParameters(paramsKey: "default_params"),
                             
-                            // ResetData Command
-                            .mapFirebaseResetDataCommand()
-                                .ifValueIn("tealium_event", equals: "reset_firebase_data"),
+                        //     // SetConsent Command
+                        //     .mapFirebaseSetConsentCommand()
+                        //         .ifValueIn("tealium_event", equals: "update_consent"),
+                        //     .mapFirebaseAnalyticsStorage(sourceKey: "analytics_storage"),
+                        //     .mapFirebaseAdStorage(sourceKey: "ad_storage"),
+                        //     .mapFirebaseAdUserData(sourceKey: "ad_user_data"),
+                        //     .mapFirebaseAdPersonalization(sourceKey: "ad_personalization"),
                             
-                            // SetSessionTimeout Command
-                            .mapFirebaseSetSessionTimeoutCommand()
-                                .ifValueIn("tealium_event", equals: "update_session_timeout"),
-                            .mapFirebaseSetSessionTimeoutValue(sourceKey: "session_timeout"),
+                        //     // ResetData Command
+                        //     .mapFirebaseResetDataCommand()
+                        //         .ifValueIn("tealium_event", equals: "reset_firebase_data"),
                             
-                            // SetAnalyticsCollectionEnabled Command
-                            .mapFirebaseSetAnalyticsCollectionEnabledCommand()
-                                .ifValueIn("tealium_event", equals: "toggle_analytics"),
-                            .mapFirebaseSetAnalyticsCollectionEnabledValue(sourceKey: "analytics_enabled"),
+                        //     // SetSessionTimeout Command
+                        //     .mapFirebaseSetSessionTimeoutCommand()
+                        //         .ifValueIn("tealium_event", equals: "update_session_timeout"),
+                        //     .mapFirebaseSetSessionTimeoutValue(sourceKey: "session_timeout"),
                             
-                            // InitiateConversionMeasurement Command
-                            .mapFirebaseInitiateConversionMeasurementCommand()
-                                .ifValueIn("tealium_event", equals: "conversion_measurement"),
-                            .mapFirebaseConversionEmailAddress(sourceKey: "email"),
-                            .mapFirebaseConversionPhoneNumber(sourceKey: "phone_number"),
-                            .mapFirebaseConversionHashedEmailAddress(sourceKey: "hashed_email"),
-                            .mapFirebaseConversionHashedPhoneNumber(sourceKey: "hashed_phone")
-                        ])
+                        //     // SetAnalyticsCollectionEnabled Command
+                        //     .mapFirebaseSetAnalyticsCollectionEnabledCommand()
+                        //         .ifValueIn("tealium_event", equals: "toggle_analytics"),
+                        //     .mapFirebaseSetAnalyticsCollectionEnabledValue(sourceKey: "analytics_enabled"),
+                            
+                        //     // InitiateConversionMeasurement Command
+                        //     .mapFirebaseInitiateConversionMeasurementCommand()
+                        //         .ifValueIn("tealium_event", equals: "conversion_measurement"),
+                        //     .mapFirebaseConversionEmailAddress(sourceKey: "email"),
+                        //     .mapFirebaseConversionPhoneNumber(sourceKey: "phone_number"),
+                        //     .mapFirebaseConversionHashedEmailAddress(sourceKey: "hashed_email"),
+                        //     .mapFirebaseConversionHashedPhoneNumber(sourceKey: "hashed_phone")
+                        // ])
                 })
             ],
+            settingsFile: "TealiumSettings",
             forcingSettings: { builder in
                 builder.setMinLogLevel(.trace)
             }
         )
-        
-    self.teal = Tealium.create(config: config)
+
+        self.teal = Tealium.create(config: config)
     }
     
     func stopTealium() {
@@ -169,7 +172,7 @@ class TealiumHelper {
             "item_list_names": ["Featured", "Recommended", "Featured"],
             "indices": [0, 1, 2],
             
-            // Custom item parameters (will be applied to all items)
+            // Custom item parameters (parallel arrays format)
             "custom_item_color": ["Blue", "Red", "Black"],
             "custom_item_size": ["Large", "Medium", "Small"],
             "custom_item_material": ["Metal", "Plastic", "Metal"]

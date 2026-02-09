@@ -4,9 +4,9 @@ import PackageDescription
 let package = Package(
     name: "TealiumPrismFirebase",
     platforms: [
-        .iOS(.v13),
+        .iOS(.v15),
         .macOS(.v10_15),
-        .tvOS(.v13),
+        .tvOS(.v15),
         .watchOS(.v7)
     ],
     products: [
@@ -16,19 +16,16 @@ let package = Package(
         ),
     ],
     dependencies: [
-        // LOCAL DEVELOPMENT: Use local tealium-swift-v3
-        .package(path: "../tealium-swift-v3"),
-        // PRODUCTION: When Prism SDK is published, use:
-        // .package(url: "https://github.com/tealium/tealium-prism-swift", from: "1.0.0"),
-        
-        // Firebase SDK
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "10.0.0")
+        .package(url: "https://github.com/Tealium/tealium-prism-swift", from: "0.3.0"),
+        // LOCAL DEVELOPMENT: swap to local path when working on both repos:
+        // .package(path: "../tealium-prism-swift"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "12.0.0")
     ],
     targets: [
         .target(
             name: "TealiumPrismFirebase",
             dependencies: [
-                .product(name: "TealiumPrismCore", package: "tealium-swift-v3"),
+                .product(name: "TealiumPrismCore", package: "tealium-prism-swift"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
             path: "./Sources/TealiumPrismFirebase"

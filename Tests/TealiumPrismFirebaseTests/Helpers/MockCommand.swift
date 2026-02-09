@@ -16,19 +16,19 @@ class MockCommand: FirebaseCommandProtocol {
     
     let name: String
     let shouldThrow: Bool
-    let errorToThrow: Error?
+    let errorToThrow: FirebaseCommandError?
     
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
     
-    init(name: String, shouldThrow: Bool = false, errorToThrow: Error? = nil) {
+    init(name: String, shouldThrow: Bool = false, errorToThrow: FirebaseCommandError? = nil) {
         self.name = name
         self.shouldThrow = shouldThrow
         self.errorToThrow = errorToThrow
     }
     
-    func execute(payload: DataObject) throws {
+    func execute(payload: DataObject) throws(FirebaseCommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1

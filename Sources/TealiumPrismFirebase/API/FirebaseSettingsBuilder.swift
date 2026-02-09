@@ -32,13 +32,9 @@ import TealiumPrismCore
 /// })
 /// ```
 public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
-    
+
     typealias Keys = FirebaseDispatcherConfiguration.Keys
-    
-    public override init() {
-        super.init()
-    }
-    
+
     // MARK: - Session Configuration
     
     /// Set the session timeout in seconds.

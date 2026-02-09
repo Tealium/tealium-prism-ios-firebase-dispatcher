@@ -19,7 +19,10 @@ final class FirebaseDispatcherTests: XCTestCase {
         super.setUp()
         mockFirebase = MockFirebaseCommand()
         dispatcher = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
             logger: nil
         )
     }
@@ -34,21 +37,26 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_init_sets_default_id() {
         let defaultDispatcher = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
             logger: nil
         )
         
-        XCTAssertEqual(defaultDispatcher.id, FirebaseConstants.moduleType)
+        XCTAssertEqual(defaultDispatcher?.id, FirebaseConstants.moduleType)
     }
     
     func test_init_sets_custom_id() {
         let customDispatcher = FirebaseDispatcher(
-            id: "CustomFirebase",
+            moduleId: "CustomFirebase",
             firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
             logger: nil
         )
         
-        XCTAssertEqual(customDispatcher.id, "CustomFirebase")
+        XCTAssertEqual(customDispatcher?.id, "CustomFirebase")
     }
     
     func test_init_sets_version() {
@@ -88,6 +96,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         waitForDefaultTimeout()
         XCTAssertNotNil(disposable)
+        XCTAssertTrue(disposable.isDisposed)
     }
     
     // MARK: - Dispatch Tests - Multiple Commands
@@ -97,7 +106,7 @@ final class FirebaseDispatcherTests: XCTestCase {
             FirebaseConstants.commandName: [
                 FirebaseConstants.LogEvent.name,
                 FirebaseConstants.SetUserId.name
-            ] as [String],
+            ],
             FirebaseConstants.LogEvent.Param.eventName: "test_event",
             FirebaseConstants.SetUserId.Param.userId: "user123"
         ])
@@ -192,7 +201,7 @@ final class FirebaseDispatcherTests: XCTestCase {
             FirebaseConstants.commandName: [
                 "invalid_command",
                 FirebaseConstants.LogEvent.name
-            ] as [String],
+            ],
             FirebaseConstants.LogEvent.Param.eventName: "test_event"
         ])
         
@@ -204,6 +213,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         waitForDefaultTimeout()
         XCTAssertTrue(mockFirebase.logEventCalled)
+        XCTAssertEqual(mockFirebase.logEventCallCount, 1)
     }
     
     func test_dispatch_with_command_as_number_does_not_crash() {
@@ -233,8 +243,5 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_shutdown_completes_without_error() {
         // Should not crash
         dispatcher.shutdown()
-        
-        // Verify dispatcher still exists and can handle calls after shutdown
-        XCTAssertNotNil(dispatcher)
     }
 }

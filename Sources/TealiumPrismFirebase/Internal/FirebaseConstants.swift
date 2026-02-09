@@ -35,7 +35,7 @@ enum FirebaseConstants {
         static let name = "setsessiontimeout"
         
         enum Param {
-            static let sessionTimeout = "firebase_session_timeout_seconds"
+            static let sessionTimeout = "session_timeout_seconds"
         }
     }
     
@@ -49,7 +49,7 @@ enum FirebaseConstants {
         static let name = "setanalyticscollectionenabled"
         
         enum Param {
-            static let analyticsEnabled = "firebase_analytics_collection_enabled"
+            static let analyticsEnabled = "analytics_collection_enabled"
         }
     }
     

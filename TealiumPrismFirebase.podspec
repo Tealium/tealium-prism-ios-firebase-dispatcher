@@ -14,10 +14,10 @@ Pod::Spec.new do |s|
     s.source           = { :git => "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", :tag => "#{s.version}" }
     s.social_media_url = "http://twitter.com/tealium"
     
-    s.ios.deployment_target = '13.0'
+    s.ios.deployment_target = '15.0'
     s.osx.deployment_target = "10.15"
     s.watchos.deployment_target = "7.0"
-    s.tvos.deployment_target = "13.0"
+    s.tvos.deployment_target = "15.0"
     
     s.swift_version = '5.5'
     
@@ -27,5 +27,5 @@ Pod::Spec.new do |s|
     # With '~> 0.1.0', CocoaPods tries to resolve version from git before checking local pods
     # With '>= 0.1.0', CocoaPods can use local pods from Podfile
     s.dependency 'tealium-prism/Core', '>= 0.1.0'
-    s.dependency 'Firebase/Analytics', '~> 10.0'
+    s.dependency 'Firebase/Analytics', '~> 12.0'
   end

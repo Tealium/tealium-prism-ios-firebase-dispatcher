@@ -17,66 +17,28 @@ import TealiumPrismCore
 /// Example:
 /// ```swift
 /// // Handles both numeric and string representations:
-/// let timeout1 = data.getNumeric(key: "timeout", as: TimeInterval.self)  // 1800.5 or "1800.5"
+/// let timeout1 = data.getAsDouble(key: "timeout")  // 1800.5 or "1800.5"
 /// let enabled = data.getBoolValue(key: "enabled")  // true or "true"
 /// ```
 extension DataItemExtractor {
     
     // MARK: - Numeric Conversion
     
-    /// Extracts a Double value with automatic Int → Double and String → Double conversion.
+    /// Extracts a Double value with automatic String → Double conversion.
     ///
-    /// This method first attempts to get the value as a Double.
-    /// If that fails, it attempts to get the value as an Int and convert it to Double.
-    /// If that also fails, it attempts to get the value as a String and convert it.
+    /// Uses the underlying extractor's `get(key:as: Double.self)`, which already handles
+    /// Int → Double conversion. Falls back to parsing from String if needed.
     ///
-    /// - Parameters:
-    ///   - key: The key to look up
-    ///   - type: The Double type (for type inference)
+    /// - Parameter key: The key to look up
     /// - Returns: The Double value if found and valid, nil otherwise
-    ///
-    /// - Note: TimeInterval is a typealias for Double, so this works for both
-    func getNumeric(key: String, as type: Double.Type) -> Double? {
-        // Try direct numeric extraction first (handles Double)
+    func getAsDouble(key: String) -> Double? {
         if let value = get(key: key, as: Double.self) {
             return value
         }
-        
-        // Try Int → Double conversion
-        if let intValue = get(key: key, as: Int.self) {
-            return Double(intValue)
-        }
-        
-        // Fall back to string conversion
         if let stringValue = get(key: key, as: String.self),
            let doubleValue = Double(stringValue) {
             return doubleValue
         }
-        
-        return nil
-    }
-    
-    /// Extracts an Int value with automatic String → Int conversion.
-    ///
-    /// This method first attempts to get the value as an Int.
-    /// If that fails, it attempts to get the value as a String and convert it.
-    ///
-    /// - Parameters:
-    ///   - key: The key to look up
-    ///   - type: The Int type (for type inference)
-    /// - Returns: The Int value if found and valid, nil otherwise
-    func getNumeric(key: String, as type: Int.Type) -> Int? {
-        // Try direct integer extraction first
-        if let value = get(key: key, as: Int.self) {
-            return value
-        }
-        
-        // Fall back to string conversion
-        if let stringValue = get(key: key, as: String.self),
-           let intValue = Int(stringValue) {
-            return intValue
-        }
-        
         return nil
     }
     

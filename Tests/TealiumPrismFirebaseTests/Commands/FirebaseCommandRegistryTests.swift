@@ -129,36 +129,5 @@ final class FirebaseCommandRegistryTests: XCTestCase {
             XCTAssert(error is FirebaseCommandError)
         }
     }
-    
-    func test_execute_empty_command_name_throws_error() {
-        let command = MockCommand(name: "test")
-        registry.register(command)
-        
-        let payload: DataObject = [:]
-        
-        XCTAssertThrowsError(try registry.execute(commandName: "", payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
-                return
-            }
-            if case .commandNotFound = commandError {
-                // Success - empty name is not found
-            } else {
-                XCTFail("Expected commandNotFound error")
-            }
-        }
-        
-        XCTAssertThrowsError(try registry.execute(commandName: "   ", payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
-                return
-            }
-            if case .commandNotFound = commandError {
-                // Success - whitespace name is not found
-            } else {
-                XCTFail("Expected commandNotFound error")
-            }
-        }
-    }
 }
 

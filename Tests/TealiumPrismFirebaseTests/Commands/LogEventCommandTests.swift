@@ -37,10 +37,9 @@ final class LogEventCommandTests: XCTestCase {
                 XCTFail("Expected FirebaseCommandError")
                 return
             }
-            if case .missingParameter = commandError {
-                // Success
-            } else {
+            guard case .missingParameter = commandError else {
                 XCTFail("Expected missingParameter error")
+                return
             }
         }
         XCTAssertFalse(mockFirebase.logEventCalled)
@@ -118,9 +117,9 @@ final class LogEventCommandTests: XCTestCase {
         // Create items data as DataObject with parallel arrays
         // Arrays need to be [DataInput] type for extractArrays() to work
         let itemsObject: DataObject = [
-            "param_items_item_id": ["SKU001", "SKU002"] as [String],
-            "param_items_item_name": ["Widget", "Gadget"] as [String],
-            "param_items_price": [29.99, 70.00] as [Double]
+            "param_items_item_id": ["SKU001", "SKU002"],
+            "param_items_item_name": ["Widget", "Gadget"],
+            "param_items_price": [29.99, 70.00]
         ]
         
         let payload: DataObject = [
@@ -162,10 +161,10 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_logs_event_with_items_mixed_types() {
         // Test items with mixed value types (String, Int, Double)
         let itemsObject: DataObject = [
-            "param_items_item_id": ["SKU001", "SKU002"] as [String],
-            "param_items_quantity": [1, 3] as [Int],
-            "param_items_price": [29.99, 70.00] as [Double],
-            "param_items_discount": [5.0, 0.0] as [Double]
+            "param_items_item_id": ["SKU001", "SKU002"],
+            "param_items_quantity": [1, 3],
+            "param_items_price": [29.99, 70.00],
+            "param_items_discount": [5.0, 0.0]
         ]
         
         let payload: DataObject = [
@@ -192,8 +191,8 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_throws_error_with_mismatched_item_array_lengths() {
         // Test that mismatched array lengths throw an error
         let itemsObject: DataObject = [
-            "param_items_item_id": ["SKU001", "SKU002", "SKU003"] as [String],
-            "param_items_item_name": ["Widget", "Gadget"] as [String]  // Shorter array
+            "param_items_item_id": ["SKU001", "SKU002", "SKU003"],
+            "param_items_item_name": ["Widget", "Gadget"]  // Shorter array
         ]
         
         let payload: DataObject = [
@@ -208,14 +207,14 @@ final class LogEventCommandTests: XCTestCase {
                 XCTFail("Expected FirebaseCommandError")
                 return
             }
-            if case .arrayLengthMismatch(let array1, let count1, let array2, let count2) = commandError {
-                // Verify we got the mismatch details
-                XCTAssertTrue(count1 == 3 || count1 == 2)
-                XCTAssertTrue(count2 == 3 || count2 == 2)
-                XCTAssertNotEqual(count1, count2)
-            } else {
+            guard case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
                 XCTFail("Expected arrayLengthMismatch error")
+                return
             }
+            // Verify we got the mismatch details
+            XCTAssertTrue(count1 == 3 || count1 == 2)
+            XCTAssertTrue(count2 == 3 || count2 == 2)
+            XCTAssertNotEqual(count1, count2)
         }
         
         // Event should not be logged

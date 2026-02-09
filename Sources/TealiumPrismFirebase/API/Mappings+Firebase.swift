@@ -55,7 +55,6 @@ public extension Mappings {
     ///     "prices": [29.99, 70.00]
     /// ])
     /// ```
-    
     /// Maps the "logevent" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -71,7 +70,7 @@ public extension Mappings {
     /// - Parameter eventKey: The source key containing the event name. Defaults to `tealium_event`.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventName(eventKey: String = TealiumDataKey.event) -> VariableOptions {
-        .from(eventKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventName])
+        .from(eventKey, to: FirebaseConstants.LogEvent.Param.eventName)
     }
     
     /// Maps a source JSONPath to the Firebase event name parameter.
@@ -79,7 +78,7 @@ public extension Mappings {
     /// - Parameter eventPath: The source path containing the event name.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventName(eventPath: JSONObjectPath) -> VariableOptions {
-        .from(eventPath, to: JSONPath[FirebaseConstants.LogEvent.Param.eventName])
+        .from(eventPath, to: FirebaseConstants.LogEvent.Param.eventName)
     }
     
     /// Maps a source key to the Firebase event parameters.
@@ -87,7 +86,7 @@ public extension Mappings {
     /// - Parameter parametersKey: The source key containing event parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventParameters(parametersKey: String) -> VariableOptions {
-        .from(parametersKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams])
+        .from(parametersKey, to: FirebaseConstants.LogEvent.Param.eventParams)
     }
     
     /// Maps a source JSONPath to the Firebase event parameters.
@@ -95,7 +94,7 @@ public extension Mappings {
     /// - Parameter parametersPath: The source path containing event parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventParameters(parametersPath: JSONObjectPath) -> VariableOptions {
-        .from(parametersPath, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams])
+        .from(parametersPath, to: FirebaseConstants.LogEvent.Param.eventParams)
     }
     
     /// Maps a source key to a specific event parameter.
@@ -134,7 +133,6 @@ public extension Mappings {
     ///
     /// tealium.track("logout", data: ["customer_id": ""])  // Empty clears
     /// ```
-    
     /// Maps the "setuserid" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -147,7 +145,7 @@ public extension Mappings {
     /// - Parameter userIdKey: The source key containing the user ID.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserId(userIdKey: String) -> VariableOptions {
-        .from(userIdKey, to: JSONPath[FirebaseConstants.SetUserId.Param.userId])
+        .from(userIdKey, to: FirebaseConstants.SetUserId.Param.userId)
     }
     
     /// Maps a source JSONPath to the Firebase user ID parameter.
@@ -155,7 +153,7 @@ public extension Mappings {
     /// - Parameter userIdPath: The source path containing the user ID.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserId(userIdPath: JSONObjectPath) -> VariableOptions {
-        .from(userIdPath, to: JSONPath[FirebaseConstants.SetUserId.Param.userId])
+        .from(userIdPath, to: FirebaseConstants.SetUserId.Param.userId)
     }
     
     // MARK: - SetUserProperty Command
@@ -189,7 +187,6 @@ public extension Mappings {
     ///     "values": ["premium", "expert"]
     /// ])
     /// ```
-    
     /// Maps the "setuserproperty" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -202,7 +199,7 @@ public extension Mappings {
     /// - Parameter propertyNameKey: The source key containing the property name(s).
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyName(propertyNameKey: String) -> VariableOptions {
-        .from(propertyNameKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyName])
+        .from(propertyNameKey, to: FirebaseConstants.SetUserProperty.Param.propertyName)
     }
     
     /// Maps a source key to the Firebase user property value(s).
@@ -210,7 +207,7 @@ public extension Mappings {
     /// - Parameter propertyValueKey: The source key containing the property value(s).
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserPropertyValue(propertyValueKey: String) -> VariableOptions {
-        .from(propertyValueKey, to: JSONPath[FirebaseConstants.SetUserProperty.Param.propertyValue])
+        .from(propertyValueKey, to: FirebaseConstants.SetUserProperty.Param.propertyValue)
     }
     
     // MARK: - SetDefaultParameters Command
@@ -227,7 +224,6 @@ public extension Mappings {
     ///     "defaults": ["app_version": "2.0", "env": "prod"]
     /// ])
     /// ```
-    
     /// Maps the "setdefaultparameters" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -240,7 +236,7 @@ public extension Mappings {
     /// - Parameter paramsKey: The source key containing the default parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseDefaultParameters(paramsKey: String) -> VariableOptions {
-        .from(paramsKey, to: JSONPath[FirebaseConstants.SetDefaultParameters.Param.params])
+        .from(paramsKey, to: FirebaseConstants.SetDefaultParameters.Param.params)
     }
     
     /// Maps a source key to a specific default parameter.
@@ -271,7 +267,6 @@ public extension Mappings {
     /// ```
     ///
     /// Supported values: `"granted"`, `"denied"`
-    
     /// Maps the "setconsent" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -284,7 +279,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adStorage])
+        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adStorage)
     }
     
     /// Maps a source key to the Firebase analytics_storage consent setting.
@@ -292,7 +287,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAnalyticsStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.analyticsStorage])
+        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.analyticsStorage)
     }
     
     /// Maps a source key to the Firebase ad_user_data consent setting.
@@ -300,7 +295,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdUserData(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adUserData])
+        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adUserData)
     }
     
     /// Maps a source key to the Firebase ad_personalization consent setting.
@@ -308,7 +303,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdPersonalization(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.adPersonalization])
+        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adPersonalization)
     }
     
     // MARK: - ResetData Command
@@ -323,7 +318,6 @@ public extension Mappings {
     /// // Tracking:
     /// tealium.track("delete_data")
     /// ```
-    
     /// Maps the "resetdata" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -343,7 +337,6 @@ public extension Mappings {
     /// // Tracking:
     /// tealium.track("update_timeout", data: ["timeout": 3600])
     /// ```
-    
     /// Maps the "setsessiontimeout" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -356,7 +349,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the session timeout value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseSetSessionTimeoutValue(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetSessionTimeout.Param.sessionTimeout])
+        .from(sourceKey, to: FirebaseConstants.SetSessionTimeout.Param.sessionTimeout)
     }
     
     // MARK: - SetAnalyticsCollectionEnabled Command
@@ -371,7 +364,6 @@ public extension Mappings {
     /// // Tracking:
     /// tealium.track("toggle_analytics", data: ["enabled": false])
     /// ```
-    
     /// Maps the "setanalyticscollectionenabled" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -384,7 +376,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the enabled value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseSetAnalyticsCollectionEnabledValue(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled])
+        .from(sourceKey, to: FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled)
     }
     
     // MARK: - InitiateConversionMeasurement Command
@@ -401,7 +393,6 @@ public extension Mappings {
     /// ```
     ///
     /// Priority: hashed_email > hashed_phone > email > phone
-    
     /// Maps the "initiateconversionmeasurement" command constant to the command key.
     ///
     /// - Returns: A `ConstantOptions` mapping builder.
@@ -414,7 +405,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the email address.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionEmailAddress(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress])
+        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress)
     }
     
     /// Maps a source key to the phone number parameter for conversion measurement.
@@ -422,7 +413,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the phone number.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionPhoneNumber(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber])
+        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber)
     }
     
     /// Maps a source key to the hashed email address parameter for conversion measurement.
@@ -430,7 +421,7 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the hashed email address.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionHashedEmailAddress(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress])
+        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress)
     }
     
     /// Maps a source key to the hashed phone number parameter for conversion measurement.
@@ -438,6 +429,6 @@ public extension Mappings {
     /// - Parameter sourceKey: The source key containing the hashed phone number.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseConversionHashedPhoneNumber(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber])
+        .from(sourceKey, to: FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber)
     }
 }

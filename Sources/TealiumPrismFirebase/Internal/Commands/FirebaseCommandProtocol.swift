@@ -17,5 +17,5 @@ protocol FirebaseCommandProtocol {
     
     /// Executes the command with payload.
     /// - Throws: `FirebaseCommandError` if validation fails or required parameters are missing
-    func execute(payload: DataObject) throws
+    func execute(payload: DataObject) throws(FirebaseCommandError)
 }
