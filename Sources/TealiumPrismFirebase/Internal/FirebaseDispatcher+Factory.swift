@@ -15,13 +15,15 @@ extension FirebaseDispatcher {
         
         let moduleType: String = Modules.Types.firebaseDispatcher
         
-        public let allowsMultipleInstances: Bool = true
+        /// Firebase Analytics only supports a single shared instance.
+        /// Multiple dispatcher instances would all write to the same Firebase Analytics backend.
+        public let allowsMultipleInstances: Bool = false
         
-        let enforcedSettings: [DataObject]
+        let enforcedSettings: DataObject?
         typealias SettingsBuilderBlock = Modules.EnforcingSettings<FirebaseSettingsBuilder>
         
-        public init(forcingSettings blocks: [SettingsBuilderBlock?] = []) {
-            self.enforcedSettings = blocks.compactMap { block in block?(FirebaseSettingsBuilder()).build() }
+        public init(forcingSettings block: SettingsBuilderBlock? = nil) {
+            self.enforcedSettings = block?(FirebaseSettingsBuilder()).build()
         }
         
         public func create(moduleId: String, 
@@ -33,7 +35,7 @@ extension FirebaseDispatcher {
         }
         
         public func getEnforcedSettings() -> [DataObject] {
-            enforcedSettings
+            enforcedSettings.map { [$0] } ?? []
         }
     }
 }

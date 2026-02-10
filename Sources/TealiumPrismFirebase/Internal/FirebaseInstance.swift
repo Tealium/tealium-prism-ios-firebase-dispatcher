@@ -13,7 +13,8 @@ import TealiumPrismCore
 
 /// Internal implementation of FirebaseCommand protocol wrapping Firebase Analytics SDK calls.
 ///
-/// Automatically configures Firebase on first use if not already configured.
+/// Configures Firebase automatically on first use if not already configured.
+/// If `FirebaseApp.configure()` was called before Tealium starts, this class detects it and skips configuration.
 class FirebaseInstance: FirebaseCommand {
     
     private let onReadySubject = ReplaySubject<Void>(cacheSize: 1)
@@ -31,9 +32,11 @@ class FirebaseInstance: FirebaseCommand {
     /// Executes the completion block when Firebase is configured.
     /// If already configured, the completion is called immediately.
     public func onReady(_ onReady: @escaping () -> Void) {
-        onReadySubject.subscribeOnce(onReady)
-        
+        // All ReplaySubject operations must happen on the main thread since
+        // ReplaySubject is not thread-safe. This method may be called from
+        // TealiumQueue.worker, so we dispatch to main before accessing the subject.
         TealiumQueue.main.ensureOnQueue { [weak self] in
+            self?.onReadySubject.subscribeOnce(onReady)
             self?.configureIfNeeded()
         }
     }

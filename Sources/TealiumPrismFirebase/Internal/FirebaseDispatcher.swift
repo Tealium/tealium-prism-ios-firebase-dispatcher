@@ -16,7 +16,7 @@ class FirebaseDispatcher: Dispatcher {
     
     public let id: String
     public let version: String = FirebaseConstants.version
-    public let dispatchLimit: Int = 1
+    public let dispatchLimit: Int = 10
     
     // MARK: - Dependencies
     
@@ -122,7 +122,7 @@ class FirebaseDispatcher: Dispatcher {
     private func applyConfigurationSettings(_ config: FirebaseDispatcherConfiguration) {
         logger?.debug(category: LogCategory.firebase, "Applying configuration settings")
         
-        // 1. Configure log level
+        // 1. Configure log level (can be changed dynamically, but for complete logs set before FirebaseApp.configure())
         if let logLevel = config.logLevel {
             firebaseInstance.setLoggerLevel(logLevel.value)
             logger?.debug(category: LogCategory.firebase,
