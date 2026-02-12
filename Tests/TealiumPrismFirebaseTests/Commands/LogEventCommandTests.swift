@@ -212,9 +212,7 @@ final class LogEventCommandTests: XCTestCase {
                 return
             }
             // Verify we got the mismatch details
-            XCTAssertTrue(count1 == 3 || count1 == 2)
-            XCTAssertTrue(count2 == 3 || count2 == 2)
-            XCTAssertNotEqual(count1, count2)
+            XCTAssertTrue((count1 == 3 && count2 == 2) || (count1 == 2 && count2 == 3))
         }
         
         // Event should not be logged

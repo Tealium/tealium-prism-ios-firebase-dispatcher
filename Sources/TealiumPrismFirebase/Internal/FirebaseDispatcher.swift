@@ -3,14 +3,14 @@
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 9/01/2026.
-//  Copyright © 2025 Tealium. All rights reserved.
+//  Copyright © 2026 Tealium. All rights reserved.
 //
 
 import Foundation
 import TealiumPrismCore
 
 /// Firebase Analytics Dispatcher for Tealium Prism SDK
-class FirebaseDispatcher: Dispatcher {
+class FirebaseDispatcher: Dispatcher, BasicModule {
     
     // MARK: - Module Properties
     
@@ -27,9 +27,9 @@ class FirebaseDispatcher: Dispatcher {
     
     // MARK: - Initialization
     
-    /// Generic `Dispatcher` initializer called by the `FirebaseDispatcher.Factory`.
-    required convenience init?(moduleId: String, context: TealiumContext, moduleConfiguration: DataObject) {
-        self.init(moduleId: moduleId,
+    /// Generic `Dispatcher` initializer called by `BasicModuleFactory`.
+    required convenience init?(context: TealiumContext, moduleConfiguration: DataObject) {
+        self.init(moduleId: Modules.Types.firebaseDispatcher,
                   firebaseInstance: FirebaseInstance(),
                   commandRegistry: FirebaseCommandRegistry(),
                   configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),

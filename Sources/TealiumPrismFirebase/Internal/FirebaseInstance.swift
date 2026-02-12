@@ -23,37 +23,31 @@ class FirebaseInstance: FirebaseCommand {
         FirebaseApp.app() != nil
     }
     
-    public init() {
-        TealiumQueue.main.ensureOnQueue { [weak self] in
-            self?.checkAndPublishReady()
-        }
-    }
+    public init() { }
     
-    /// Executes the completion block when Firebase is configured.
-    /// If already configured, the completion is called immediately.
+    /// Executes the callback when Firebase is configured.
+    /// If already configured, the callback is called immediately.
     public func onReady(_ onReady: @escaping () -> Void) {
-        // All ReplaySubject operations must happen on the main thread since
-        // ReplaySubject is not thread-safe. This method may be called from
-        // TealiumQueue.worker, so we dispatch to main before accessing the subject.
+        onReadySubject.subscribeOnce(onReady)
+        
+        guard onReadySubject.last() == nil else { return }
+        
         TealiumQueue.main.ensureOnQueue { [weak self] in
-            self?.onReadySubject.subscribeOnce(onReady)
             self?.configureIfNeeded()
         }
     }
     
     private func configureIfNeeded() {
-        guard !isConfigured else {
-            checkAndPublishReady()
-            return
+        if !isConfigured {
+            FirebaseApp.configure()
         }
         
-        FirebaseApp.configure()
-        checkAndPublishReady()
-    }
-    
-    private func checkAndPublishReady() {
-        guard isConfigured, onReadySubject.last() == nil else { return }
-        onReadySubject.publish()
+        guard isConfigured else { return }
+        
+        TealiumQueue.worker.ensureOnQueue { [weak self] in
+            guard let self, self.onReadySubject.last() == nil else { return }
+            self.onReadySubject.publish()
+        }
     }
     
     public func setSessionTimeoutInterval(_ interval: TimeInterval) {

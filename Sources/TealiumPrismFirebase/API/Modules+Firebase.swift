@@ -3,7 +3,7 @@
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 9/01/2026.
-//  Copyright © 2025 Tealium. All rights reserved.
+//  Copyright © 2026 Tealium. All rights reserved.
 //
 
 import Foundation
@@ -38,7 +38,10 @@ public extension Modules {
     static func firebaseDispatcher(
         forcingSettings block: EnforcingSettings<FirebaseSettingsBuilder>? = { $0 }
     ) -> some ModuleFactory {
-        FirebaseDispatcher.Factory(forcingSettings: block)
+        BasicModuleFactory<FirebaseDispatcher>(
+            moduleType: Modules.Types.firebaseDispatcher,
+            enforcedSettings: block?(FirebaseSettingsBuilder()).build()
+        )
     }
 }
 
