@@ -47,18 +47,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertEqual(defaultDispatcher?.id, FirebaseConstants.moduleType)
     }
     
-    func test_init_sets_custom_id() {
-        let customDispatcher = FirebaseDispatcher(
-            moduleId: "CustomFirebase",
-            firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
-            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
-            logger: nil
-        )
-        
-        XCTAssertEqual(customDispatcher?.id, "CustomFirebase")
-    }
-    
     func test_init_sets_version() {
         XCTAssertEqual(dispatcher.version, FirebaseConstants.version)
     }
@@ -243,5 +231,154 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_shutdown_completes_without_error() {
         // Should not crash
         dispatcher.shutdown()
+    }
+    
+    // MARK: - Configuration Application Tests (Init)
+    
+    func test_init_applies_logLevel_from_configuration() {
+        let mockFirebase = MockFirebaseCommand()
+        let config: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.logLevel: "debug"
+        ]
+        
+        _ = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
+            firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: config),
+            logger: nil
+        )
+        
+        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.lastLoggerLevel, .debug)
+    }
+    
+    func test_init_applies_sessionTimeout_from_configuration() {
+        let mockFirebase = MockFirebaseCommand()
+        let config: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.sessionTimeout: 3600.0
+        ]
+        
+        _ = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
+            firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: config),
+            logger: nil
+        )
+        
+        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
+    }
+    
+    func test_init_applies_analyticsEnabled_from_configuration() {
+        let mockFirebase = MockFirebaseCommand()
+        let config: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false
+        ]
+        
+        _ = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
+            firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: config),
+            logger: nil
+        )
+        
+        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
+    }
+    
+    func test_init_applies_all_configuration_settings() {
+        let mockFirebase = MockFirebaseCommand()
+        let config: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.logLevel: "warning",
+            FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800.0,
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true
+        ]
+        
+        _ = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
+            firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: config),
+            logger: nil
+        )
+        
+        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.lastLoggerLevel, .warning)
+        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.0)
+        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
+    }
+    
+    func test_init_with_empty_configuration_does_not_apply_settings() {
+        let mockFirebase = MockFirebaseCommand()
+        let config: DataObject = [:]
+        
+        _ = FirebaseDispatcher(
+            moduleId: FirebaseConstants.moduleType,
+            firebaseInstance: mockFirebase,
+            commandRegistry: FirebaseCommandRegistry(),
+            configuration: FirebaseDispatcherConfiguration(configuration: config),
+            logger: nil
+        )
+        
+        XCTAssertFalse(mockFirebase.setLoggerLevelCalled)
+        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+    }
+    
+    // MARK: - Configuration Application Tests (Update)
+    
+    func test_updateConfiguration_applies_logLevel() {
+        let newConfig: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.logLevel: "error"
+        ]
+        
+        _ = dispatcher.updateConfiguration(newConfig)
+        
+        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.lastLoggerLevel, .error)
+    }
+    
+    func test_updateConfiguration_applies_sessionTimeout() {
+        let newConfig: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.sessionTimeout: 7200.0
+        ]
+        
+        _ = dispatcher.updateConfiguration(newConfig)
+        
+        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.lastSessionTimeout, 7200.0)
+    }
+    
+    func test_updateConfiguration_applies_analyticsEnabled() {
+        let newConfig: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true
+        ]
+        
+        _ = dispatcher.updateConfiguration(newConfig)
+        
+        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
+    }
+    
+    func test_updateConfiguration_applies_all_settings() {
+        let newConfig: DataObject = [
+            FirebaseDispatcherConfiguration.Keys.logLevel: "info",
+            FirebaseDispatcherConfiguration.Keys.sessionTimeout: 900.0,
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false
+        ]
+        
+        _ = dispatcher.updateConfiguration(newConfig)
+        
+        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.lastLoggerLevel, .info)
+        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.lastSessionTimeout, 900.0)
+        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
 }

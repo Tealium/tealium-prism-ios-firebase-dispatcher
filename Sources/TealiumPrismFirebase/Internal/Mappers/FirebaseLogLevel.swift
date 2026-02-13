@@ -71,7 +71,8 @@ enum FirebaseLogLevel: String, CaseIterable {
     /// Returns the string for a FirebaseLoggerLevel (e.g. when receiving value from SDK).
     ///
     /// Use when you only have FirebaseLoggerLevel; cannot distinguish .min from .error or .max from .debug.
-    static func string(from loggerLevel: FirebaseLoggerLevel) -> String {
-        FirebaseLogLevel(firebaseLoggerLevel: loggerLevel)?.rawValue ?? "notice"
+    /// Returns nil if the level is not recognized (e.g., Firebase SDK added a new log level).
+    static func string(from loggerLevel: FirebaseLoggerLevel) -> String? {
+        FirebaseLogLevel(firebaseLoggerLevel: loggerLevel)?.rawValue
     }
 }

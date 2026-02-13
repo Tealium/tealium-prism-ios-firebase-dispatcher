@@ -27,8 +27,8 @@ class FirebaseInstance: FirebaseCommand {
     
     /// Executes the callback when Firebase is configured.
     /// If already configured, the callback is called immediately.
-    public func onReady(_ onReady: @escaping () -> Void) {
-        onReadySubject.subscribeOnce(onReady)
+    public func onReady(_ completion: @escaping () -> Void) {
+        onReadySubject.subscribeOnce(completion)
         
         guard onReadySubject.last() == nil else { return }
         

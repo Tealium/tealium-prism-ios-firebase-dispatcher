@@ -74,7 +74,10 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
     /// - Returns: Self for method chaining.
     @discardableResult
     public func setLogLevel(_ level: FirebaseLoggerLevel) -> Self {
-        let levelString = FirebaseLogLevel.string(from: level)
+        guard let levelString = FirebaseLogLevel.string(from: level) else {
+            // Unknown log level - skip setting it
+            return self
+        }
         _configurationObject.set(levelString, key: Keys.logLevel)
         return self
     }
