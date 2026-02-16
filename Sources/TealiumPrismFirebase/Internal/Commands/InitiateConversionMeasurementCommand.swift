@@ -89,7 +89,7 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
         guard let data = Data(base64Encoded: hashedEmail) else {
             throw FirebaseCommandError.invalidParameterType(
                 parameter: Param.hashedEmailAddress,
-                expectedType: "Base64-encoded SHA-256 hash (44 characters)"
+                expectedType: "Base64-encoded SHA-256 hash"
             )
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: data)
@@ -102,7 +102,7 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
         guard let data = Data(base64Encoded: hashedPhone) else {
             throw FirebaseCommandError.invalidParameterType(
                 parameter: Param.hashedPhoneNumber,
-                expectedType: "Base64-encoded SHA-256 hash (44 characters)"
+                expectedType: "Base64-encoded SHA-256 hash"
             )
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: data)
