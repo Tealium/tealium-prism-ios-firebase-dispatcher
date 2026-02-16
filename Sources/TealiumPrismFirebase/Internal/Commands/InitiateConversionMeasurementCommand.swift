@@ -27,10 +27,12 @@ import TealiumPrismCore
 ///     "command": "initiateconversionmeasurement",
 ///     "param_email_address": "user@example.com"
 ///     // OR "param_phone_number": "+1234567890"
-///     // OR "param_hashed_email_address": "hashedEmailString"
-///     // OR "param_hashed_phone_number": "hashedPhoneString"
+///     // OR "param_hashed_email_address": "base64EncodedHashString"
+///     // OR "param_hashed_phone_number": "base64EncodedHashString"
 /// ]
 /// ```
+///
+/// **Note**: Hashed credentials should be Base64-encoded SHA-256 hashes (44 characters).
 ///
 /// **Priority**: hashed_email > hashed_phone > email > phone (only first available is used)
 class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
@@ -84,14 +86,26 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
         guard !hashedEmail.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.hashedEmailAddress)
         }
-        firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data(hashedEmail.utf8))
+        guard let data = Data(base64Encoded: hashedEmail) else {
+            throw FirebaseCommandError.invalidParameterType(
+                parameter: Param.hashedEmailAddress,
+                expectedType: "Base64-encoded SHA-256 hash (44 characters)"
+            )
+        }
+        firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: data)
     }
     
     private func initiateWithHashedPhone(_ hashedPhone: String) throws(FirebaseCommandError) {
         guard !hashedPhone.isEmpty else {
             throw FirebaseCommandError.emptyParameter(Param.hashedPhoneNumber)
         }
-        firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: Data(hashedPhone.utf8))
+        guard let data = Data(base64Encoded: hashedPhone) else {
+            throw FirebaseCommandError.invalidParameterType(
+                parameter: Param.hashedPhoneNumber,
+                expectedType: "Base64-encoded SHA-256 hash (44 characters)"
+            )
+        }
+        firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: data)
     }
 }
 

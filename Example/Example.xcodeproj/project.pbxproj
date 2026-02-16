@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9E9C4E8F2F432B9600794E33 /* GoogleAdsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 9E9C4E8E2F432B9600794E33 /* GoogleAdsOnDeviceConversion */; };
 		9EF4470B2F363E1A00FFCCC8 /* TealiumPrismCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470A2F363E1A00FFCCC8 /* TealiumPrismCore */; };
 		9EF4470D2F363E1A00FFCCC8 /* TealiumPrismLifecycle in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470C2F363E1A00FFCCC8 /* TealiumPrismLifecycle */; };
 		9EF4470F2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 9EF4470E2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI */; };
@@ -31,6 +32,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9EF4470D2F363E1A00FFCCC8 /* TealiumPrismLifecycle in Frameworks */,
+				9E9C4E8F2F432B9600794E33 /* GoogleAdsOnDeviceConversion in Frameworks */,
 				9EF4470B2F363E1A00FFCCC8 /* TealiumPrismCore in Frameworks */,
 				9EF4470F2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI in Frameworks */,
 				9EF447122F363E6200FFCCC8 /* TealiumPrismFirebase in Frameworks */,
@@ -88,6 +90,7 @@
 				9EF4470C2F363E1A00FFCCC8 /* TealiumPrismLifecycle */,
 				9EF4470E2F363E1A00FFCCC8 /* TealiumPrismMomentsAPI */,
 				9EF447112F363E6200FFCCC8 /* TealiumPrismFirebase */,
+				9E9C4E8E2F432B9600794E33 /* GoogleAdsOnDeviceConversion */,
 			);
 			productName = Example;
 			productReference = 9E354EC62F1024E400A9F761 /* Example.app */;
@@ -120,6 +123,7 @@
 			packageReferences = (
 				9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */,
 				9EF447102F363E6200FFCCC8 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */,
+				9E9C4E8D2F432B9600794E33 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 9E354EC72F1024E400A9F761 /* Products */;
@@ -364,6 +368,14 @@
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		9E9C4E8D2F432B9600794E33 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk/";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.2.0;
+			};
+		};
 		9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Tealium/tealium-prism-swift";
@@ -375,6 +387,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		9E9C4E8E2F432B9600794E33 /* GoogleAdsOnDeviceConversion */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 9E9C4E8D2F432B9600794E33 /* XCRemoteSwiftPackageReference "google-ads-on-device-conversion-ios-sdk" */;
+			productName = GoogleAdsOnDeviceConversion;
+		};
 		9EF4470A2F363E1A00FFCCC8 /* TealiumPrismCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 9EF447092F363E1900FFCCC8 /* XCRemoteSwiftPackageReference "tealium-prism-swift" */;

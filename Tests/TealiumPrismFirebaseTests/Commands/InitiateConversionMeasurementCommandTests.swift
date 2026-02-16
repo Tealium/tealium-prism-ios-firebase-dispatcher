@@ -9,6 +9,7 @@
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
 import XCTest
+import CryptoKit
 
 final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
@@ -113,13 +114,18 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     // MARK: - Hashed Email Address Tests
     
     func test_execute_with_hashed_email_address() {
+        // Real-world scenario: hash an email and encode to Base64
+        let email = "user@example.com"
+        let hash = SHA256.hash(data: Data(email.utf8))
+        let base64Hash = Data(hash).base64EncodedString()
+        
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmailString123"
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
-        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data("hashedEmailString123".utf8))
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
     
     func test_execute_with_empty_hashed_email_address_throws_error() {
@@ -142,16 +148,65 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
     }
     
+    func test_execute_with_invalid_hashed_email_throws_error() {
+        // Test invalid Base64 strings that should fail decoding
+        let invalidHashes = [
+            "!@#$%^&*()",                       // Invalid Base64 characters
+            "abc",                              // Valid Base64 but too short
+        ]
+        
+        for invalidHash in invalidHashes {
+            let payload: DataObject = [
+                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: invalidHash
+            ]
+            
+            XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+                guard let commandError = error as? FirebaseCommandError else {
+                    XCTFail("Expected FirebaseCommandError but got \(error)")
+                    return
+                }
+                
+                if case .invalidParameterType = commandError {
+                    // Success - correct error type
+                } else {
+                    XCTFail("Expected invalidParameterType error for '\(invalidHash)' but got \(commandError)")
+                }
+            }
+            XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+        }
+    }
+    
+    func test_execute_with_normalized_gmail_hashed_email() {
+        // Test with Gmail normalization scenario (like in TealiumHelper example)
+        let rawEmail = "An.Email.User0125@googlemail.com"
+        let normalizedEmail = normalizeGmailForTest(rawEmail)
+        let hash = SHA256.hash(data: Data(normalizedEmail.utf8))
+        let base64Hash = Data(hash).base64EncodedString()
+        
+        let payload: DataObject = [
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: base64Hash
+        ]
+        
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
+    }
+    
     // MARK: - Hashed Phone Number Tests
     
     func test_execute_with_hashed_phone_number() {
+        // Real-world scenario: hash a phone number and encode to Base64
+        let phoneNumber = "+15555551234"
+        let hash = SHA256.hash(data: Data(phoneNumber.utf8))
+        let base64Hash = Data(hash).base64EncodedString()
+        
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhoneString123"
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
-        XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data("hashedPhoneString123".utf8))
+        XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data(hash))
     }
     
     func test_execute_with_empty_hashed_phone_number_throws_error() {
@@ -174,12 +229,42 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
     }
     
+    func test_execute_with_invalid_hashed_phone_throws_error() {
+        // Test with invalid Base64 string
+        let invalidHash = "invalidbase64!@#"
+        let payload: DataObject = [
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: invalidHash
+        ]
+        
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? FirebaseCommandError else {
+                XCTFail("Expected FirebaseCommandError but got \(error)")
+                return
+            }
+            
+            if case .invalidParameterType = commandError {
+                // Success - correct error type
+            } else {
+                XCTFail("Expected invalidParameterType error but got \(commandError)")
+            }
+        }
+        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
+    }
+    
     // MARK: - Priority Tests
     
     func test_execute_prioritizes_hashed_email_over_hashed_phone() {
+        let email = "user@example.com"
+        let emailHash = SHA256.hash(data: Data(email.utf8))
+        let emailBase64 = Data(emailHash).base64EncodedString()
+        
+        let phone = "+15555551234"
+        let phoneHash = SHA256.hash(data: Data(phone.utf8))
+        let phoneBase64 = Data(phoneHash).base64EncodedString()
+        
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone"
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: emailBase64,
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -188,8 +273,12 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     }
     
     func test_execute_prioritizes_hashed_phone_over_email() {
+        let phone = "+15555551234"
+        let phoneHash = SHA256.hash(data: Data(phone.utf8))
+        let phoneBase64 = Data(phoneHash).base64EncodedString()
+        
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64,
             FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
         ]
         
@@ -211,9 +300,17 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_full_priority_chain() {
         // All parameters provided - should use hashed_email (highest priority)
+        let email = "user@example.com"
+        let emailHash = SHA256.hash(data: Data(email.utf8))
+        let emailBase64 = Data(emailHash).base64EncodedString()
+        
+        let phone = "+15555551234"
+        let phoneHash = SHA256.hash(data: Data(phone.utf8))
+        let phoneBase64 = Data(phoneHash).base64EncodedString()
+        
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "hashedEmail",
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "hashedPhone",
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: emailBase64,
+            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64,
             FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
             FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
         ]
@@ -223,5 +320,33 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Normalizes Gmail address for testing (simplified version of TealiumHelper.normalizeEmail)
+    private func normalizeGmailForTest(_ email: String) -> String {
+        var normalized = email.lowercased()
+        normalized = normalized.replacingOccurrences(of: "@googlemail.com", with: "@gmail.com")
+        
+        if normalized.hasSuffix("@gmail.com") {
+            let components = normalized.split(separator: "@")
+            guard components.count == 2 else { return normalized }
+            
+            var username = String(components[0])
+            let domain = String(components[1])
+            
+            username = username.replacingOccurrences(of: ".", with: "")
+            username = username
+                .replacingOccurrences(of: "i", with: "l")
+                .replacingOccurrences(of: "1", with: "l")
+                .replacingOccurrences(of: "0", with: "o")
+                .replacingOccurrences(of: "2", with: "z")
+                .replacingOccurrences(of: "5", with: "s")
+            
+            normalized = "\(username)@\(domain)"
+        }
+        
+        return normalized
     }
 }

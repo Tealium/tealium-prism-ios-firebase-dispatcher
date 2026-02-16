@@ -10,6 +10,7 @@ import Foundation
 import FirebaseCore
 import TealiumPrismCore
 import TealiumPrismFirebase
+import CryptoKit
 
 class TealiumHelper {
     private(set) var teal: Tealium?
@@ -207,31 +208,82 @@ class TealiumHelper {
     
     // MARK: - InitiateConversionMeasurementCommand
     
-    /// Initiate conversion measurement with email address
+    /// Initiate conversion measurement with plaintext email (Firebase handles normalization/hashing)
     func conversionWithEmail() {
         teal?.track("conversion_measurement", data: [
             "email": "user@example.com"
         ])
     }
     
-    /// Initiate conversion measurement with phone number
+    /// Initiate conversion measurement with plaintext phone in E.164 format (Firebase handles hashing)
     func conversionWithPhone() {
         teal?.track("conversion_measurement", data: [
             "phone_number": "+1234567890"
         ])
     }
     
-    /// Initiate conversion measurement with hashed email address
+    /// Initiate conversion measurement with hashed email
+    /// Flow: normalize email → SHA256 hash → Base64 encode → send via Tealium
     func conversionWithHashedEmail() {
+        let rawEmail = "An.Email.User0125@googlemail.com"
+        let normalizedEmail = normalizeEmail(rawEmail)
+        let hash = SHA256.hash(data: Data(normalizedEmail.utf8))
+        let base64String = Data(hash).base64EncodedString()
+        
         teal?.track("conversion_measurement", data: [
-            "hashed_email": "5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8"  // SHA256 of "password"
+            "hashed_email": base64String
         ])
+        
+        print("📧 Hashed Email Conversion")
+        print("   Raw: \(rawEmail)")
+        print("   Normalized: \(normalizedEmail)")
+        print("   Base64: \(base64String)")
     }
     
-    /// Initiate conversion measurement with hashed phone number
+    /// Initiate conversion measurement with hashed phone
+    /// Flow: E.164 format → SHA256 hash → Base64 encode → send via Tealium
     func conversionWithHashedPhone() {
+        let phoneNumber = "+15555551234"
+        let hash = SHA256.hash(data: Data(phoneNumber.utf8))
+        let base64String = Data(hash).base64EncodedString()
+        
         teal?.track("conversion_measurement", data: [
-            "hashed_phone": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"  // SHA256 of empty string
+            "hashed_phone": base64String
         ])
+        
+        print("📱 Hashed Phone Conversion")
+        print("   Phone: \(phoneNumber)")
+        print("   Base64: \(base64String)")
+    }
+    
+    // MARK: - Email Normalization Helper
+    
+    /// Normalizes email according to Firebase documentation
+    /// https://firebase.google.com/docs/tutorials/ads-ios-on-device-measurement/step-3
+    ///
+    /// Rules: lowercase, @googlemail.com → @gmail.com, Gmail substitutions (I/i/1→l, 0→o, 2→z, 5→s)
+    private func normalizeEmail(_ email: String) -> String {
+        var normalized = email.lowercased()
+        normalized = normalized.replacingOccurrences(of: "@googlemail.com", with: "@gmail.com")
+        
+        if normalized.hasSuffix("@gmail.com") {
+            let components = normalized.split(separator: "@")
+            guard components.count == 2 else { return normalized }
+            
+            var username = String(components[0])
+            let domain = String(components[1])
+            
+            username = username.replacingOccurrences(of: ".", with: "")
+            username = username
+                .replacingOccurrences(of: "i", with: "l")
+                .replacingOccurrences(of: "1", with: "l")
+                .replacingOccurrences(of: "0", with: "o")
+                .replacingOccurrences(of: "2", with: "z")
+                .replacingOccurrences(of: "5", with: "s")
+            
+            normalized = "\(username)@\(domain)"
+        }
+        
+        return normalized
     }
 }
