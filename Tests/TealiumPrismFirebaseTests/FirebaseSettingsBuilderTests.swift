@@ -15,17 +15,17 @@ final class FirebaseSettingsBuilderTests: XCTestCase {
     
     func test_firebaseSettingsBuilder_build_returns_configuration() throws {
         let settings = FirebaseSettingsBuilder()
-            .setSessionTimeout(1800)
+            .setSessionTimeout(1800.seconds)
             .setAnalyticsEnabled(true)
             .setLogLevel(.debug)
             .build()
-        
+
         XCTAssertEqual(settings, [
-            "configuration": try DataItem(serializing: [
-                FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800 as Int,
+            "configuration": [
+                FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800.0 as Double,
                 FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true,
                 FirebaseDispatcherConfiguration.Keys.logLevel: "debug"
-            ])
+            ] as DataObject
         ])
     }
     

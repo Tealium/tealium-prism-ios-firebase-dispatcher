@@ -12,18 +12,8 @@ import XCTest
 
 final class FirebaseCommandRegistryTests: XCTestCase {
     
-    var registry: FirebaseCommandRegistry!
-    
-    override func setUp() {
-        super.setUp()
-        registry = FirebaseCommandRegistry()
-    }
-    
-    override func tearDown() {
-        registry = nil
-        super.tearDown()
-    }
-    
+    let registry = FirebaseCommandRegistry()
+
     // MARK: - Registration Tests
     
     func test_register_single_command() {
@@ -74,15 +64,12 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try registry.execute(commandName: "unknown", payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .commandNotFound(let name) = commandError else {
+                XCTFail("Expected commandNotFound but got \(error)")
                 return
             }
-            if case .commandNotFound(let name) = commandError {
-                XCTAssertEqual(name, "unknown")
-            } else {
-                XCTFail("Expected commandNotFound error")
-            }
+            XCTAssertEqual(name, "unknown")
         }
     }
     
@@ -119,7 +106,7 @@ final class FirebaseCommandRegistryTests: XCTestCase {
     }
     
     func test_execute_propagates_command_error() {
-        let failureCommand = MockCommand(name: "failure", shouldThrow: true)
+        let failureCommand = MockCommand(name: "failure", errorToThrow: .missingParameter("test_param"))
         
         registry.register(failureCommand)
         

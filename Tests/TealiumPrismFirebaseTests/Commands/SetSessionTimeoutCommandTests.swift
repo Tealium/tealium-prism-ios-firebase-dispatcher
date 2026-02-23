@@ -12,21 +12,9 @@ import XCTest
 
 final class SetSessionTimeoutCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetSessionTimeoutCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_command_data_throws_error() {

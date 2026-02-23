@@ -12,21 +12,9 @@ import XCTest
 
 final class SetDefaultParametersCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetDefaultParametersCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetDefaultParametersCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetDefaultParametersCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_command_data_clears_parameters() {

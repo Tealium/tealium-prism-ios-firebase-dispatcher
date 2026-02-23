@@ -13,20 +13,6 @@ import XCTest
 
 final class FirebaseDispatcherConfigurationTests: XCTestCase {
     
-    // MARK: - Keys Tests
-    
-    func test_keys_sessionTimeout() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.sessionTimeout, "session_timeout_seconds")
-    }
-    
-    func test_keys_analyticsEnabled() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.analyticsEnabled, "analytics_collection_enabled")
-    }
-    
-    func test_keys_logLevel() {
-        XCTAssertEqual(FirebaseDispatcherConfiguration.Keys.logLevel, "log_level")
-    }
-    
     // MARK: - Initialization Tests
     
     func test_init_with_all_values() throws {

@@ -13,36 +13,19 @@ import CryptoKit
 
 final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: InitiateConversionMeasurementCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = InitiateConversionMeasurementCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = InitiateConversionMeasurementCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_command_data_throws_error() {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .noValidParameters = commandError else {
+                XCTFail("Expected noValidParameters error but got \(error)")
                 return
-            }
-            
-            if case .noValidParameters = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected noValidParameters error but got \(commandError)")
             }
         }
     }
@@ -65,15 +48,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .emptyParameter = commandError else {
+                XCTFail("Expected emptyParameter error but got \(error)")
                 return
-            }
-            
-            if case .emptyParameter = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected emptyParameter error but got \(commandError)")
             }
         }
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
@@ -97,15 +75,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .emptyParameter = commandError else {
+                XCTFail("Expected emptyParameter error but got \(error)")
                 return
-            }
-            
-            if case .emptyParameter = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected emptyParameter error but got \(commandError)")
             }
         }
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
@@ -134,15 +107,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .emptyParameter = commandError else {
+                XCTFail("Expected emptyParameter error but got \(error)")
                 return
-            }
-            
-            if case .emptyParameter = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected emptyParameter error but got \(commandError)")
             }
         }
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
@@ -161,15 +129,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
             ]
             
             XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-                guard let commandError = error as? FirebaseCommandError else {
-                    XCTFail("Expected FirebaseCommandError but got \(error)")
+                guard let commandError = error as? FirebaseCommandError,
+                      case .invalidParameterType = commandError else {
+                    XCTFail("Expected invalidParameterType error for '\(invalidHash)' but got \(error)")
                     return
-                }
-                
-                if case .invalidParameterType = commandError {
-                    // Success - correct error type
-                } else {
-                    XCTFail("Expected invalidParameterType error for '\(invalidHash)' but got \(commandError)")
                 }
             }
             XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
@@ -215,15 +178,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .emptyParameter = commandError else {
+                XCTFail("Expected emptyParameter error but got \(error)")
                 return
-            }
-            
-            if case .emptyParameter = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected emptyParameter error but got \(commandError)")
             }
         }
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
@@ -237,15 +195,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError but got \(error)")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .invalidParameterType = commandError else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
                 return
-            }
-            
-            if case .invalidParameterType = commandError {
-                // Success - correct error type
-            } else {
-                XCTFail("Expected invalidParameterType error but got \(commandError)")
             }
         }
         XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)

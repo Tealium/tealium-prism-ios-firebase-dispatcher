@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
     s.license          = { :type => "Commercial", :file => "LICENSE" }
     s.authors          = { "Tealium Inc." => "dev@tealium.com" }
     s.source           = { :git => "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", :tag => "#{s.version}" }
-    s.social_media_url = "http://twitter.com/tealium"
+    s.social_media_url = "https://twitter.com/tealium"
     
     s.ios.deployment_target = '15.0'
     s.osx.deployment_target = "10.15"

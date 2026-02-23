@@ -13,35 +13,19 @@ import XCTest
 
 final class SetConsentCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetConsentCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetConsentCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetConsentCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_consent_data_throws_error() {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .noValidConsentSettings = commandError else {
+                XCTFail("Expected noValidConsentSettings error but got \(error)")
                 return
-            }
-            if case .noValidConsentSettings = commandError {
-                // Success
-            } else {
-                XCTFail("Expected noValidConsentSettings error")
             }
         }
         XCTAssertFalse(mockFirebase.setConsentCalled)
@@ -145,14 +129,10 @@ final class SetConsentCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .noValidConsentSettings = commandError else {
+                XCTFail("Expected noValidConsentSettings error but got \(error)")
                 return
-            }
-            if case .noValidConsentSettings = commandError {
-                // Success
-            } else {
-                XCTFail("Expected noValidConsentSettings error")
             }
         }
         XCTAssertFalse(mockFirebase.setConsentCalled)

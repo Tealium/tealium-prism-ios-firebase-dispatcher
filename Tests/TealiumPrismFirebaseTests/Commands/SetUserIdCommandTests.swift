@@ -12,35 +12,19 @@ import XCTest
 
 final class SetUserIdCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetUserIdCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetUserIdCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetUserIdCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_user_id_throws_error() {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .missingParameter = commandError else {
+                XCTFail("Expected missingParameter error but got \(error)")
                 return
-            }
-            if case .missingParameter = commandError {
-                // Success
-            } else {
-                XCTFail("Expected missingParameter error")
             }
         }
         XCTAssertFalse(mockFirebase.setUserIdCalled)

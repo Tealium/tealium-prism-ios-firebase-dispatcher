@@ -12,21 +12,9 @@ import XCTest
 
 final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetAnalyticsCollectionEnabledCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_command_data_throws_error() {

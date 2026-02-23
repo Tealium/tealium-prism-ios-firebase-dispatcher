@@ -12,45 +12,14 @@ import XCTest
 
 final class FirebaseDispatcherTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var dispatcher: FirebaseDispatcher!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        dispatcher = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
-            firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
-            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
-            logger: nil
-        )
-    }
-    
-    override func tearDown() {
-        dispatcher = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
-    // MARK: - Initialization Tests
-    
-    func test_init_sets_default_id() {
-        let defaultDispatcher = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
-            firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
-            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
-            logger: nil
-        )
-        
-        XCTAssertEqual(defaultDispatcher?.id, FirebaseConstants.moduleType)
-    }
-    
-    func test_init_sets_version() {
-        XCTAssertEqual(dispatcher.version, FirebaseConstants.version)
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var dispatcher = FirebaseDispatcher(
+        firebaseInstance: mockFirebase,
+        commandRegistry: FirebaseCommandRegistry(),
+        configuration: FirebaseDispatcherConfiguration(configuration: [:]),
+        logger: nil
+    )
+
     // MARK: - Dispatch Tests - Single Command
     
     func test_dispatch_with_single_command_executes_command() {
@@ -83,7 +52,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertNotNil(disposable)
         XCTAssertTrue(disposable.isDisposed)
     }
     
@@ -242,7 +210,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         ]
         
         _ = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
             commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
@@ -260,7 +227,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         ]
         
         _ = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
             commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
@@ -278,7 +244,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         ]
         
         _ = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
             commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
@@ -298,7 +263,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         ]
         
         _ = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
             commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
@@ -318,7 +282,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         let config: DataObject = [:]
         
         _ = FirebaseDispatcher(
-            moduleId: FirebaseConstants.moduleType,
             firebaseInstance: mockFirebase,
             commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),

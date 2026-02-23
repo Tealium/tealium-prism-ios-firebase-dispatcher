@@ -15,26 +15,24 @@ import Foundation
 class MockCommand: FirebaseCommandProtocol {
     
     let name: String
-    let shouldThrow: Bool
     let errorToThrow: FirebaseCommandError?
-    
+
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
-    
-    init(name: String, shouldThrow: Bool = false, errorToThrow: FirebaseCommandError? = nil) {
+
+    init(name: String, errorToThrow: FirebaseCommandError? = nil) {
         self.name = name
-        self.shouldThrow = shouldThrow
         self.errorToThrow = errorToThrow
     }
-    
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1
-        
-        if shouldThrow {
-            throw errorToThrow ?? FirebaseCommandError.missingParameter("test_param")
+
+        if let errorToThrow {
+            throw errorToThrow
         }
     }
 }

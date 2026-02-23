@@ -12,21 +12,9 @@ import XCTest
 
 final class SetUserPropertyCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: SetUserPropertyCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = SetUserPropertyCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = SetUserPropertyCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_property_data_throws_error() {
@@ -86,14 +74,10 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .emptyArray = commandError else {
+                XCTFail("Expected emptyArray error but got \(error)")
                 return
-            }
-            if case .emptyArray = commandError {
-                // Success
-            } else {
-                XCTFail("Expected emptyArray error")
             }
         }
     }
@@ -105,14 +89,10 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .arrayLengthMismatch = commandError else {
+                XCTFail("Expected arrayLengthMismatch error but got \(error)")
                 return
-            }
-            if case .arrayLengthMismatch = commandError {
-                // Success
-            } else {
-                XCTFail("Expected arrayLengthMismatch error")
             }
         }
     }

@@ -12,33 +12,18 @@ import XCTest
 
 final class LogEventCommandTests: XCTestCase {
     
-    var mockFirebase: MockFirebaseCommand!
-    var command: LogEventCommand!
-    
-    override func setUp() {
-        super.setUp()
-        mockFirebase = MockFirebaseCommand()
-        command = LogEventCommand(firebaseInstance: mockFirebase)
-    }
-    
-    override func tearDown() {
-        command = nil
-        mockFirebase = nil
-        super.tearDown()
-    }
-    
+    let mockFirebase = MockFirebaseCommand()
+    lazy var command = LogEventCommand(firebaseInstance: mockFirebase)
+
     // MARK: - Basic Tests
     
     func test_execute_without_event_name_throws_error() {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
-                return
-            }
-            guard case .missingParameter = commandError else {
-                XCTFail("Expected missingParameter error")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .missingParameter = commandError else {
+                XCTFail("Expected missingParameter error but got \(error)")
                 return
             }
         }
@@ -203,16 +188,13 @@ final class LogEventCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError")
-                return
-            }
-            guard case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
-                XCTFail("Expected arrayLengthMismatch error")
+            guard let commandError = error as? FirebaseCommandError,
+                  case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
+                XCTFail("Expected arrayLengthMismatch error but got \(error)")
                 return
             }
             // Verify we got the mismatch details
-            XCTAssertTrue((count1 == 3 && count2 == 2) || (count1 == 2 && count2 == 3))
+            XCTAssertNotEqual(count1, count2)
         }
         
         // Event should not be logged

@@ -73,28 +73,12 @@ public extension Mappings {
         .from(eventKey, to: FirebaseConstants.LogEvent.Param.eventName)
     }
     
-    /// Maps a source JSONPath to the Firebase event name parameter.
-    ///
-    /// - Parameter eventPath: The source path containing the event name.
-    /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseLogEventName(eventPath: JSONObjectPath) -> VariableOptions {
-        .from(eventPath, to: FirebaseConstants.LogEvent.Param.eventName)
-    }
-    
     /// Maps a source key to the Firebase event parameters.
     ///
     /// - Parameter parametersKey: The source key containing event parameters dictionary.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseLogEventParameters(parametersKey: String) -> VariableOptions {
         .from(parametersKey, to: FirebaseConstants.LogEvent.Param.eventParams)
-    }
-    
-    /// Maps a source JSONPath to the Firebase event parameters.
-    ///
-    /// - Parameter parametersPath: The source path containing event parameters dictionary.
-    /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseLogEventParameters(parametersPath: JSONObjectPath) -> VariableOptions {
-        .from(parametersPath, to: FirebaseConstants.LogEvent.Param.eventParams)
     }
     
     /// Maps a source key to a specific event parameter.
@@ -146,14 +130,6 @@ public extension Mappings {
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseUserId(userIdKey: String) -> VariableOptions {
         .from(userIdKey, to: FirebaseConstants.SetUserId.Param.userId)
-    }
-    
-    /// Maps a source JSONPath to the Firebase user ID parameter.
-    ///
-    /// - Parameter userIdPath: The source path containing the user ID.
-    /// - Returns: A `VariableOptions` mapping builder.
-    static func mapFirebaseUserId(userIdPath: JSONObjectPath) -> VariableOptions {
-        .from(userIdPath, to: FirebaseConstants.SetUserId.Param.userId)
     }
     
     // MARK: - SetUserProperty Command

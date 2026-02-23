@@ -27,7 +27,7 @@ public extension Modules {
      * ```swift
      * Modules.firebaseDispatcher(forcingSettings: { builder in
      *     builder
-     *         .setSessionTimeout(1800)
+     *         .setSessionTimeout(30.minutes)
      *         .setMappings([
      *             .mapFirebaseLogEventCommand(),
      *             .mapFirebaseLogEventName()
