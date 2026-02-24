@@ -100,7 +100,7 @@ public extension Mappings {
     ///   - itemParameterName: The name of the Firebase item parameter (e.g., "item_id").
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseItemParameter(from sourceKey: String, to itemParameterName: String) -> VariableOptions {
-        .from(sourceKey, to: JSONPath[FirebaseConstants.LogEvent.Param.items][itemParameterName])
+        .from(sourceKey, to: JSONPath[FirebaseConstants.LogEvent.Param.eventParams][FirebaseConstants.LogEvent.Param.items][itemParameterName])
     }
     
     // MARK: - SetUserId Command

@@ -134,9 +134,11 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
             FirebaseConstants.LogEvent.Param.eventName: "view_item_list",
-            FirebaseConstants.LogEvent.Param.items: [
-                "item_id": ["SKU001", "SKU002"],
-                "item_name": ["Widget", "Gadget"]
+            FirebaseConstants.LogEvent.Param.eventParams: [
+                FirebaseConstants.LogEvent.Param.items: [
+                    "item_id": ["SKU001", "SKU002"],
+                    "item_name": ["Widget", "Gadget"]
+                ] as DataObject
             ] as DataObject
         ])
     }
