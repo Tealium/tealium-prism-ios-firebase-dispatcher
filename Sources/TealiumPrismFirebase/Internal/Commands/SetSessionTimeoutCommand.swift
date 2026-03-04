@@ -21,7 +21,7 @@ import TealiumPrismCore
 ///
 /// ```
 /// payload = [
-///     "command": "setsessiontimeout",
+///     "command_name": "setsessiontimeout",
 ///     "session_timeout_seconds": 3600
 /// ]
 /// ```

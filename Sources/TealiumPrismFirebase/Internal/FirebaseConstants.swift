@@ -63,9 +63,9 @@ enum FirebaseConstants {
         static let name = "logevent"
         
         enum Param {
-            static let eventName = "firebase_event_name"
-            static let eventParams = "firebase_event_params"
-            static let items = "param_items"
+            static let eventName = "event_name"
+            static let eventParams = "parameters"
+            static let items = "items"
         }
     }
     
@@ -79,7 +79,7 @@ enum FirebaseConstants {
         static let name = "setuserid"
         
         enum Param {
-            static let userId = "firebase_user_id"
+            static let userId = "user_id"
         }
     }
     
@@ -94,8 +94,8 @@ enum FirebaseConstants {
         static let name = "setuserproperty"
         
         enum Param {
-            static let propertyName = "firebase_property_name"
-            static let propertyValue = "firebase_property_value"
+            static let propertyName = "property_name"
+            static let propertyValue = "property_value"
         }
     }
     
@@ -120,7 +120,7 @@ enum FirebaseConstants {
         static let name = "setdefaultparameters"
         
         enum Param {
-            static let params = "firebase_params"
+            static let params = "parameters"
         }
     }
     
@@ -134,6 +134,7 @@ enum FirebaseConstants {
         static let name = "setconsent"
         
         enum Param {
+            static let consentSettings = "consent_settings"
             static let adStorage = "ad_storage"
             static let analyticsStorage = "analytics_storage"
             static let adUserData = "ad_user_data"
@@ -154,10 +155,10 @@ enum FirebaseConstants {
         static let name = "initiateconversionmeasurement"
         
         enum Param {
-            static let emailAddress = "param_email_address"
-            static let phoneNumber = "param_phone_number"
-            static let hashedEmailAddress = "param_hashed_email_address"
-            static let hashedPhoneNumber = "param_hashed_phone_number"
+            static let emailAddress = "email_address"
+            static let phoneNumber = "phone_number"
+            static let hashedEmailAddress = "hashed_email_address"
+            static let hashedPhoneNumber = "hashed_phone_number"
         }
     }
 }

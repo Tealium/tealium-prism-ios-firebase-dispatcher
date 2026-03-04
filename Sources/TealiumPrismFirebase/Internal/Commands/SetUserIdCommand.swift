@@ -22,8 +22,8 @@ import TealiumPrismCore
 ///
 /// ```
 /// payload = [
-///     "command": "setuserid",
-///     "firebase_user_id": "USER_12345"  // Empty string clears user ID
+///     "command_name": "setuserid",
+///     "user_id": "USER_12345"  // Empty string clears user ID
 /// ]
 /// ```
 class SetUserIdCommand: FirebaseCommandProtocol {

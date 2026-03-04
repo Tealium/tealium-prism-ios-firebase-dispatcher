@@ -16,8 +16,8 @@ import TealiumPrismCore
 /// Empty string removes the property.
 ///
 /// This command automatically detects whether the input is a single property or multiple properties:
-/// - Single values: `firebase_property_name` and `firebase_property_value` as strings
-/// - Multiple values: `firebase_property_name` and `firebase_property_value` as arrays
+/// - Single values: `property_name` and `property_value` as strings
+/// - Multiple values: `property_name` and `property_value` as arrays
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
@@ -27,18 +27,18 @@ import TealiumPrismCore
 /// Single property:
 /// ```
 /// payload = [
-///     "command": "setuserproperty",
-///     "firebase_property_name": "tier",
-///     "firebase_property_value": "premium"  // Empty string removes property
+///     "command_name": "setuserproperty",
+///     "property_name": "tier",
+///     "property_value": "premium"  // Empty string removes property
 /// ]
 /// ```
 ///
 /// Multiple properties (arrays):
 /// ```
 /// payload = [
-///     "command": "setuserproperty",
-///     "firebase_property_name": ["subscription_tier", "user_level"],
-///     "firebase_property_value": ["premium", "expert"]
+///     "command_name": "setuserproperty",
+///     "property_name": ["subscription_tier", "user_level"],
+///     "property_value": ["premium", "expert"]
 /// ]
 /// ```
 class SetUserPropertyCommand: FirebaseCommandProtocol {

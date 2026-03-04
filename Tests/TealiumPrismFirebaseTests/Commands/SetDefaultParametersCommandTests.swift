@@ -27,7 +27,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         XCTAssertNoThrow(try command.execute(payload: payloadWithParams))
         XCTAssertNotNil(mockFirebase.lastDefaultParameters, "Sanity: params should be set before clear test")
 
-        // Now clear by executing with payload that has no firebase_params
+        // Now clear by executing with payload that has no parameters
         let payload: DataObject = [:]
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)

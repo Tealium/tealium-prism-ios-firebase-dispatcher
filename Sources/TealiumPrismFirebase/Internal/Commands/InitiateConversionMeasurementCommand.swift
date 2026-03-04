@@ -24,11 +24,11 @@ import TealiumPrismCore
 ///
 /// ```
 /// payload = [
-///     "command": "initiateconversionmeasurement",
-///     "param_email_address": "user@example.com"
-///     // OR "param_phone_number": "+1234567890"
-///     // OR "param_hashed_email_address": "base64EncodedHashString"
-///     // OR "param_hashed_phone_number": "base64EncodedHashString"
+///     "command_name": "initiateconversionmeasurement",
+///     "email_address": "user@example.com"
+///     // OR "phone_number": "+1234567890"
+///     // OR "hashed_email_address": "base64EncodedHashString"
+///     // OR "hashed_phone_number": "base64EncodedHashString"
 /// ]
 /// ```
 ///

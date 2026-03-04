@@ -226,7 +226,7 @@ public extension Mappings {
     }
     
     // MARK: - SetConsent Command
-    
+
     /// Update Firebase consent settings.
     ///
     /// ```swift
@@ -249,37 +249,37 @@ public extension Mappings {
     static func mapFirebaseSetConsentCommand() -> ConstantOptions {
         .constant(FirebaseConstants.SetConsent.name, to: FirebaseConstants.commandName)
     }
-    
+
     /// Maps a source key to the Firebase ad_storage consent setting.
     ///
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adStorage)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.consentSettings][FirebaseConstants.SetConsent.Param.adStorage])
     }
-    
+
     /// Maps a source key to the Firebase analytics_storage consent setting.
     ///
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAnalyticsStorage(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.analyticsStorage)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.consentSettings][FirebaseConstants.SetConsent.Param.analyticsStorage])
     }
-    
+
     /// Maps a source key to the Firebase ad_user_data consent setting.
     ///
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdUserData(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adUserData)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.consentSettings][FirebaseConstants.SetConsent.Param.adUserData])
     }
-    
+
     /// Maps a source key to the Firebase ad_personalization consent setting.
     ///
     /// - Parameter sourceKey: The source key containing the consent value.
     /// - Returns: A `VariableOptions` mapping builder.
     static func mapFirebaseAdPersonalization(sourceKey: String) -> VariableOptions {
-        .from(sourceKey, to: FirebaseConstants.SetConsent.Param.adPersonalization)
+        .from(sourceKey, to: JSONPath[FirebaseConstants.SetConsent.Param.consentSettings][FirebaseConstants.SetConsent.Param.adPersonalization])
     }
     
     // MARK: - ResetData Command

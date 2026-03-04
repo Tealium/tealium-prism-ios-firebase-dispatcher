@@ -221,10 +221,12 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseConstants.SetConsent.name,
-            FirebaseConstants.SetConsent.Param.analyticsStorage: "granted",
-            FirebaseConstants.SetConsent.Param.adStorage: "denied",
-            FirebaseConstants.SetConsent.Param.adUserData: "granted",
-            FirebaseConstants.SetConsent.Param.adPersonalization: "denied"
+            FirebaseConstants.SetConsent.Param.consentSettings: [
+                FirebaseConstants.SetConsent.Param.analyticsStorage: "granted",
+                FirebaseConstants.SetConsent.Param.adStorage: "denied",
+                FirebaseConstants.SetConsent.Param.adUserData: "granted",
+                FirebaseConstants.SetConsent.Param.adPersonalization: "denied"
+            ] as DataObject
         ])
     }
     

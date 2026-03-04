@@ -15,170 +15,170 @@
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_name" },
+                    "destination": { "path": "event_name" },
                     "parameters": {
                         "reference": { "key": "tealium_event" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params" },
+                    "destination": { "path": "parameters" },
                     "parameters": {
-                        "reference": { "key": "firebase_params" }
+                        "reference": { "key": "params" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.value" },
+                    "destination": { "path": "parameters.value" },
                     "parameters": {
                         "reference": { "key": "value" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.currency" },
+                    "destination": { "path": "parameters.currency" },
                     "parameters": {
                         "reference": { "key": "currency" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.transaction_id" },
+                    "destination": { "path": "parameters.transaction_id" },
                     "parameters": {
                         "reference": { "key": "transaction_id" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.shipping" },
+                    "destination": { "path": "parameters.shipping" },
                     "parameters": {
                         "reference": { "key": "shipping" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.tax" },
+                    "destination": { "path": "parameters.tax" },
                     "parameters": {
                         "reference": { "key": "tax" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.affiliation" },
+                    "destination": { "path": "parameters.affiliation" },
                     "parameters": {
                         "reference": { "key": "affiliation" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.coupon" },
+                    "destination": { "path": "parameters.coupon" },
                     "parameters": {
                         "reference": { "key": "coupon" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.custom_event_param_1" },
+                    "destination": { "path": "parameters.custom_event_param_1" },
                     "parameters": {
                         "reference": { "key": "custom_event_param_1" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.custom_event_param_2" },
+                    "destination": { "path": "parameters.custom_event_param_2" },
                     "parameters": {
                         "reference": { "key": "custom_event_param_2" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.custom_event_param_3" },
+                    "destination": { "path": "parameters.custom_event_param_3" },
                     "parameters": {
                         "reference": { "key": "custom_event_param_3" }
                     }
                 },
 
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_id" },
+                    "destination": { "path": "parameters.items.item_id" },
                     "parameters": {
                         "reference": { "key": "product_ids" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_name" },
+                    "destination": { "path": "parameters.items.item_name" },
                     "parameters": {
                         "reference": { "key": "product_names" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_brand" },
+                    "destination": { "path": "parameters.items.item_brand" },
                     "parameters": {
                         "reference": { "key": "product_brands" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_category" },
+                    "destination": { "path": "parameters.items.item_category" },
                     "parameters": {
                         "reference": { "key": "product_categories" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_category2" },
+                    "destination": { "path": "parameters.items.item_category2" },
                     "parameters": {
                         "reference": { "key": "product_category2" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_category3" },
+                    "destination": { "path": "parameters.items.item_category3" },
                     "parameters": {
                         "reference": { "key": "product_category3" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.price" },
+                    "destination": { "path": "parameters.items.price" },
                     "parameters": {
                         "reference": { "key": "prices" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.quantity" },
+                    "destination": { "path": "parameters.items.quantity" },
                     "parameters": {
                         "reference": { "key": "quantities" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.discount" },
+                    "destination": { "path": "parameters.items.discount" },
                     "parameters": {
                         "reference": { "key": "discounts" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_variant" },
+                    "destination": { "path": "parameters.items.item_variant" },
                     "parameters": {
                         "reference": { "key": "item_variants" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_list_id" },
+                    "destination": { "path": "parameters.items.item_list_id" },
                     "parameters": {
                         "reference": { "key": "item_list_ids" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.item_list_name" },
+                    "destination": { "path": "parameters.items.item_list_name" },
                     "parameters": {
                         "reference": { "key": "item_list_names" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.index" },
+                    "destination": { "path": "parameters.items.index" },
                     "parameters": {
                         "reference": { "key": "indices" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.custom_item_color" },
+                    "destination": { "path": "parameters.items.custom_item_color" },
                     "parameters": {
                         "reference": { "key": "custom_item_color" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.custom_item_size" },
+                    "destination": { "path": "parameters.items.custom_item_size" },
                     "parameters": {
                         "reference": { "key": "custom_item_size" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_event_params.param_items.custom_item_material" },
+                    "destination": { "path": "parameters.items.custom_item_material" },
                     "parameters": {
                         "reference": { "key": "custom_item_material" }
                     }
@@ -193,7 +193,7 @@
                     }
                 },
                 {
-                    "destination": { "path": "firebase_user_id" },
+                    "destination": { "path": "user_id" },
                     "parameters": {
                         "reference": { "key": "user_id" }
                     }
@@ -208,18 +208,18 @@
                     }
                 },
                 {
-                    "destination": { "path": "firebase_property_name" },
+                    "destination": { "path": "property_name" },
                     "parameters": {
                         "reference": { "key": "property_name" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_property_value" },
+                    "destination": { "path": "property_value" },
                     "parameters": {
                         "reference": { "key": "property_value" }
                     }
                 },
-                
+
                 {
                     "destination": { "key": "command_name" },
                     "parameters": {
@@ -229,13 +229,13 @@
                     }
                 },
                 {
-                    "destination": { "path": "firebase_property_name" },
+                    "destination": { "path": "property_name" },
                     "parameters": {
                         "reference": { "key": "property_names" }
                     }
                 },
                 {
-                    "destination": { "path": "firebase_property_value" },
+                    "destination": { "path": "property_value" },
                     "parameters": {
                         "reference": { "key": "property_values" }
                     }
@@ -250,7 +250,7 @@
                     }
                 },
                 {
-                    "destination": { "path": "firebase_params" },
+                    "destination": { "path": "parameters" },
                     "parameters": {
                         "reference": { "key": "default_params" }
                     }
@@ -265,25 +265,25 @@
                     }
                 },
                 {
-                    "destination": { "path": "analytics_storage" },
+                    "destination": { "path": "consent_settings.analytics_storage" },
                     "parameters": {
                         "reference": { "key": "analytics_storage" }
                     }
                 },
                 {
-                    "destination": { "path": "ad_storage" },
+                    "destination": { "path": "consent_settings.ad_storage" },
                     "parameters": {
                         "reference": { "key": "ad_storage" }
                     }
                 },
                 {
-                    "destination": { "path": "ad_user_data" },
+                    "destination": { "path": "consent_settings.ad_user_data" },
                     "parameters": {
                         "reference": { "key": "ad_user_data" }
                     }
                 },
                 {
-                    "destination": { "path": "ad_personalization" },
+                    "destination": { "path": "consent_settings.ad_personalization" },
                     "parameters": {
                         "reference": { "key": "ad_personalization" }
                     }
@@ -337,25 +337,25 @@
                     }
                 },
                 {
-                    "destination": { "path": "param_email_address" },
+                    "destination": { "path": "email_address" },
                     "parameters": {
                         "reference": { "key": "email" }
                     }
                 },
                 {
-                    "destination": { "path": "param_phone_number" },
+                    "destination": { "path": "phone_number" },
                     "parameters": {
                         "reference": { "key": "phone_number" }
                     }
                 },
                 {
-                    "destination": { "path": "param_hashed_email_address" },
+                    "destination": { "path": "hashed_email_address" },
                     "parameters": {
                         "reference": { "key": "hashed_email" }
                     }
                 },
                 {
-                    "destination": { "path": "param_hashed_phone_number" },
+                    "destination": { "path": "hashed_phone_number" },
                     "parameters": {
                         "reference": { "key": "hashed_phone" }
                     }

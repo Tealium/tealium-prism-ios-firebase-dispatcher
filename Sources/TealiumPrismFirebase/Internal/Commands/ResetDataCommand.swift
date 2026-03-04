@@ -21,7 +21,7 @@ import TealiumPrismCore
 ///
 /// ```
 /// payload = [
-///     "command": "resetdata"
+///     "command_name": "resetdata"
 /// ]
 /// ```
 class ResetDataCommand: FirebaseCommandProtocol {

@@ -23,12 +23,12 @@ import TealiumPrismCore
 /// ### Format 1: Object of Arrays (Tealium convention - most common)
 /// ```
 /// payload = [
-///     "command": "logevent",
-///     "firebase_event_name": "purchase",
-///     "firebase_event_params": [
+///     "command_name": "logevent",
+///     "event_name": "purchase",
+///     "parameters": [
 ///         "param_value": 99.99,
 ///         "param_currency": "USD",
-///         "param_items": [
+///         "items": [
 ///             "param_items_item_id": ["SKU001", "SKU002"],
 ///             "param_items_item_name": ["Widget", "Gadget"],
 ///             "param_items_price": [29.99, 70.00]
@@ -40,12 +40,12 @@ import TealiumPrismCore
 /// ### Format 2: Array of Objects (Firebase-ready format)
 /// ```
 /// payload = [
-///     "command": "logevent",
-///     "firebase_event_name": "purchase",
-///     "firebase_event_params": [
+///     "command_name": "logevent",
+///     "event_name": "purchase",
+///     "parameters": [
 ///         "param_value": 99.99,
 ///         "param_currency": "USD",
-///         "param_items": [
+///         "items": [
 ///             ["item_id": "SKU001", "item_name": "Widget", "price": 29.99],
 ///             ["item_id": "SKU002", "item_name": "Gadget", "price": 70.00]
 ///         ]
@@ -64,17 +64,11 @@ class LogEventCommand: FirebaseCommandProtocol {
     typealias Param = FirebaseConstants.LogEvent.Param
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        // 1. Extract event name
         let eventName = try extractEventName(from: payload)
-        
-        // 2. Build parameters from payload (may throw if item arrays are mismatched)
-        let parameters = try buildParameters(from: payload, eventName: eventName)
-        
-        // 3. Log the event to Firebase
+        let parameters = try buildParameters(from: payload)
         firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
     }
-    
-    /// Extracts the event name from payload.
+
     private func extractEventName(from payload: DataObject) throws(FirebaseCommandError) -> String {
         guard let rawEventName = payload.get(key: Param.eventName, as: String.self) else {
             throw FirebaseCommandError.missingParameter(Param.eventName)
@@ -85,7 +79,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Builds all Firebase parameters from payload (including items).
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
-    private func buildParameters(from payload: DataObject, eventName: String) throws(FirebaseCommandError) -> [String: Any] {
+    private func buildParameters(from payload: DataObject) throws(FirebaseCommandError) -> [String: Any] {
         guard let eventParamsData = payload.getDataDictionary(key: Param.eventParams) else {
             return [:]
         }
@@ -93,8 +87,8 @@ class LogEventCommand: FirebaseCommandProtocol {
         var parameters: [String: Any] = [:]
         
         // Build items first (if present)
-        if let items = try buildItems(from: eventParamsData, eventName: eventName) {
-            parameters[AnalyticsParameterItems] = items  // Use Firebase SDK constant "items"
+        if let items = try buildItems(from: eventParamsData) {
+            parameters[AnalyticsParameterItems] = items
         }
         
         // Build regular parameters
@@ -104,12 +98,11 @@ class LogEventCommand: FirebaseCommandProtocol {
         return parameters
     }
     
-    /// Builds regular parameters (excluding items).
     private func buildRegularParameters(from eventParamsData: [String: DataItem]) -> [String: Any] {
         var result: [String: Any] = [:]
         
         for (key, dataItem) in eventParamsData {
-            // Skip items - handled separately via param_items
+            // Skip items - handled separately via the items key
             guard key != Param.items else { 
                 continue 
             }
@@ -130,7 +123,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Supported formats:
     /// 1. Object of arrays (Tealium): `{"param_items_item_id": ["SKU1", "SKU2"], ...}`
     /// 2. Array of objects (Firebase-ready): `[{"item_id": "SKU1"}, {"item_id": "SKU2"}]`
-    private func buildItems(from eventParamsData: [String: DataItem], eventName: String) throws(FirebaseCommandError) -> [[String: Any]]? {
+    private func buildItems(from eventParamsData: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]]? {
         guard let itemsData = eventParamsData[Param.items] else {
             return nil
         }
@@ -182,16 +175,14 @@ class LogEventCommand: FirebaseCommandProtocol {
         }
         
         // Validate all arrays have the same length
-        if let mismatch = arrays.first(where: { $0.value.count != itemCount }) {
-            // Find the expected length array for comparison
-            if let expected = arrays.first(where: { $0.value.count == itemCount }) {
-                throw FirebaseCommandError.arrayLengthMismatch(
-                    array1: expected.key,
-                    count1: expected.value.count,
-                    array2: mismatch.key,
-                    count2: mismatch.value.count
-                )
-            }
+        if let mismatch = arrays.first(where: { $0.value.count != itemCount }),
+           let expected = arrays.first(where: { $0.value.count == itemCount }) {
+            throw FirebaseCommandError.arrayLengthMismatch(
+                array1: expected.key,
+                count1: expected.value.count,
+                array2: mismatch.key,
+                count2: mismatch.value.count
+            )
         }
         
         return (0..<itemCount).compactMap { index in
@@ -200,7 +191,6 @@ class LogEventCommand: FirebaseCommandProtocol {
         }
     }
     
-    /// Builds a single item dictionary from parallel arrays at given index.
     private func buildItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
         var item: [String: Any] = [:]
         
@@ -212,7 +202,6 @@ class LogEventCommand: FirebaseCommandProtocol {
         return item
     }
     
-    /// Extracts only array values from dictionary using safe DataItem methods.
     private func extractArrays(from dict: [String: DataItem]) -> [String: [DataInput]] {
         dict.compactMapValues { $0.getDataArray()?.map { $0.toDataInput() } }
     }

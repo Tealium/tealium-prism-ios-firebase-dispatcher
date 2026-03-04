@@ -21,7 +21,7 @@ import TealiumPrismCore
 ///
 /// ```
 /// payload = [
-///     "command": "setanalyticscollectionenabled",
+///     "command_name": "setanalyticscollectionenabled",
 ///     "analytics_collection_enabled": true
 /// ]
 /// ```
