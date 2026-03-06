@@ -27,43 +27,43 @@
                     }
                 },
                 {
-                    "destination": { "path": "parameters.value" },
+                    "destination": { "path": "parameters.param_value" },
                     "parameters": {
                         "reference": { "key": "value" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.currency" },
+                    "destination": { "path": "parameters.param_currency" },
                     "parameters": {
                         "reference": { "key": "currency" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.transaction_id" },
+                    "destination": { "path": "parameters.param_transaction_id" },
                     "parameters": {
                         "reference": { "key": "transaction_id" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.shipping" },
+                    "destination": { "path": "parameters.param_shipping" },
                     "parameters": {
                         "reference": { "key": "shipping" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.tax" },
+                    "destination": { "path": "parameters.param_tax" },
                     "parameters": {
                         "reference": { "key": "tax" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.affiliation" },
+                    "destination": { "path": "parameters.param_affiliation" },
                     "parameters": {
                         "reference": { "key": "affiliation" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.coupon" },
+                    "destination": { "path": "parameters.param_coupon" },
                     "parameters": {
                         "reference": { "key": "coupon" }
                     }
@@ -88,97 +88,97 @@
                 },
 
                 {
-                    "destination": { "path": "parameters.items.item_id" },
+                    "destination": { "path": "parameters.param_items.param_items_item_id" },
                     "parameters": {
                         "reference": { "key": "product_ids" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_name" },
+                    "destination": { "path": "parameters.param_items.param_items_item_name" },
                     "parameters": {
                         "reference": { "key": "product_names" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_brand" },
+                    "destination": { "path": "parameters.param_items.param_items_item_brand" },
                     "parameters": {
                         "reference": { "key": "product_brands" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_category" },
+                    "destination": { "path": "parameters.param_items.param_items_item_category" },
                     "parameters": {
                         "reference": { "key": "product_categories" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_category2" },
+                    "destination": { "path": "parameters.param_items.param_items_item_category2" },
                     "parameters": {
                         "reference": { "key": "product_category2" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_category3" },
+                    "destination": { "path": "parameters.param_items.param_items_item_category3" },
                     "parameters": {
                         "reference": { "key": "product_category3" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.price" },
+                    "destination": { "path": "parameters.param_items.param_items_price" },
                     "parameters": {
                         "reference": { "key": "prices" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.quantity" },
+                    "destination": { "path": "parameters.param_items.param_items_quantity" },
                     "parameters": {
                         "reference": { "key": "quantities" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.discount" },
+                    "destination": { "path": "parameters.param_items.param_items_discount" },
                     "parameters": {
                         "reference": { "key": "discounts" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_variant" },
+                    "destination": { "path": "parameters.param_items.param_items_item_variant" },
                     "parameters": {
                         "reference": { "key": "item_variants" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_list_id" },
+                    "destination": { "path": "parameters.param_items.param_items_item_list_id" },
                     "parameters": {
                         "reference": { "key": "item_list_ids" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.item_list_name" },
+                    "destination": { "path": "parameters.param_items.param_items_item_list_name" },
                     "parameters": {
                         "reference": { "key": "item_list_names" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.index" },
+                    "destination": { "path": "parameters.param_items.param_items_index" },
                     "parameters": {
                         "reference": { "key": "indices" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.custom_item_color" },
+                    "destination": { "path": "parameters.param_items.custom_item_color" },
                     "parameters": {
                         "reference": { "key": "custom_item_color" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.custom_item_size" },
+                    "destination": { "path": "parameters.param_items.custom_item_size" },
                     "parameters": {
                         "reference": { "key": "custom_item_size" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters.items.custom_item_material" },
+                    "destination": { "path": "parameters.param_items.custom_item_material" },
                     "parameters": {
                         "reference": { "key": "custom_item_material" }
                     }

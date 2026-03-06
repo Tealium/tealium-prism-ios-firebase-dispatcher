@@ -20,7 +20,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
 
     // MARK: - Dependencies
 
-    private let firebaseInstance: FirebaseCommand
+    private let firebaseInstance: FirebaseAnalyticsInterface
     private let commandRegistry: FirebaseCommandRegistry
     private let logger: LoggerProtocol?
     private var configuration: FirebaseDispatcherConfiguration
@@ -36,7 +36,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
     }
 
     /// Internal initializer called by the generic one and by the tests.
-    init(firebaseInstance: FirebaseCommand,
+    init(firebaseInstance: FirebaseAnalyticsInterface,
           commandRegistry: FirebaseCommandRegistry,
           configuration: FirebaseDispatcherConfiguration,
           logger: LoggerProtocol?) {

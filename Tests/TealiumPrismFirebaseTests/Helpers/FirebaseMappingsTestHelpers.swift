@@ -12,13 +12,15 @@ import XCTest
 
 /// Base test class with common helpers for Firebase mappings tests
 class FirebaseMappingsTestBase: XCTestCase {
-    
+
     @StateSubject([:])
     var mappingsState: ObservableState<[String: [MappingOperation]]>
     lazy var engine = MappingsEngine(mappings: mappingsState)
-    
-    /// Maps a dispatch using the provided mappings and returns the result
-    func map(dispatch: Dispatch, mappings: [Mappings]) -> Dispatch {
-        engine.map(dispatch: dispatch, mappings: mappings.map { $0.build() })
+
+    /// Maps a dispatch using FirebaseMappings configured via a closure
+    func map(dispatch: Dispatch, setup: (FirebaseMappings) -> Void) -> Dispatch {
+        let mappings = FirebaseMappings()
+        setup(mappings)
+        return engine.map(dispatch: dispatch, mappings: mappings.build())
     }
 }

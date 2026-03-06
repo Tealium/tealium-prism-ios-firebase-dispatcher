@@ -7,158 +7,125 @@
 //
 
 import Foundation
-import FirebaseAnalytics
-import TealiumPrismCore
 
-/// All constants for the Firebase Dispatcher module, organized by command.
-/// Each command has its own namespace with name and parameters.
+/// Module-level constants for the Firebase Dispatcher.
 ///
-/// Firebase Analytics SDK Reference:
-/// - Analytics Class: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics
+/// Payload key strings for the command schema are defined in `FirebaseDestination`
+/// and accessed via `FirebaseDestination.*.path`.
 enum FirebaseConstants {
-    
+
     // MARK: - Module Metadata
-    
+
     static let version = "1.0.0"
     static let moduleType = "FirebaseDispatcher"
-    
-    /// The key used to identify the command to execute in mapped payload
+
+    /// The key used to identify the command to execute in the mapped payload.
     static let commandName = "command_name"
-    
-    // MARK: - SetSessionTimeout Command
-    
-    /// Set session timeout command for dynamically changing the session timeout interval.
-    ///
-    /// Firebase SDK Reference:
-    /// - setSessionTimeoutInterval: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setsessiontimeoutinterval_:
-    enum SetSessionTimeout {
-        static let name = "setsessiontimeout"
-        
-        enum Param {
-            static let sessionTimeout = "session_timeout_seconds"
-        }
+
+    // MARK: - Event Parameter Keys
+
+    /// Tealium payload keys for Firebase event parameters.
+    /// Used by both `FirebaseEventParameter.value` and `FirebaseParameterMapper.mapping`.
+    enum EventParamKey {
+        static let achievementId = "param_achievement_id"
+        static let adFormat = "param_ad_format"
+        static let adNetworkClickId = "param_ad_network_click_id"
+        static let adPlatform = "param_ad_platform"
+        static let adSource = "param_ad_source"
+        static let adUnitName = "param_ad_unit_name"
+        static let affiliation = "param_affiliation"
+        static let campaign = "param_campaign"
+        static let campaignId = "param_campaign_id"
+        static let character = "param_character"
+        static let content = "param_content"
+        static let contentType = "param_content_type"
+        static let coupon = "param_coupon"
+        static let cp1 = "param_cp1"
+        static let creativeFormat = "param_creative_format"
+        static let creativeName = "param_creative_name"
+        static let creativeSlot = "param_creative_slot"
+        static let currency = "param_currency"
+        static let destination = "param_destination"
+        static let discount = "param_discount"
+        static let endDate = "param_end_date"
+        static let extendSession = "param_extend_session"
+        static let flightNumber = "param_flight_number"
+        static let groupId = "param_group_id"
+        static let index = "param_index"
+        static let itemBrand = "param_item_brand"
+        static let itemCategory = "param_item_category"
+        static let itemCategory2 = "param_item_category2"
+        static let itemCategory3 = "param_item_category3"
+        static let itemCategory4 = "param_item_category4"
+        static let itemCategory5 = "param_item_category5"
+        static let itemId = "param_item_id"
+        static let itemListId = "param_item_list_id"
+        static let itemListName = "param_item_list_name"
+        static let itemName = "param_item_name"
+        static let itemVariant = "param_item_variant"
+        static let items = "param_items"
+        static let level = "param_level"
+        static let levelName = "param_level_name"
+        static let location = "param_location"
+        static let locationId = "param_location_id"
+        static let marketingTactic = "param_marketing_tactic"
+        static let medium = "param_medium"
+        static let method = "param_method"
+        static let numberOfNights = "param_number_nights"
+        static let numberOfPassengers = "param_number_pax"
+        static let numberOfRooms = "param_number_rooms"
+        static let origin = "param_origin"
+        static let paymentType = "param_payment_type"
+        static let price = "param_price"
+        static let promotionId = "param_promotion_id"
+        static let promotionName = "param_promotion_name"
+        static let quantity = "param_quantity"
+        static let score = "param_score"
+        static let screenClass = "param_screen_class"
+        static let screenName = "param_screen_name"
+        static let searchTerm = "param_search_term"
+        static let shipping = "param_shipping"
+        static let shippingTier = "param_shipping_tier"
+        static let source = "param_source"
+        static let sourcePlatform = "param_source_platform"
+        static let startDate = "param_start_date"
+        static let success = "param_success"
+        static let tax = "param_tax"
+        static let term = "param_term"
+        static let transactionId = "param_transaction_id"
+        static let travelClass = "param_travel_class"
+        static let userAllowAdPersonalizationSignals = "param_user_allow_ad_personalization_signals"
+        static let userSignupMethod = "param_user_signup_method"
+        static let value = "param_value"
+        static let virtualCurrencyName = "param_virtual_currency_name"
     }
-    
-    // MARK: - SetAnalyticsCollectionEnabled Command
-    
-    /// Set analytics collection enabled command for dynamically enabling/disabling analytics collection.
-    ///
-    /// Firebase SDK Reference:
-    /// - setAnalyticsCollectionEnabled: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setanalyticscollectionenabled_:
-    enum SetAnalyticsCollectionEnabled {
-        static let name = "setanalyticscollectionenabled"
-        
-        enum Param {
-            static let analyticsEnabled = "analytics_collection_enabled"
-        }
-    }
-    
-    // MARK: - LogEvent Command
-    
-    /// Log event command for sending analytics events to Firebase.
-    ///
-    /// Firebase SDK Reference:
-    /// - logEvent: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#logevent_:parameters:
-    enum LogEvent {
-        static let name = "logevent"
-        
-        enum Param {
-            static let eventName = "event_name"
-            static let eventParams = "parameters"
-            static let items = "items"
-        }
-    }
-    
-    // MARK: - SetUserId Command
-    
-    /// Set user ID command for associating analytics data with a user.
-    ///
-    /// Firebase SDK Reference:
-    /// - setUserID: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserid_:
-    enum SetUserId {
-        static let name = "setuserid"
-        
-        enum Param {
-            static let userId = "user_id"
-        }
-    }
-    
-    // MARK: - SetUserProperty Command
-    
-    /// Set user property command for setting custom user attributes.
-    /// Supports both single property and multiple properties.
-    ///
-    /// Firebase SDK Reference:
-    /// - setUserProperty: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setuserproperty_:forname:
-    enum SetUserProperty {
-        static let name = "setuserproperty"
-        
-        enum Param {
-            static let propertyName = "property_name"
-            static let propertyValue = "property_value"
-        }
-    }
-    
-    // MARK: - ResetData Command
-    
-    /// Reset analytics data command to clear all analytics data.
-    ///
-    /// Firebase SDK Reference:
-    /// - resetAnalyticsData: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#resetanalyticsdata
-    enum ResetData {
-        static let name = "resetdata"
-        // No parameters required
-    }
-    
-    // MARK: - SetDefaultParameters Command
-    
-    /// Set default event parameters that will be included with every event.
-    ///
-    /// Firebase SDK Reference:
-    /// - setDefaultEventParameters: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics#setdefaulteventparameters_:
-    enum SetDefaultParameters {
-        static let name = "setdefaultparameters"
-        
-        enum Param {
-            static let params = "parameters"
-        }
-    }
-    
-    // MARK: - SetConsent Command
-    
-    /// Set consent command for configuring analytics consent settings.
-    ///
-    /// Firebase SDK Reference:
-    /// - setConsent: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(Consent)#setconsent_:
-    enum SetConsent {
-        static let name = "setconsent"
-        
-        enum Param {
-            static let consentSettings = "consent_settings"
-            static let adStorage = "ad_storage"
-            static let analyticsStorage = "analytics_storage"
-            static let adUserData = "ad_user_data"
-            static let adPersonalization = "ad_personalization"
-        }
-    }
-    
-    // MARK: - InitiateConversionMeasurement Command
-    
-    /// Initiate on-device conversion measurement command.
-    ///
-    /// Firebase SDK References:
-    /// - emailAddress: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementemailaddress:
-    /// - phoneNumber: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementphonenumber:
-    /// - hashedEmailAddress: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementhashedemailaddress:
-    /// - hashedPhoneNumber: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Categories/FIRAnalytics(OnDevice)#initiateondeviceconversionmeasurementhashedphonenumber:
-    enum InitiateConversionMeasurement {
-        static let name = "initiateconversionmeasurement"
-        
-        enum Param {
-            static let emailAddress = "email_address"
-            static let phoneNumber = "phone_number"
-            static let hashedEmailAddress = "hashed_email_address"
-            static let hashedPhoneNumber = "hashed_phone_number"
-        }
+
+    // MARK: - Item Parameter Keys
+
+    /// Tealium payload keys for Firebase item parameters.
+    /// Used by both `FirebaseItemParameter.value` and `FirebaseItemParameterMapper.mapping`.
+    enum ItemParamKey {
+        static let itemId = "param_items_item_id"
+        static let itemName = "param_items_item_name"
+        static let itemBrand = "param_items_item_brand"
+        static let itemCategory = "param_items_item_category"
+        static let itemCategory2 = "param_items_item_category2"
+        static let itemCategory3 = "param_items_item_category3"
+        static let itemCategory4 = "param_items_item_category4"
+        static let itemCategory5 = "param_items_item_category5"
+        static let itemVariant = "param_items_item_variant"
+        static let itemListId = "param_items_item_list_id"
+        static let itemListName = "param_items_item_list_name"
+        static let index = "param_items_index"
+        static let price = "param_items_price"
+        static let quantity = "param_items_quantity"
+        static let discount = "param_items_discount"
+        static let affiliation = "param_items_affiliation"
+        static let coupon = "param_items_coupon"
+        static let locationId = "param_items_location_id"
+        static let promotionId = "param_items_promotion_id"
+        static let promotionName = "param_items_promotion_name"
+        static let creativeName = "param_items_creative_name"
+        static let creativeSlot = "param_items_creative_slot"
     }
 }

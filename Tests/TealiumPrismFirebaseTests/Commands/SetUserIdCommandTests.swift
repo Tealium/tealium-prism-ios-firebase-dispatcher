@@ -12,7 +12,7 @@ import XCTest
 
 final class SetUserIdCommandTests: XCTestCase {
     
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetUserIdCommand(firebaseInstance: mockFirebase)
 
     // MARK: - Basic Tests
@@ -34,7 +34,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_sets_user_id() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserId.Param.userId: "user@example.com"
+            FirebaseDestination.userId.path: "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -46,7 +46,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_clears_user_id_with_empty_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetUserId.Param.userId: ""
+            FirebaseDestination.userId.path: ""
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))

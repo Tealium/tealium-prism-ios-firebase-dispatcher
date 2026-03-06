@@ -1,5 +1,5 @@
 //
-//  MockFirebaseCommand.swift
+//  MockFirebaseAnalytics.swift
 //  TealiumPrismFirebaseTests
 //
 //  Created by Sebastian Krajna on 14/01/2026.
@@ -11,9 +11,9 @@ import FirebaseCore
 import FirebaseAnalytics
 import Foundation
 
-/// Mock implementation of FirebaseCommand protocol for testing.
+/// Mock implementation of FirebaseAnalyticsInterface protocol for testing.
 /// Tracks all method calls and their parameters for verification.
-class MockFirebaseCommand: FirebaseCommand {
+class MockFirebaseAnalytics: FirebaseAnalyticsInterface {
     
     // MARK: - Call Tracking
     
@@ -63,7 +63,7 @@ class MockFirebaseCommand: FirebaseCommand {
     var initiateConversionMeasurementHashedPhoneCalled = false
     var lastHashedPhoneNumber: Data?
     
-    // MARK: - FirebaseCommand Protocol
+    // MARK: - FirebaseAnalyticsInterface Protocol
     
     func onReady(_ onReady: @escaping () -> Void) {
         onReadyCalled = true

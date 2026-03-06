@@ -13,10 +13,8 @@ import XCTest
 
 final class SetConsentCommandTests: XCTestCase {
 
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetConsentCommand(firebaseInstance: mockFirebase)
-
-    private typealias Param = FirebaseConstants.SetConsent.Param
 
     // MARK: - Basic Tests
 
@@ -37,8 +35,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_storage_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "granted"
             ] as DataObject
         ]
 
@@ -49,8 +47,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_storage_denied() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "denied"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "denied"
             ] as DataObject
         ]
 
@@ -60,8 +58,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_analytics_storage_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.analyticsStorage: "granted"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.analyticsStorage.key: "granted"
             ] as DataObject
         ]
 
@@ -71,8 +69,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_user_data_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adUserData: "granted"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adUserData.key: "granted"
             ] as DataObject
         ]
 
@@ -82,8 +80,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_personalization_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adPersonalization: "granted"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adPersonalization.key: "granted"
             ] as DataObject
         ]
 
@@ -95,11 +93,11 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_multiple_consent_types() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
-                Param.analyticsStorage: "granted",
-                Param.adUserData: "denied",
-                Param.adPersonalization: "denied"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "granted",
+                ConsentType.analyticsStorage.key: "granted",
+                ConsentType.adUserData.key: "denied",
+                ConsentType.adPersonalization.key: "denied"
             ] as DataObject
         ]
 
@@ -118,8 +116,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_ignores_invalid_consent_type() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "granted",
                 "invalid_type": "granted"
             ] as DataObject
         ]
@@ -130,9 +128,9 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_ignores_invalid_consent_status() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
-                Param.analyticsStorage: "invalid_status"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "granted",
+                ConsentType.analyticsStorage.key: "invalid_status"
             ] as DataObject
         ]
 
@@ -142,7 +140,7 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_throws_error_when_all_values_are_invalid() {
         let payload: DataObject = [
-            Param.consentSettings: [
+            FirebaseDestination.consentSettings.path: [
                 "invalid_type": "granted",
                 "another_invalid": "denied"
             ] as DataObject
@@ -160,8 +158,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_throws_error_for_non_string_value() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: 123
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: 123
             ] as DataObject
         ]
 
@@ -175,8 +173,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_handles_case_insensitive_consent_status() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "GRANTED"
+            FirebaseDestination.consentSettings.path: [
+                ConsentType.adStorage.key: "GRANTED"
             ] as DataObject
         ]
 

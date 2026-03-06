@@ -141,8 +141,8 @@
         "repositoryURL": "https://github.com/Tealium/tealium-prism-swift",
         "state": {
           "branch": null,
-          "revision": "ac5a9b095a83f8fbae5c1d1722856527b8aefc69",
-          "version": "0.3.0"
+          "revision": "a38ee08f3dc5b979b6087d486fdc3a0cba992cba",
+          "version": "0.4.0"
         }
       }
     ]

@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import FirebaseAnalytics
 import TealiumPrismCore
 
 /// Command for logging Firebase Analytics events with parameter and item support.
@@ -54,15 +53,14 @@ import TealiumPrismCore
 /// ```
 class LogEventCommand: FirebaseCommandProtocol {
     
-    private let firebaseInstance: FirebaseCommand
-    
-    init(firebaseInstance: FirebaseCommand) {
+    private let firebaseInstance: FirebaseAnalyticsInterface
+
+    init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
     
-    let name = FirebaseConstants.LogEvent.name
-    typealias Param = FirebaseConstants.LogEvent.Param
-    
+    let name = FirebaseCommand.logEvent.rawValue
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         let eventName = try extractEventName(from: payload)
         let parameters = try buildParameters(from: payload)
@@ -70,17 +68,17 @@ class LogEventCommand: FirebaseCommandProtocol {
     }
 
     private func extractEventName(from payload: DataObject) throws(FirebaseCommandError) -> String {
-        guard let rawEventName = payload.get(key: Param.eventName, as: String.self) else {
-            throw FirebaseCommandError.missingParameter(Param.eventName)
+        guard let rawEventName = payload.get(key: FirebaseDestination.eventName.path, as: String.self) else {
+            throw FirebaseCommandError.missingParameter(FirebaseDestination.eventName.path)
         }
         
-        return FirebaseEvent.map(rawEventName)
+        return FirebaseEventMapper.map(rawEventName)
     }
     
     /// Builds all Firebase parameters from payload (including items).
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
     private func buildParameters(from payload: DataObject) throws(FirebaseCommandError) -> [String: Any] {
-        guard let eventParamsData = payload.getDataDictionary(key: Param.eventParams) else {
+        guard let eventParamsData = payload.getDataDictionary(key: FirebaseDestination.eventParams.path) else {
             return [:]
         }
         
@@ -88,7 +86,8 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         // Build items first (if present)
         if let items = try buildItems(from: eventParamsData) {
-            parameters[AnalyticsParameterItems] = items
+            let itemsKey = FirebaseParameterMapper.map(FirebaseEventParameter.items.value)
+            parameters[itemsKey] = items
         }
         
         // Build regular parameters
@@ -103,11 +102,11 @@ class LogEventCommand: FirebaseCommandProtocol {
         
         for (key, dataItem) in eventParamsData {
             // Skip items - handled separately via the items key
-            guard key != Param.items else { 
-                continue 
+            guard key != FirebaseEventParameter.items.value else {
+                continue
             }
-            
-            let paramName = FirebaseParameter.map(key)
+
+            let paramName = FirebaseParameterMapper.map(key)
             result[paramName] = dataItem.toDataInput()
         }
         
@@ -124,7 +123,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// 1. Object of arrays (Tealium): `{"param_items_item_id": ["SKU1", "SKU2"], ...}`
     /// 2. Array of objects (Firebase-ready): `[{"item_id": "SKU1"}, {"item_id": "SKU2"}]`
     private func buildItems(from eventParamsData: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]]? {
-        guard let itemsData = eventParamsData[Param.items] else {
+        guard let itemsData = eventParamsData[FirebaseEventParameter.items.value] else {
             return nil
         }
         var items: [[String: Any]] = []
@@ -145,7 +144,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     ///
-    /// Maps parameter names through FirebaseItemParameter.map() to support both:
+    /// Maps parameter names through `FirebaseItemParameterMapper.map()` to support both:
     /// - Firebase convention: "item_id" → "item_id"
     /// - Tealium convention: "param_items_item_id" → "item_id"
     private func buildItemsFromArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
@@ -156,7 +155,7 @@ class LogEventCommand: FirebaseCommandProtocol {
             
             var mappedItem: [String: Any] = [:]
             for (key, value) in itemDict {
-                let paramName = FirebaseItemParameter.map(key)
+                let paramName = FirebaseItemParameterMapper.map(key)
                 mappedItem[paramName] = value.toDataInput()
             }
             
@@ -195,7 +194,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         var item: [String: Any] = [:]
         
         for (key, array) in arrays where index < array.count {
-            let paramName = FirebaseItemParameter.map(key)
+            let paramName = FirebaseItemParameterMapper.map(key)
             item[paramName] = array[index]
         }
         

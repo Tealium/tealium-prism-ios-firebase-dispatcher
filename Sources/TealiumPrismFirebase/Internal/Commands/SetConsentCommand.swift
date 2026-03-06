@@ -36,26 +36,22 @@ import FirebaseAnalytics
 /// **Supported values:** `granted`, `denied`
 class SetConsentCommand: FirebaseCommandProtocol {
     
-    private let firebaseInstance: FirebaseCommand
-    
-    init(firebaseInstance: FirebaseCommand) {
+    private let firebaseInstance: FirebaseAnalyticsInterface
+
+    init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
     
-    let name = FirebaseConstants.SetConsent.name
-    typealias Param = FirebaseConstants.SetConsent.Param
-    
+    let name = FirebaseCommand.setConsent.rawValue
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        guard let consentData = payload.getDataDictionary(key: Param.consentSettings) else {
+        guard let consentData = payload.getDataDictionary(key: FirebaseDestination.consentSettings.path) else {
             throw FirebaseCommandError.noValidConsentSettings
         }
 
-        let consentKeys = [Param.adStorage, Param.analyticsStorage, Param.adUserData, Param.adPersonalization]
-
-        let consentSettings = Dictionary(uniqueKeysWithValues: consentKeys.compactMap { key -> (ConsentType, ConsentStatus)? in
-            guard let dataItem = consentData[key],
+        let consentSettings = Dictionary(uniqueKeysWithValues: ConsentType.all.compactMap { consentType -> (ConsentType, ConsentStatus)? in
+            guard let dataItem = consentData[consentType.key],
                   let stringValue = dataItem.get(as: String.self),
-                  let consentType = ConsentType.from(key),
                   let status = ConsentStatus.from(stringValue) else {
                 return nil
             }

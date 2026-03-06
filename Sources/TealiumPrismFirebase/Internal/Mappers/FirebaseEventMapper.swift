@@ -17,7 +17,7 @@ import FirebaseAnalytics
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants
-struct FirebaseEvent {
+struct FirebaseEventMapper {
     
     /// Maps event_* keys to Firebase Analytics event constants.
     /// Example: `event_purchase` → `"purchase"`

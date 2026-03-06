@@ -15,7 +15,7 @@ import TealiumPrismCore
 ///
 /// Configures Firebase automatically on first use if not already configured.
 /// If `FirebaseApp.configure()` was called before Tealium starts, this class detects it and skips configuration.
-class FirebaseInstance: FirebaseCommand {
+class FirebaseInstance: FirebaseAnalyticsInterface {
     
     private let onReadySubject = ReplaySubject<Void>(cacheSize: 1)
     

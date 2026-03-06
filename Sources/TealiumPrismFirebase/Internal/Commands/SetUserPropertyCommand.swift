@@ -43,20 +43,19 @@ import TealiumPrismCore
 /// ```
 class SetUserPropertyCommand: FirebaseCommandProtocol {
     
-    private let firebaseInstance: FirebaseCommand
-    
-    init(firebaseInstance: FirebaseCommand) {
+    private let firebaseInstance: FirebaseAnalyticsInterface
+
+    init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
 
-    let name = FirebaseConstants.SetUserProperty.name
-    typealias Param = FirebaseConstants.SetUserProperty.Param
+    let name = FirebaseCommand.setUserProperty.rawValue
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         let properties = try extractNamesAndValues(payload: payload)
         
         guard !properties.isEmpty else {
-            throw FirebaseCommandError.missingParameter(Param.propertyName)
+            throw FirebaseCommandError.missingParameter(FirebaseDestination.userPropertyName.path)
         }
         
         // Set each property
@@ -70,8 +69,8 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     /// Extracts property names and values from the payload.
     /// Automatically handles both single values and arrays.
     private func extractNamesAndValues(payload: DataObject) throws(FirebaseCommandError) -> [(name: String, value: String?)] {
-        guard let namesItem = payload.getDataItem(key: Param.propertyName),
-              let valuesItem = payload.getDataItem(key: Param.propertyValue) else {
+        guard let namesItem = payload.getDataItem(key: FirebaseDestination.userPropertyName.path),
+              let valuesItem = payload.getDataItem(key: FirebaseDestination.userPropertyValue.path) else {
             return []
         }
         
@@ -80,14 +79,14 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.get(as: String.self)]
         
         guard !namesArray.isEmpty else {
-            throw FirebaseCommandError.emptyArray(Param.propertyName)
+            throw FirebaseCommandError.emptyArray(FirebaseDestination.userPropertyName.path)
         }
         
         guard namesArray.count == valuesArray.count else {
             throw FirebaseCommandError.arrayLengthMismatch(
-                array1: Param.propertyName,
+                array1: FirebaseDestination.userPropertyName.path,
                 count1: namesArray.count,
-                array2: Param.propertyValue,
+                array2: FirebaseDestination.userPropertyValue.path,
                 count2: valuesArray.count
             )
         }

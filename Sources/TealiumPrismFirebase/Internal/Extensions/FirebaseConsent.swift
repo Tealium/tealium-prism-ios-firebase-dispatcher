@@ -16,23 +16,20 @@ import FirebaseAnalytics
 /// Firebase SDK Reference:
 /// - ConsentType: https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Type-Definitions#consenttype
 extension ConsentType {
-    /// Creates a ConsentType from a string value
-    /// - Parameter consentString: The consent type string (e.g., "ad_storage", "analytics_storage"), case-insensitive matching is supported
-    /// - Returns: The corresponding ConsentType, or nil if the string is not a valid consent type
-    static func from(_ consentString: String) -> ConsentType? {
-        switch consentString.lowercased() {
-        case "ad_storage":
-            return .adStorage
-        case "analytics_storage":
-            return .analyticsStorage
-        case "ad_user_data":
-            return .adUserData
-        case "ad_personalization":
-            return .adPersonalization
-        default:
-            return nil
+
+    /// The payload key for this consent type (e.g., `"ad_storage"`).
+    var key: String {
+        switch self {
+        case .adStorage: return "ad_storage"
+        case .analyticsStorage: return "analytics_storage"
+        case .adUserData: return "ad_user_data"
+        case .adPersonalization: return "ad_personalization"
+        default: return ""
         }
     }
+
+    /// All consent types supported by the Firebase Dispatcher.
+    static let all: [ConsentType] = [.adStorage, .analyticsStorage, .adUserData, .adPersonalization]
 }
 
 // MARK: - ConsentStatus Extension

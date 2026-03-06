@@ -12,7 +12,7 @@ import XCTest
 
 final class FirebaseDispatcherTests: XCTestCase {
     
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var dispatcher = FirebaseDispatcher(
         firebaseInstance: mockFirebase,
         commandRegistry: FirebaseCommandRegistry(),
@@ -24,8 +24,8 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "test_event"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            FirebaseDestination.eventName.path: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -41,8 +41,8 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "test_event"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            FirebaseDestination.eventName.path: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -60,11 +60,11 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_with_command_array_executes_all_commands() {
         let dispatch = Dispatch(name: "multi_command", data: [
             FirebaseConstants.commandName: [
-                FirebaseConstants.LogEvent.name,
-                FirebaseConstants.SetUserId.name
+                FirebaseCommand.logEvent.rawValue,
+                FirebaseCommand.setUserId.rawValue
             ],
-            FirebaseConstants.LogEvent.Param.eventName: "test_event",
-            FirebaseConstants.SetUserId.Param.userId: "user123"
+            FirebaseDestination.eventName.path: "test_event",
+            FirebaseDestination.userId.path: "user123"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -81,13 +81,13 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "event_one"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            FirebaseDestination.eventName.path: "event_one"
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "event_two"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            FirebaseDestination.eventName.path: "event_two"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -156,9 +156,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         let dispatch = Dispatch(name: "mixed", data: [
             FirebaseConstants.commandName: [
                 "invalid_command",
-                FirebaseConstants.LogEvent.name
+                FirebaseCommand.logEvent.rawValue
             ],
-            FirebaseConstants.LogEvent.Param.eventName: "test_event"
+            FirebaseDestination.eventName.path: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -204,7 +204,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     // MARK: - Configuration Application Tests (Init)
     
     func test_init_applies_logLevel_from_configuration() {
-        let mockFirebase = MockFirebaseCommand()
+        let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
             FirebaseDispatcherConfiguration.Keys.logLevel: "debug"
         ]
@@ -221,7 +221,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     }
     
     func test_init_applies_sessionTimeout_from_configuration() {
-        let mockFirebase = MockFirebaseCommand()
+        let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 3600.0
         ]
@@ -238,7 +238,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     }
     
     func test_init_applies_analyticsEnabled_from_configuration() {
-        let mockFirebase = MockFirebaseCommand()
+        let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
             FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false
         ]
@@ -255,7 +255,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     }
     
     func test_init_applies_all_configuration_settings() {
-        let mockFirebase = MockFirebaseCommand()
+        let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
             FirebaseDispatcherConfiguration.Keys.logLevel: "warning",
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800.0,
@@ -278,7 +278,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     }
     
     func test_init_with_empty_configuration_does_not_apply_settings() {
-        let mockFirebase = MockFirebaseCommand()
+        let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [:]
         
         _ = FirebaseDispatcher(

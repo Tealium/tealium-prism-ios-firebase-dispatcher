@@ -28,10 +28,11 @@ public extension Modules {
      * Modules.firebaseDispatcher(forcingSettings: { builder in
      *     builder
      *         .setSessionTimeout(30.minutes)
-     *         .setMappings([
-     *             .mapFirebaseLogEventCommand(),
-     *             .mapFirebaseLogEventName()
-     *         ])
+     *         .setMappings { mappings in
+     *             mappings.mapCommand(.logEvent)
+     *             mappings.mapFrom("tealium_event", to: .eventName)
+     *             mappings.mapFrom("total", to: .eventParam(.value))
+     *         }
      * })
      * ```
      */

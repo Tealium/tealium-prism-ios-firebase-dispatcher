@@ -12,7 +12,7 @@ import XCTest
 
 final class SetSessionTimeoutCommandTests: XCTestCase {
     
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetSessionTimeoutCommand(firebaseInstance: mockFirebase)
 
     // MARK: - Basic Tests
@@ -30,7 +30,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_double() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 1800.5
+            FirebaseDestination.sessionTimeout.path: 1800.5
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -42,7 +42,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_int() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
+            FirebaseDestination.sessionTimeout.path: 3600
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -54,7 +54,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "1800.5"
+            FirebaseDestination.sessionTimeout.path: "1800.5"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -64,7 +64,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_throws_error_for_invalid_string() {
         let payload: DataObject = [
-            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: "invalid"
+            FirebaseDestination.sessionTimeout.path: "invalid"
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
