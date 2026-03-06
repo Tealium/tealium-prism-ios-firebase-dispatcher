@@ -34,7 +34,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_email_address() {
         let payload: DataObject = [
-            FirebaseDestination.conversionEmail.path: "user@example.com"
+            FirebaseDestination.conversionEmail.renderedPath: "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -44,7 +44,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_email_address_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.conversionEmail.path: ""
+            FirebaseDestination.conversionEmail.renderedPath: ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -61,7 +61,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_phone_number() {
         let payload: DataObject = [
-            FirebaseDestination.conversionPhone.path: "+1234567890"
+            FirebaseDestination.conversionPhone.renderedPath: "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -71,7 +71,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_phone_number_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.conversionPhone.path: ""
+            FirebaseDestination.conversionPhone.renderedPath: ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -93,7 +93,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedEmail.path: base64Hash
+            FirebaseDestination.conversionHashedEmail.renderedPath: base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -103,7 +103,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_email_address_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedEmail.path: ""
+            FirebaseDestination.conversionHashedEmail.renderedPath: ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -125,7 +125,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         
         for invalidHash in invalidHashes {
             let payload: DataObject = [
-                FirebaseDestination.conversionHashedEmail.path: invalidHash
+                FirebaseDestination.conversionHashedEmail.renderedPath: invalidHash
             ]
             
             XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -147,7 +147,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedEmail.path: base64Hash
+            FirebaseDestination.conversionHashedEmail.renderedPath: base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -164,7 +164,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedPhone.path: base64Hash
+            FirebaseDestination.conversionHashedPhone.renderedPath: base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -174,7 +174,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_phone_number_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedPhone.path: ""
+            FirebaseDestination.conversionHashedPhone.renderedPath: ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -191,7 +191,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         // Test with invalid Base64 string
         let invalidHash = "invalidbase64!@#"
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedPhone.path: invalidHash
+            FirebaseDestination.conversionHashedPhone.renderedPath: invalidHash
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -216,8 +216,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedEmail.path: emailBase64,
-            FirebaseDestination.conversionHashedPhone.path: phoneBase64
+            FirebaseDestination.conversionHashedEmail.renderedPath: emailBase64,
+            FirebaseDestination.conversionHashedPhone.renderedPath: phoneBase64
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -231,8 +231,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedPhone.path: phoneBase64,
-            FirebaseDestination.conversionEmail.path: "user@example.com"
+            FirebaseDestination.conversionHashedPhone.renderedPath: phoneBase64,
+            FirebaseDestination.conversionEmail.renderedPath: "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -242,8 +242,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_prioritizes_email_over_phone() {
         let payload: DataObject = [
-            FirebaseDestination.conversionEmail.path: "user@example.com",
-            FirebaseDestination.conversionPhone.path: "+1234567890"
+            FirebaseDestination.conversionEmail.renderedPath: "user@example.com",
+            FirebaseDestination.conversionPhone.renderedPath: "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -262,10 +262,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseDestination.conversionHashedEmail.path: emailBase64,
-            FirebaseDestination.conversionHashedPhone.path: phoneBase64,
-            FirebaseDestination.conversionEmail.path: "user@example.com",
-            FirebaseDestination.conversionPhone.path: "+1234567890"
+            FirebaseDestination.conversionHashedEmail.renderedPath: emailBase64,
+            FirebaseDestination.conversionHashedPhone.renderedPath: phoneBase64,
+            FirebaseDestination.conversionEmail.renderedPath: "user@example.com",
+            FirebaseDestination.conversionPhone.renderedPath: "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))

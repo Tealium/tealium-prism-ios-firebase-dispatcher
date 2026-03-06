@@ -20,7 +20,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     func test_execute_without_command_data_clears_parameters() {
         // Set some parameters first so we can verify they get cleared
         let payloadWithParams: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "version": "1.0"
             ] as DataObject
         ]
@@ -36,7 +36,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_with_empty_firebase_params_sets_empty_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [:] as DataObject
+            FirebaseDestination.defaultParams.renderedPath: [:] as DataObject
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -50,7 +50,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_string_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "version": "2.1.0",
                 "language": "en"
             ] as DataObject
@@ -66,7 +66,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_int_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "count": 42
             ] as DataObject
         ]
@@ -77,7 +77,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_double_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "price": 99.99
             ] as DataObject
         ]
@@ -90,7 +90,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_bool_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "is_premium": true,
                 "opted_out": false
             ] as DataObject
@@ -105,7 +105,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_array_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "tags": ["sale", "featured", "new"] as [String],
                 "counts": [1, 2, 3] as [Int]
             ] as DataObject
@@ -120,7 +120,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
     
     func test_execute_sets_dictionary_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.defaultParams.path: [
+            FirebaseDestination.defaultParams.renderedPath: [
                 "metadata": [
                     "source": "app",
                     "campaign_id": 42

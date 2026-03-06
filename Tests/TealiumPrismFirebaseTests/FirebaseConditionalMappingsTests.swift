@@ -25,7 +25,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should be added because tealium_event == "screen_view"
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "screen_view"
+            FirebaseDestination.eventName.renderedPath: "screen_view"
         ])
     }
 
@@ -41,7 +41,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should NOT be added because tealium_event != "screen_view"
         // But event name should still be mapped
         XCTAssertEqual(result.payload, [
-            FirebaseDestination.eventName.path: "purchase"
+            FirebaseDestination.eventName.renderedPath: "purchase"
         ])
     }
 
@@ -57,7 +57,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Both command and event name should be added
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "screen_view"
+            FirebaseDestination.eventName.renderedPath: "screen_view"
         ])
     }
 
@@ -96,8 +96,8 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
                 FirebaseCommand.logEvent.rawValue,
                 FirebaseCommand.setUserId.rawValue
             ],
-            FirebaseDestination.eventName.path: "login",
-            FirebaseDestination.userId.path: "USER_123"
+            FirebaseDestination.eventName.renderedPath: "login",
+            FirebaseDestination.userId.renderedPath: "USER_123"
         ])
     }
 
@@ -114,7 +114,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "special_screen"
+            FirebaseDestination.eventName.renderedPath: "special_screen"
         ])
     }
 }

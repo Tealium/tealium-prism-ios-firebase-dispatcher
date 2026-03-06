@@ -16,3 +16,10 @@ import TealiumPrismCore
 public protocol ReferenceContainerConvertible {
     func asReferenceContainer() -> ReferenceContainer
 }
+
+extension ReferenceContainerConvertible {
+    /// Shorthand for `asReferenceContainer().path.render()`.
+    var renderedPath: String {
+        asReferenceContainer().path.render()
+    }
+}

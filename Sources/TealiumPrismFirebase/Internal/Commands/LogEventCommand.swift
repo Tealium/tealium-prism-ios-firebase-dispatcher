@@ -68,8 +68,8 @@ class LogEventCommand: FirebaseCommandProtocol {
     }
 
     private func extractEventName(from payload: DataObject) throws(FirebaseCommandError) -> String {
-        guard let rawEventName = payload.get(key: FirebaseDestination.eventName.path, as: String.self) else {
-            throw FirebaseCommandError.missingParameter(FirebaseDestination.eventName.path)
+        guard let rawEventName = payload.get(key: FirebaseDestination.eventName.renderedPath, as: String.self) else {
+            throw FirebaseCommandError.missingParameter(FirebaseDestination.eventName.renderedPath)
         }
         
         return FirebaseEventMapper.map(rawEventName)
@@ -78,7 +78,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Builds all Firebase parameters from payload (including items).
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
     private func buildParameters(from payload: DataObject) throws(FirebaseCommandError) -> [String: Any] {
-        guard let eventParamsData = payload.getDataDictionary(key: FirebaseDestination.eventParams.path) else {
+        guard let eventParamsData = payload.getDataDictionary(key: FirebaseDestination.eventParams.renderedPath) else {
             return [:]
         }
         

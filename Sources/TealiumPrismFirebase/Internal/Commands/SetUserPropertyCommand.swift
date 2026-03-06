@@ -55,7 +55,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         let properties = try extractNamesAndValues(payload: payload)
         
         guard !properties.isEmpty else {
-            throw FirebaseCommandError.missingParameter(FirebaseDestination.userPropertyName.path)
+            throw FirebaseCommandError.missingParameter(FirebaseDestination.userPropertyName.renderedPath)
         }
         
         // Set each property
@@ -69,8 +69,8 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     /// Extracts property names and values from the payload.
     /// Automatically handles both single values and arrays.
     private func extractNamesAndValues(payload: DataObject) throws(FirebaseCommandError) -> [(name: String, value: String?)] {
-        guard let namesItem = payload.getDataItem(key: FirebaseDestination.userPropertyName.path),
-              let valuesItem = payload.getDataItem(key: FirebaseDestination.userPropertyValue.path) else {
+        guard let namesItem = payload.getDataItem(key: FirebaseDestination.userPropertyName.renderedPath),
+              let valuesItem = payload.getDataItem(key: FirebaseDestination.userPropertyValue.renderedPath) else {
             return []
         }
         
@@ -79,14 +79,14 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.get(as: String.self)]
         
         guard !namesArray.isEmpty else {
-            throw FirebaseCommandError.emptyArray(FirebaseDestination.userPropertyName.path)
+            throw FirebaseCommandError.emptyArray(FirebaseDestination.userPropertyName.renderedPath)
         }
         
         guard namesArray.count == valuesArray.count else {
             throw FirebaseCommandError.arrayLengthMismatch(
-                array1: FirebaseDestination.userPropertyName.path,
+                array1: FirebaseDestination.userPropertyName.renderedPath,
                 count1: namesArray.count,
-                array2: FirebaseDestination.userPropertyValue.path,
+                array2: FirebaseDestination.userPropertyValue.renderedPath,
                 count2: valuesArray.count
             )
         }

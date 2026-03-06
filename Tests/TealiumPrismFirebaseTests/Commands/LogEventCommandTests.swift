@@ -35,7 +35,7 @@ final class LogEventCommandTests: XCTestCase {
 
     func test_execute_logs_simple_event() {
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "test_event"
+            FirebaseDestination.eventName.renderedPath: "test_event"
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -47,7 +47,7 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_maps_event_name() {
         // "event_purchase" should map to Firebase's AnalyticsEventPurchase ("purchase")
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "event_purchase"
+            FirebaseDestination.eventName.renderedPath: "event_purchase"
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -58,8 +58,8 @@ final class LogEventCommandTests: XCTestCase {
 
     func test_execute_logs_event_with_string_parameter() {
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "test_event",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "test_event",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.currency.value: "USD"
             ] as DataObject
         ]
@@ -71,8 +71,8 @@ final class LogEventCommandTests: XCTestCase {
 
     func test_execute_logs_event_with_numeric_parameters() {
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "purchase",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "purchase",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.value.value: 99.99,
                 FirebaseEventParameter.quantity.value: 2
             ] as DataObject
@@ -86,8 +86,8 @@ final class LogEventCommandTests: XCTestCase {
 
     func test_execute_logs_event_with_boolean_parameter() {
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "test_event",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "test_event",
+            FirebaseDestination.eventParams.renderedPath: [
                 "custom_is_first_time": true
             ] as DataObject
         ]
@@ -109,8 +109,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "purchase",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "purchase",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.value.value: 99.99,
                 FirebaseEventParameter.currency.value: "USD",
                 FirebaseEventParameter.items.value: itemsObject
@@ -152,8 +152,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "add_to_cart",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "add_to_cart",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.items.value: itemsObject
             ] as DataObject
         ]
@@ -180,8 +180,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "purchase",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "purchase",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.items.value: itemsObject
             ] as DataObject
         ]
@@ -218,8 +218,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "purchase",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "purchase",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.value.value: 99.99,
                 FirebaseEventParameter.currency.value: "USD",
                 FirebaseEventParameter.items.value: itemsArray as [DataObject]
@@ -267,8 +267,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "purchase",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "purchase",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.items.value: itemsArray as [DataObject]
             ] as DataObject
         ]
@@ -306,8 +306,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         let payload: DataObject = [
-            FirebaseDestination.eventName.path: "view_cart",
-            FirebaseDestination.eventParams.path: [
+            FirebaseDestination.eventName.renderedPath: "view_cart",
+            FirebaseDestination.eventParams.renderedPath: [
                 FirebaseEventParameter.items.value: itemsArray as [DataObject]
             ] as DataObject
         ]

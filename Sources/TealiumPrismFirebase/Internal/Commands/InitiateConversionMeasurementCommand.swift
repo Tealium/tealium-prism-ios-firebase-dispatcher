@@ -47,20 +47,20 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
-        if let hashedEmail = payload.get(key: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
+        if let hashedEmail = payload.get(key: FirebaseDestination.conversionHashedEmail.renderedPath, as: String.self) {
             try initiateWithHashedEmail(hashedEmail)
-        } else if let hashedPhone = payload.get(key: FirebaseDestination.conversionHashedPhone.path, as: String.self) {
+        } else if let hashedPhone = payload.get(key: FirebaseDestination.conversionHashedPhone.renderedPath, as: String.self) {
             try initiateWithHashedPhone(hashedPhone)
-        } else if let email = payload.get(key: FirebaseDestination.conversionEmail.path, as: String.self) {
+        } else if let email = payload.get(key: FirebaseDestination.conversionEmail.renderedPath, as: String.self) {
             try initiateWithEmail(email)
-        } else if let phone = payload.get(key: FirebaseDestination.conversionPhone.path, as: String.self) {
+        } else if let phone = payload.get(key: FirebaseDestination.conversionPhone.renderedPath, as: String.self) {
             try initiateWithPhone(phone)
         } else {
             throw FirebaseCommandError.noValidParameters(expected: [
-                FirebaseDestination.conversionEmail.path,
-                FirebaseDestination.conversionPhone.path,
-                FirebaseDestination.conversionHashedEmail.path,
-                FirebaseDestination.conversionHashedPhone.path
+                FirebaseDestination.conversionEmail.renderedPath,
+                FirebaseDestination.conversionPhone.renderedPath,
+                FirebaseDestination.conversionHashedEmail.renderedPath,
+                FirebaseDestination.conversionHashedPhone.renderedPath
             ])
         }
     }
@@ -69,25 +69,25 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     private func initiateWithEmail(_ email: String) throws(FirebaseCommandError) {
         guard !email.isEmpty else {
-            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionEmail.path)
+            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionEmail.renderedPath)
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
     }
     
     private func initiateWithPhone(_ phone: String) throws(FirebaseCommandError) {
         guard !phone.isEmpty else {
-            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionPhone.path)
+            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionPhone.renderedPath)
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
     }
     
     private func initiateWithHashedEmail(_ hashedEmail: String) throws(FirebaseCommandError) {
         guard !hashedEmail.isEmpty else {
-            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedEmail.path)
+            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedEmail.renderedPath)
         }
         guard let data = Data(base64Encoded: hashedEmail) else {
             throw FirebaseCommandError.invalidParameterType(
-                parameter: FirebaseDestination.conversionHashedEmail.path,
+                parameter: FirebaseDestination.conversionHashedEmail.renderedPath,
                 expectedType: "Base64-encoded SHA-256 hash"
             )
         }
@@ -96,11 +96,11 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
     
     private func initiateWithHashedPhone(_ hashedPhone: String) throws(FirebaseCommandError) {
         guard !hashedPhone.isEmpty else {
-            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedPhone.path)
+            throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedPhone.renderedPath)
         }
         guard let data = Data(base64Encoded: hashedPhone) else {
             throw FirebaseCommandError.invalidParameterType(
-                parameter: FirebaseDestination.conversionHashedPhone.path,
+                parameter: FirebaseDestination.conversionHashedPhone.renderedPath,
                 expectedType: "Base64-encoded SHA-256 hash"
             )
         }

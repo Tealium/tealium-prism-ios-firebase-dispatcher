@@ -25,7 +25,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "test_event"
+            FirebaseDestination.eventName.renderedPath: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -42,7 +42,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "test_event"
+            FirebaseDestination.eventName.renderedPath: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -63,8 +63,8 @@ final class FirebaseDispatcherTests: XCTestCase {
                 FirebaseCommand.logEvent.rawValue,
                 FirebaseCommand.setUserId.rawValue
             ],
-            FirebaseDestination.eventName.path: "test_event",
-            FirebaseDestination.userId.path: "user123"
+            FirebaseDestination.eventName.renderedPath: "test_event",
+            FirebaseDestination.userId.renderedPath: "user123"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -82,12 +82,12 @@ final class FirebaseDispatcherTests: XCTestCase {
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "event_one"
+            FirebaseDestination.eventName.renderedPath: "event_one"
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.path: "event_two"
+            FirebaseDestination.eventName.renderedPath: "event_two"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -158,7 +158,7 @@ final class FirebaseDispatcherTests: XCTestCase {
                 "invalid_command",
                 FirebaseCommand.logEvent.rawValue
             ],
-            FirebaseDestination.eventName.path: "test_event"
+            FirebaseDestination.eventName.renderedPath: "test_event"
         ])
         
         let completionCalled = expectation(description: "Completion called")

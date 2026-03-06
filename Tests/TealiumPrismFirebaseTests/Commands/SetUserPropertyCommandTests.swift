@@ -28,7 +28,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_without_property_name_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyValue.path: "value"
+            FirebaseDestination.userPropertyValue.renderedPath: "value"
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -40,8 +40,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_sets_single_property() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: "tier",
-            FirebaseDestination.userPropertyValue.path: "premium"
+            FirebaseDestination.userPropertyName.renderedPath: "tier",
+            FirebaseDestination.userPropertyValue.renderedPath: "premium"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -53,8 +53,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     func test_execute_clears_property_without_value_or_empty_string() {
         // Empty string clears the property
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: "tier",
-            FirebaseDestination.userPropertyValue.path: ""
+            FirebaseDestination.userPropertyName.renderedPath: "tier",
+            FirebaseDestination.userPropertyValue.renderedPath: ""
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -69,8 +69,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
         let emptyNamesArray: [String] = []
         let emptyValuesArray: [String] = []
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: emptyNamesArray,
-            FirebaseDestination.userPropertyValue.path: emptyValuesArray
+            FirebaseDestination.userPropertyName.renderedPath: emptyNamesArray,
+            FirebaseDestination.userPropertyValue.renderedPath: emptyValuesArray
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -84,8 +84,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_with_mismatched_array_lengths_throws_error() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["prop1", "prop2", "prop3"],
-            FirebaseDestination.userPropertyValue.path: ["value1", "value2"]
+            FirebaseDestination.userPropertyName.renderedPath: ["prop1", "prop2", "prop3"],
+            FirebaseDestination.userPropertyValue.renderedPath: ["value1", "value2"]
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -99,8 +99,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_sets_single_property_with_array_format() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["subscription_tier"],
-            FirebaseDestination.userPropertyValue.path: ["premium"]
+            FirebaseDestination.userPropertyName.renderedPath: ["subscription_tier"],
+            FirebaseDestination.userPropertyValue.renderedPath: ["premium"]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -112,8 +112,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_sets_multiple_properties() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["subscription_tier", "user_level", "account_type"],
-            FirebaseDestination.userPropertyValue.path: ["premium", "expert", "business"]
+            FirebaseDestination.userPropertyName.renderedPath: ["subscription_tier", "user_level", "account_type"],
+            FirebaseDestination.userPropertyValue.renderedPath: ["premium", "expert", "business"]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -128,8 +128,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
     
     func test_execute_clears_property_with_empty_value_in_array_format() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["to_clear"],
-            FirebaseDestination.userPropertyValue.path: [""]
+            FirebaseDestination.userPropertyName.renderedPath: ["to_clear"],
+            FirebaseDestination.userPropertyValue.renderedPath: [""]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -140,8 +140,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_nil_in_names_array_skips_that_pair() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["prop_a", nil, "prop_c"] as [String?],
-            FirebaseDestination.userPropertyValue.path: ["value_a", "value_b", "value_c"]
+            FirebaseDestination.userPropertyName.renderedPath: ["prop_a", nil, "prop_c"] as [String?],
+            FirebaseDestination.userPropertyValue.renderedPath: ["value_a", "value_b", "value_c"]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -153,8 +153,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_nil_in_values_array_clears_that_property() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["prop_a", "prop_b", "prop_c"],
-            FirebaseDestination.userPropertyValue.path: ["value_a", nil, "value_c"] as [String?]
+            FirebaseDestination.userPropertyName.renderedPath: ["prop_a", "prop_b", "prop_c"],
+            FirebaseDestination.userPropertyValue.renderedPath: ["value_a", nil, "value_c"] as [String?]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -173,8 +173,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_nil_in_both_arrays_at_same_index_skips_pair() {
         let payload: DataObject = [
-            FirebaseDestination.userPropertyName.path: ["prop_a", nil, "prop_c"] as [String?],
-            FirebaseDestination.userPropertyValue.path: ["value_a", nil, "value_c"] as [String?]
+            FirebaseDestination.userPropertyName.renderedPath: ["prop_a", nil, "prop_c"] as [String?],
+            FirebaseDestination.userPropertyValue.renderedPath: ["value_a", nil, "value_c"] as [String?]
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
