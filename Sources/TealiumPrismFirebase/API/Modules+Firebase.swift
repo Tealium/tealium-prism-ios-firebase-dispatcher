@@ -1,5 +1,5 @@
 //
-//  Tealium+Firebase.swift
+//  Modules+Firebase.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 9/01/2026.

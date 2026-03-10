@@ -1,5 +1,5 @@
 //
-//  FirebaseEvent.swift
+//  FirebaseEventMapper.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 5/12/2025.

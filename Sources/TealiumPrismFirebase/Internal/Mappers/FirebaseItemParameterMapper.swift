@@ -1,5 +1,5 @@
 //
-//  FirebaseItemParameter.swift
+//  FirebaseItemParameterMapper.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 12/11/2025.

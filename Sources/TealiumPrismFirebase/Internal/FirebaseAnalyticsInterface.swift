@@ -1,5 +1,5 @@
 //
-//  FirebaseCommand.swift
+//  FirebaseAnalyticsInterface.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 9/12/2025.
