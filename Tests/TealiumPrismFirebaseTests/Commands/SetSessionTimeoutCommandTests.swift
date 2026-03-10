@@ -30,7 +30,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_double() {
         let payload: DataObject = [
-            FirebaseDestination.sessionTimeout.renderedPath: 1800.5
+            "session_timeout_seconds": 1800.5
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -42,7 +42,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_int() {
         let payload: DataObject = [
-            FirebaseDestination.sessionTimeout.renderedPath: 3600
+            "session_timeout_seconds": 3600
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -54,7 +54,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_sets_timeout_from_string() {
         let payload: DataObject = [
-            FirebaseDestination.sessionTimeout.renderedPath: "1800.5"
+            "session_timeout_seconds": "1800.5"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -64,7 +64,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
     
     func test_execute_throws_error_for_invalid_string() {
         let payload: DataObject = [
-            FirebaseDestination.sessionTimeout.renderedPath: "invalid"
+            "session_timeout_seconds": "invalid"
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in

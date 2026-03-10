@@ -27,7 +27,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
-            FirebaseDestination.conversionEmail.renderedPath: "user@example.com"
+            "email_address": "user@example.com"
         ])
     }
 
@@ -43,7 +43,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
-            FirebaseDestination.conversionPhone.renderedPath: "+1234567890"
+            "phone_number": "+1234567890"
         ])
     }
 
@@ -59,7 +59,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
-            FirebaseDestination.conversionHashedEmail.renderedPath: "abc123hash"
+            "hashed_email_address": "abc123hash"
         ])
     }
 
@@ -75,7 +75,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
-            FirebaseDestination.conversionHashedPhone.renderedPath: "xyz789hash"
+            "hashed_phone_number": "xyz789hash"
         ])
     }
 
@@ -91,7 +91,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "screen_view"
+            "event_name": "screen_view"
         ])
     }
 
@@ -110,8 +110,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "purchase",
-            FirebaseDestination.eventParams.renderedPath: [
+            "event_name": "purchase",
+            "parameters": [
                 FirebaseEventParameter.value.value: 99.99,
                 FirebaseEventParameter.currency.value: "USD"
             ] as DataObject
@@ -133,8 +133,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "view_item_list",
-            FirebaseDestination.eventParams.renderedPath: [
+            "event_name": "view_item_list",
+            "parameters": [
                 FirebaseEventParameter.items.value: [
                     FirebaseItemParameter.itemId.value: ["SKU001", "SKU002"],
                     FirebaseItemParameter.itemName.value: ["Widget", "Gadget"]
@@ -160,8 +160,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "custom_event",
-            FirebaseDestination.eventParams.renderedPath: [
+            "event_name": "custom_event",
+            "parameters": [
                 "screen_name": "Home",
                 "user_type": "premium",
                 "session_count": 5
@@ -197,7 +197,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setAnalyticsCollectionEnabled.rawValue,
-            FirebaseDestination.analyticsEnabled.renderedPath: true
+            "analytics_collection_enabled": true
         ])
     }
 
@@ -221,7 +221,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setConsent.rawValue,
-            FirebaseDestination.consentSettings.renderedPath: [
+            "consent_settings": [
                 ConsentType.analyticsStorage.key: "granted",
                 ConsentType.adStorage.key: "denied",
                 ConsentType.adUserData.key: "granted",
@@ -246,7 +246,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
-            FirebaseDestination.defaultParams.renderedPath: [
+            "parameters": [
                 "app_version": "2.0",
                 "environment": "prod"
             ] as DataObject
@@ -269,7 +269,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
-            FirebaseDestination.defaultParams.renderedPath: [
+            "parameters": [
                 "app_version": "2.0",
                 "environment": "production",
                 "feature_flag_enabled": true
@@ -291,7 +291,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setSessionTimeout.rawValue,
-            FirebaseDestination.sessionTimeout.renderedPath: 3600
+            "session_timeout_seconds": 3600
         ])
     }
 
@@ -307,7 +307,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setUserId.rawValue,
-            FirebaseDestination.userId.renderedPath: "USER_123"
+            "user_id": "USER_123"
         ])
     }
 
@@ -327,8 +327,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
-            FirebaseDestination.userPropertyName.renderedPath: ["tier", "level", "status"],
-            FirebaseDestination.userPropertyValue.renderedPath: ["premium", "expert", "active"]
+            "property_name": ["tier", "level", "status"],
+            "property_value": ["premium", "expert", "active"]
         ])
     }
 
@@ -348,8 +348,8 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
-            FirebaseDestination.userPropertyName.renderedPath: "membership_tier",
-            FirebaseDestination.userPropertyValue.renderedPath: "premium"
+            "property_name": "membership_tier",
+            "property_value": "premium"
         ])
     }
 }

@@ -42,7 +42,7 @@ class SetDefaultParametersCommand: FirebaseCommandProtocol {
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         // parameters is missing -> clear all default parameters
-        guard let defaultParamsData = payload.getDataDictionary(key: FirebaseDestination.defaultParams.renderedPath) else {
+        guard let defaultParamsData = payload.extractDataDictionary(path: FirebaseDestination.defaultParams.path) else {
             firebaseInstance.setDefaultEventParameters(nil)
             return
         }

@@ -25,7 +25,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should be added because tealium_event == "screen_view"
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "screen_view"
+            "event_name": "screen_view"
         ])
     }
 
@@ -41,7 +41,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Command should NOT be added because tealium_event != "screen_view"
         // But event name should still be mapped
         XCTAssertEqual(result.payload, [
-            FirebaseDestination.eventName.renderedPath: "purchase"
+            "event_name": "purchase"
         ])
     }
 
@@ -57,7 +57,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         // Both command and event name should be added
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "screen_view"
+            "event_name": "screen_view"
         ])
     }
 
@@ -96,8 +96,8 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
                 FirebaseCommand.logEvent.rawValue,
                 FirebaseCommand.setUserId.rawValue
             ],
-            FirebaseDestination.eventName.renderedPath: "login",
-            FirebaseDestination.userId.renderedPath: "USER_123"
+            "event_name": "login",
+            "user_id": "USER_123"
         ])
     }
 
@@ -114,7 +114,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            FirebaseDestination.eventName.renderedPath: "special_screen"
+            "event_name": "special_screen"
         ])
     }
 }

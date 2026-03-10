@@ -252,7 +252,7 @@ public enum FirebaseEventParameter {
     /// The Tealium-owned parameter key string.
     ///
     /// These strings are stable identifiers owned by Tealium (e.g., `"param_currency"`).
-    /// The `FirebaseParameter` mapper translates them to Firebase SDK constants at dispatch time.
+    /// The `FirebaseParameterMapper` translates them to Firebase SDK constants at dispatch time.
     var value: String {
         typealias K = FirebaseConstants.EventParamKey
         switch self {

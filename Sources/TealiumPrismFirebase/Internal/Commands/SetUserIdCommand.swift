@@ -37,8 +37,8 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     let name = FirebaseCommand.setUserId.rawValue
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        guard let userId = payload.get(key: FirebaseDestination.userId.renderedPath, as: String.self) else {
-            throw FirebaseCommandError.missingParameter(FirebaseDestination.userId.renderedPath)
+        guard let userId = payload.extract(path: FirebaseDestination.userId.path, as: String.self) else {
+            throw FirebaseCommandError.missingParameter(FirebaseDestination.userId.path.render())
         }
         
         // Empty string clears the user ID

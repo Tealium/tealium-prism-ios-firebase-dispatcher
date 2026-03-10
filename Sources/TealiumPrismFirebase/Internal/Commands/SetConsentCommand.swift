@@ -45,7 +45,7 @@ class SetConsentCommand: FirebaseCommandProtocol {
     let name = FirebaseCommand.setConsent.rawValue
 
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        guard let consentData = payload.getDataDictionary(key: FirebaseDestination.consentSettings.renderedPath) else {
+        guard let consentData = payload.extractDataDictionary(path: FirebaseDestination.consentSettings.path) else {
             throw FirebaseCommandError.noValidConsentSettings
         }
 

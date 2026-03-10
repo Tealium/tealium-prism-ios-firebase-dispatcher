@@ -18,8 +18,8 @@ public protocol ReferenceContainerConvertible {
 }
 
 extension ReferenceContainerConvertible {
-    /// Shorthand for `asReferenceContainer().path.render()`.
-    var renderedPath: String {
-        asReferenceContainer().path.render()
+    /// Shorthand for `asReferenceContainer().path`.
+    var path: JSONObjectPath {
+        asReferenceContainer().path
     }
 }

@@ -36,9 +36,9 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
     let name = FirebaseCommand.setAnalyticsCollectionEnabled.rawValue
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        guard let enabled = payload.getBoolValue(key: FirebaseDestination.analyticsEnabled.renderedPath) else {
+        guard let enabled = payload.getBoolValue(path: FirebaseDestination.analyticsEnabled.path) else {
             throw FirebaseCommandError.invalidParameterType(
-                parameter: FirebaseDestination.analyticsEnabled.renderedPath,
+                parameter: FirebaseDestination.analyticsEnabled.path.render(),
                 expectedType: "boolean (true/false)"
             )
         }

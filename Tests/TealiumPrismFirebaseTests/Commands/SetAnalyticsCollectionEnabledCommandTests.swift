@@ -30,7 +30,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_enables_analytics_collection_with_true() {
         let payload: DataObject = [
-            FirebaseDestination.analyticsEnabled.renderedPath: true
+            "analytics_collection_enabled": true
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -40,7 +40,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     
     func test_execute_disables_analytics_collection_with_false() {
         let payload: DataObject = [
-            FirebaseDestination.analyticsEnabled.renderedPath: false
+            "analytics_collection_enabled": false
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -51,7 +51,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     // MARK: - String and Integer Value Tests (parameterized)
     
     func test_execute_parses_enabling_values_correctly() {
-        let param = FirebaseDestination.analyticsEnabled.renderedPath
+        let param = "analytics_collection_enabled"
         let enablingStrings: [String] = ["true", "TRUE", "yes", "YES", "1"]
         let enablingInts: [Int] = [1, 42]
 
@@ -68,7 +68,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     }
 
     func test_execute_parses_disabling_values_correctly() {
-        let param = FirebaseDestination.analyticsEnabled.renderedPath
+        let param = "analytics_collection_enabled"
         let disablingStrings: [String] = ["false", "FALSE", "no", "NO", "0"]
         let disablingInts: [Int] = [0]
 

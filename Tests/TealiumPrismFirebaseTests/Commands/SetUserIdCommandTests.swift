@@ -34,7 +34,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_sets_user_id() {
         let payload: DataObject = [
-            FirebaseDestination.userId.renderedPath: "user@example.com"
+            "user_id": "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -46,7 +46,7 @@ final class SetUserIdCommandTests: XCTestCase {
     
     func test_execute_clears_user_id_with_empty_string() {
         let payload: DataObject = [
-            FirebaseDestination.userId.renderedPath: ""
+            "user_id": ""
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))

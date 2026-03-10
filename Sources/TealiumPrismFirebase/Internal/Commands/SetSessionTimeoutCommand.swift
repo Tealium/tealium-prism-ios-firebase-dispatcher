@@ -36,9 +36,9 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     let name = FirebaseCommand.setSessionTimeout.rawValue
     
     func execute(payload: DataObject) throws(FirebaseCommandError) {
-        guard let sessionTimeout = payload.getAsDouble(key: FirebaseDestination.sessionTimeout.renderedPath) else {
+        guard let sessionTimeout = payload.getAsDouble(path: FirebaseDestination.sessionTimeout.path) else {
             throw FirebaseCommandError.invalidParameterType(
-                parameter: FirebaseDestination.sessionTimeout.renderedPath,
+                parameter: FirebaseDestination.sessionTimeout.path.render(),
                 expectedType: "numeric value (seconds)"
             )
         }

@@ -41,7 +41,22 @@ extension DataItemExtractor {
         }
         return nil
     }
-    
+
+    /// Extracts a Double value at the given path with automatic String → Double conversion.
+    ///
+    /// - Parameter path: The path to look up
+    /// - Returns: The Double value if found and valid, nil otherwise
+    func getAsDouble(path: JSONObjectPath) -> Double? {
+        if let value = extract(path: path, as: Double.self) {
+            return value
+        }
+        if let stringValue = extract(path: path, as: String.self),
+           let doubleValue = Double(stringValue) {
+            return doubleValue
+        }
+        return nil
+    }
+
     // MARK: - Boolean Conversion
     
     /// Extracts a boolean value with automatic String/Int → Bool conversion.
@@ -81,6 +96,31 @@ extension DataItemExtractor {
             }
         }
         
+        return nil
+    }
+
+    /// Extracts a boolean value at the given path with automatic String/Int → Bool conversion.
+    ///
+    /// - Parameter path: The path to look up
+    /// - Returns: The boolean value if found and valid, nil otherwise
+    func getBoolValue(path: JSONObjectPath) -> Bool? {
+        if let value = extract(path: path, as: Bool.self) {
+            return value
+        }
+        if let intValue = extract(path: path, as: Int.self) {
+            return intValue != 0
+        }
+        if let stringValue = extract(path: path, as: String.self) {
+            let lowercased = stringValue.lowercased().trimmingCharacters(in: .whitespaces)
+            switch lowercased {
+            case "true", "1", "yes":
+                return true
+            case "false", "0", "no":
+                return false
+            default:
+                return nil
+            }
+        }
         return nil
     }
 }
