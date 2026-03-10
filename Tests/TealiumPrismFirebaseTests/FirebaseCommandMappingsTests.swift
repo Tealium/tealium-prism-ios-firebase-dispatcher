@@ -8,7 +8,6 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
-import FirebaseAnalytics
 import XCTest
 
 /// Tests for all Firebase command mappings (LogEvent, SetUserId, SetUserProperty, etc.)
