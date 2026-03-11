@@ -11,6 +11,8 @@
                 {
                     "destination": { "key": "command_name" },
                     "parameters": {
+                        "reference": { "key": "tealium_event" },
+                        "filter": { "value": "purchase" },
                         "map_to": { "value": "logevent" }
                     }
                 },
