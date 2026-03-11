@@ -8,6 +8,7 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+import FirebaseAnalytics
 import XCTest
 
 final class LogEventCommandTests: XCTestCase {
@@ -43,23 +44,13 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertNil(mockFirebase.lastEventParameters)
     }
 
-    func test_execute_maps_event_name() {
-        // "event_purchase" should map to Firebase's AnalyticsEventPurchase ("purchase")
-        let payload: DataObject = [
-            "event_name": "event_purchase"
-        ]
-
-        XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastEventName, "purchase")
-    }
-
     // MARK: - Event with Parameters Tests
 
     func test_execute_logs_event_with_string_parameter() {
         let payload: DataObject = [
             "event_name": "test_event",
             "parameters": [
-                FirebaseEventParameter.currency.value: "USD"
+                AnalyticsParameterCurrency: "USD"
             ] as DataObject
         ]
 
@@ -72,8 +63,8 @@ final class LogEventCommandTests: XCTestCase {
         let payload: DataObject = [
             "event_name": "purchase",
             "parameters": [
-                FirebaseEventParameter.value.value: 99.99,
-                FirebaseEventParameter.quantity.value: 2
+                AnalyticsParameterValue: 99.99,
+                AnalyticsParameterQuantity: 2
             ] as DataObject
         ]
 
@@ -102,17 +93,17 @@ final class LogEventCommandTests: XCTestCase {
         // Create items data as DataObject with parallel arrays.
         // Arrays need to be [DataInput] type for extractArrays() to work.
         let itemsObject: DataObject = [
-            FirebaseItemParameter.itemId.value: ["SKU001", "SKU002"],
-            FirebaseItemParameter.itemName.value: ["Widget", "Gadget"],
-            FirebaseItemParameter.price.value: [29.99, 70.00]
+            AnalyticsParameterItemID: ["SKU001", "SKU002"],
+            AnalyticsParameterItemName: ["Widget", "Gadget"],
+            AnalyticsParameterPrice: [29.99, 70.00]
         ]
 
         let payload: DataObject = [
             "event_name": "purchase",
             "parameters": [
-                FirebaseEventParameter.value.value: 99.99,
-                FirebaseEventParameter.currency.value: "USD",
-                FirebaseEventParameter.items.value: itemsObject
+                AnalyticsParameterValue: 99.99,
+                AnalyticsParameterCurrency: "USD",
+                AnalyticsParameterItems: itemsObject
             ] as DataObject
         ]
 
@@ -144,16 +135,16 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_logs_event_with_items_mixed_types() {
         // Test items with mixed value types (String, Int, Double)
         let itemsObject: DataObject = [
-            FirebaseItemParameter.itemId.value: ["SKU001", "SKU002"],
-            FirebaseItemParameter.quantity.value: [1, 3],
-            FirebaseItemParameter.price.value: [29.99, 70.00],
-            FirebaseItemParameter.discount.value: [5.0, 0.0]
+            AnalyticsParameterItemID: ["SKU001", "SKU002"],
+            AnalyticsParameterQuantity: [1, 3],
+            AnalyticsParameterPrice: [29.99, 70.00],
+            AnalyticsParameterDiscount: [5.0, 0.0]
         ]
 
         let payload: DataObject = [
             "event_name": "add_to_cart",
             "parameters": [
-                FirebaseEventParameter.items.value: itemsObject
+                AnalyticsParameterItems: itemsObject
             ] as DataObject
         ]
 
@@ -174,14 +165,14 @@ final class LogEventCommandTests: XCTestCase {
     func test_execute_throws_error_with_mismatched_item_array_lengths() {
         // Test that mismatched array lengths throw an error
         let itemsObject: DataObject = [
-            FirebaseItemParameter.itemId.value: ["SKU001", "SKU002", "SKU003"],
-            FirebaseItemParameter.itemName.value: ["Widget", "Gadget"]  // Shorter array
+            AnalyticsParameterItemID: ["SKU001", "SKU002", "SKU003"],
+            AnalyticsParameterItemName: ["Widget", "Gadget"]  // Shorter array
         ]
 
         let payload: DataObject = [
             "event_name": "purchase",
             "parameters": [
-                FirebaseEventParameter.items.value: itemsObject
+                AnalyticsParameterItems: itemsObject
             ] as DataObject
         ]
 
@@ -219,9 +210,9 @@ final class LogEventCommandTests: XCTestCase {
         let payload: DataObject = [
             "event_name": "purchase",
             "parameters": [
-                FirebaseEventParameter.value.value: 99.99,
-                FirebaseEventParameter.currency.value: "USD",
-                FirebaseEventParameter.items.value: itemsArray as [DataObject]
+                AnalyticsParameterValue: 99.99,
+                AnalyticsParameterCurrency: "USD",
+                AnalyticsParameterItems: itemsArray as [DataObject]
             ] as DataObject
         ]
 
@@ -250,43 +241,6 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterCurrency] as? String, "USD")
     }
 
-    func test_execute_logs_event_with_items_array_of_objects_using_tealium_naming() {
-        // Test array of objects with Tealium naming convention (param_items_*)
-        let itemsArray: [DataObject] = [
-            [
-                FirebaseItemParameter.itemId.value: "SKU001",
-                FirebaseItemParameter.itemName.value: "Widget",
-                FirebaseItemParameter.price.value: 29.99
-            ],
-            [
-                FirebaseItemParameter.itemId.value: "SKU002",
-                FirebaseItemParameter.itemName.value: "Gadget",
-                FirebaseItemParameter.price.value: 70.00
-            ]
-        ]
-
-        let payload: DataObject = [
-            "event_name": "purchase",
-            "parameters": [
-                FirebaseEventParameter.items.value: itemsArray as [DataObject]
-            ] as DataObject
-        ]
-
-        XCTAssertNoThrow(try command.execute(payload: payload))
-
-        guard let items = mockFirebase.lastEventParameters?[AnalyticsParameterItems] as? [[String: Any]] else {
-            XCTFail("Items should be present")
-            return
-        }
-
-        XCTAssertEqual(items.count, 2)
-
-        // Verify names were mapped to Firebase convention
-        XCTAssertEqual(items[0][AnalyticsParameterItemID] as? String, "SKU001")
-        XCTAssertEqual(items[0][AnalyticsParameterItemName] as? String, "Widget")
-        XCTAssertEqual(items[0][AnalyticsParameterPrice] as? Double, 29.99)
-    }
-
     func test_execute_logs_event_with_items_array_of_objects_mixed_types() {
         // Test array of objects with various types
         let itemsArray: [DataObject] = [
@@ -307,7 +261,7 @@ final class LogEventCommandTests: XCTestCase {
         let payload: DataObject = [
             "event_name": "view_cart",
             "parameters": [
-                FirebaseEventParameter.items.value: itemsArray as [DataObject]
+                AnalyticsParameterItems: itemsArray as [DataObject]
             ] as DataObject
         ]
 

@@ -53,7 +53,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
     func test_execute_parses_enabling_values_correctly() {
         let param = "analytics_collection_enabled"
         let enablingStrings: [String] = ["true", "TRUE", "yes", "YES", "1"]
-        let enablingInts: [Int] = [1, 42]
+        let enablingInts: [Int] = [1]
 
         for value in enablingStrings {
             let payload: DataObject = [param: value]

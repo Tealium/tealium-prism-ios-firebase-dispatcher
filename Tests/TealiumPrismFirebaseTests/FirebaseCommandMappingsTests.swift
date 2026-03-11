@@ -8,6 +8,7 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+import FirebaseAnalytics
 import XCTest
 
 /// Tests for all Firebase command mappings (LogEvent, SetUserId, SetUserProperty, etc.)
@@ -104,16 +105,16 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         let result = map(dispatch: dispatch) { mappings in
             mappings.mapCommand(.logEvent)
             mappings.mapFrom(TealiumDataKey.event, to: .eventName)
-            mappings.mapFrom("total", to: .eventParam(.value))
-            mappings.mapFrom("currency", to: .eventParam(.currency))
+            mappings.mapFrom("total", to: .eventParam(AnalyticsParameterValue))
+            mappings.mapFrom("currency", to: .eventParam(AnalyticsParameterCurrency))
         }
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "purchase",
             "parameters": [
-                FirebaseEventParameter.value.value: 99.99,
-                FirebaseEventParameter.currency.value: "USD"
+                AnalyticsParameterValue: 99.99,
+                AnalyticsParameterCurrency: "USD"
             ] as DataObject
         ])
     }
@@ -127,17 +128,17 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         let result = map(dispatch: dispatch) { mappings in
             mappings.mapCommand(.logEvent)
             mappings.mapFrom(TealiumDataKey.event, to: .eventName)
-            mappings.mapFrom("item_id", to: .itemParam(.itemId))
-            mappings.mapFrom("item_name", to: .itemParam(.itemName))
+            mappings.mapFrom("item_id", to: .itemParam(AnalyticsParameterItemID))
+            mappings.mapFrom("item_name", to: .itemParam(AnalyticsParameterItemName))
         }
 
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "view_item_list",
             "parameters": [
-                FirebaseEventParameter.items.value: [
-                    FirebaseItemParameter.itemId.value: ["SKU001", "SKU002"],
-                    FirebaseItemParameter.itemName.value: ["Widget", "Gadget"]
+                AnalyticsParameterItems: [
+                    AnalyticsParameterItemID: ["SKU001", "SKU002"],
+                    AnalyticsParameterItemName: ["Widget", "Gadget"]
                 ] as DataObject
             ] as DataObject
         ])
@@ -222,10 +223,10 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         XCTAssertEqual(result.payload, [
             FirebaseConstants.commandName: FirebaseCommand.setConsent.rawValue,
             "consent_settings": [
-                ConsentType.analyticsStorage.key: "granted",
-                ConsentType.adStorage.key: "denied",
-                ConsentType.adUserData.key: "granted",
-                ConsentType.adPersonalization.key: "denied"
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied",
+                ConsentType.adUserData.rawValue: "granted",
+                ConsentType.adPersonalization.rawValue: "denied"
             ] as DataObject
         ])
     }
