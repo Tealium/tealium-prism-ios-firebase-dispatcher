@@ -23,6 +23,20 @@
                     }
                 },
                 {
+                    "destination": { "key": "command_name" },
+                    "parameters": {
+                        "reference": { "key": "tealium_event" },
+                        "filter": { "value": "log_event" },
+                        "map_to": { "value": "logevent" }
+                    }
+                },
+                {
+                    "destination": { "path": "event_name" },
+                    "parameters": {
+                        "reference": { "key": "event_name" }
+                    }
+                },
+                {
                     "destination": { "path": "parameters" },
                     "parameters": {
                         "reference": { "key": "params" }
