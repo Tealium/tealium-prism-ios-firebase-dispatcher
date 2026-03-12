@@ -11,6 +11,8 @@
                 {
                     "destination": { "key": "command_name" },
                     "parameters": {
+                        "reference": { "key": "tealium_event" },
+                        "filter": { "value": "purchase" },
                         "map_to": { "value": "logevent" }
                     }
                 },
@@ -18,6 +20,20 @@
                     "destination": { "path": "event_name" },
                     "parameters": {
                         "reference": { "key": "tealium_event" }
+                    }
+                },
+                {
+                    "destination": { "key": "command_name" },
+                    "parameters": {
+                        "reference": { "key": "tealium_event" },
+                        "filter": { "value": "log_event" },
+                        "map_to": { "value": "logevent" }
+                    }
+                },
+                {
+                    "destination": { "path": "event_name" },
+                    "parameters": {
+                        "reference": { "key": "event_name" }
                     }
                 },
                 {

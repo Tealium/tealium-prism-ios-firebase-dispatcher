@@ -13,10 +13,8 @@ import XCTest
 
 final class SetConsentCommandTests: XCTestCase {
 
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetConsentCommand(firebaseInstance: mockFirebase)
-
-    private typealias Param = FirebaseConstants.SetConsent.Param
 
     // MARK: - Basic Tests
 
@@ -37,8 +35,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_storage_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "granted"
             ] as DataObject
         ]
 
@@ -49,8 +47,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_storage_denied() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "denied"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "denied"
             ] as DataObject
         ]
 
@@ -60,8 +58,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_analytics_storage_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.analyticsStorage: "granted"
+            "consent_settings": [
+                ConsentType.analyticsStorage.rawValue: "granted"
             ] as DataObject
         ]
 
@@ -71,8 +69,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_user_data_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adUserData: "granted"
+            "consent_settings": [
+                ConsentType.adUserData.rawValue: "granted"
             ] as DataObject
         ]
 
@@ -82,8 +80,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_ad_personalization_granted() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adPersonalization: "granted"
+            "consent_settings": [
+                ConsentType.adPersonalization.rawValue: "granted"
             ] as DataObject
         ]
 
@@ -95,11 +93,11 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_sets_multiple_consent_types() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
-                Param.analyticsStorage: "granted",
-                Param.adUserData: "denied",
-                Param.adPersonalization: "denied"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "granted",
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adUserData.rawValue: "denied",
+                ConsentType.adPersonalization.rawValue: "denied"
             ] as DataObject
         ]
 
@@ -116,52 +114,38 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Invalid Values Tests
 
-    func test_execute_ignores_invalid_consent_type() {
+    func test_execute_forwards_unknown_consent_type() {
+        // ConsentType is RawRepresentable — unknown keys should be forwarded to Firebase
+        // rather than silently dropped, so future Firebase types work without SDK updates.
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
-                "invalid_type": "granted"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "granted",
+                "functional_storage": "granted"
             ] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 1)
+        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 2)
     }
 
-    func test_execute_ignores_invalid_consent_status() {
+    func test_execute_forwards_unknown_consent_status() {
+        // ConsentStatus is RawRepresentable — unknown status strings should be forwarded
+        // to Firebase rather than silently dropped, so future statuses work without SDK updates.
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "granted",
-                Param.analyticsStorage: "invalid_status"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "granted",
+                ConsentType.analyticsStorage.rawValue: "pending"
             ] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 1)
-    }
-
-    func test_execute_throws_error_when_all_values_are_invalid() {
-        let payload: DataObject = [
-            Param.consentSettings: [
-                "invalid_type": "granted",
-                "another_invalid": "denied"
-            ] as DataObject
-        ]
-
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .noValidConsentSettings = commandError else {
-                XCTFail("Expected noValidConsentSettings error but got \(error)")
-                return
-            }
-        }
-        XCTAssertFalse(mockFirebase.setConsentCalled)
+        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 2)
     }
 
     func test_execute_throws_error_for_non_string_value() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: 123
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: 123
             ] as DataObject
         ]
 
@@ -175,8 +159,8 @@ final class SetConsentCommandTests: XCTestCase {
 
     func test_execute_handles_case_insensitive_consent_status() {
         let payload: DataObject = [
-            Param.consentSettings: [
-                Param.adStorage: "GRANTED"
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: "GRANTED"
             ] as DataObject
         ]
 

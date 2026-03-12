@@ -12,7 +12,7 @@ import XCTest
 
 final class ResetDataCommandTests: XCTestCase {
     
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = ResetDataCommand(firebaseInstance: mockFirebase)
 
     // MARK: - Tests

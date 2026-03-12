@@ -85,6 +85,21 @@ class TealiumHelper {
         ])
     }
     
+    /// Purchase event using the consistent pattern — `tealium_event` = command type,
+    /// `event_name` = explicit Firebase event name passed in data.
+    func logPurchaseEvent() {
+        teal?.track("log_event", data: [
+            "event_name": "purchase",
+            "value": 249.97,
+            "currency": "USD",
+            "transaction_id": "TXN-2026-001",
+            "product_ids":   ["SKU-001", "SKU-002", "SKU-003"],
+            "product_names": ["Premium Widget", "Gadget Pro", "Super Tool"],
+            "prices":        [99.99, 79.99, 69.99],
+            "quantities":    [1, 2, 1]
+        ])
+    }
+
     // MARK: - SetUserIdCommand
     
     /// Set user ID

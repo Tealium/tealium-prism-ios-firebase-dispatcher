@@ -11,11 +11,11 @@ import FirebaseCore
 import FirebaseAnalytics
 import TealiumPrismCore
 
-/// Internal implementation of FirebaseCommand protocol wrapping Firebase Analytics SDK calls.
+/// Internal implementation of `FirebaseAnalyticsInterface` wrapping Firebase Analytics SDK calls.
 ///
 /// Configures Firebase automatically on first use if not already configured.
 /// If `FirebaseApp.configure()` was called before Tealium starts, this class detects it and skips configuration.
-class FirebaseInstance: FirebaseCommand {
+class FirebaseInstance: FirebaseAnalyticsInterface {
     
     private let onReadySubject = ReplaySubject<Void>(cacheSize: 1)
     

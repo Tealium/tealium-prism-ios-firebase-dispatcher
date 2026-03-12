@@ -1,5 +1,5 @@
 //
-//  FirebaseCommand.swift
+//  FirebaseAnalyticsInterface.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 9/12/2025.
@@ -14,7 +14,7 @@ import FirebaseAnalytics
 ///
 /// Firebase SDK Reference:
 /// - https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Classes/Analytics
-protocol FirebaseCommand {
+protocol FirebaseAnalyticsInterface {
     /// Executes the completion block when Firebase is configured.
     /// If already configured, the completion is called immediately.
     func onReady(_ onReady: @escaping () -> Void)

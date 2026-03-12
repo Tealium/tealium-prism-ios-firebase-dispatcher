@@ -28,8 +28,8 @@ struct FirebaseDispatcherConfiguration {
     }
     
     init(configuration: DataObject) {
-        sessionTimeout = configuration.getAsDouble(key: Keys.sessionTimeout)
-        analyticsEnabled = configuration.get(key: Keys.analyticsEnabled)
+        sessionTimeout = configuration.getConvertible(key: Keys.sessionTimeout, converter: LenientConverters.double)
+        analyticsEnabled = configuration.getConvertible(key: Keys.analyticsEnabled, converter: LenientConverters.bool)
         logLevel = configuration.get(key: Keys.logLevel, as: String.self).flatMap { FirebaseLogLevel.map($0) }
     }
 }

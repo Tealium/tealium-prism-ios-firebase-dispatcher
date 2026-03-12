@@ -28,6 +28,10 @@ struct ContentView: View {
                         TealiumTextButton(title: "Send Purchase Event") {
                             TealiumHelper.shared.logComprehensivePurchaseEvent()
                         }
+
+                        TealiumTextButton(title: "Send Purchase Event (log_event)") {
+                            TealiumHelper.shared.logPurchaseEvent()
+                        }
                     }
                     
                     Divider().padding(.vertical)

@@ -13,7 +13,7 @@ import TealiumPrismCore
 /// Builder for Firebase Dispatcher configuration settings.
 ///
 /// Use this builder to configure Firebase Analytics behavior.
-/// For data mappings, use `setMappings(_:)` with helpers from `Mappings+Firebase.swift`.
+/// For data mappings, use `setMappings(_:)` with `FirebaseMappings` type-safe enums.
 ///
 /// ## Available Configuration Options
 ///
@@ -28,10 +28,13 @@ import TealiumPrismCore
 ///     builder
 ///         .setSessionTimeout(30.minutes)
 ///         .setAnalyticsEnabled(true)
-///         .setMappings([...])
+///         .setMappings { mappings in
+///             mappings.mapCommand(.logEvent)
+///             mappings.mapFrom("tealium_event", to: .eventName)
+///         }
 /// })
 /// ```
-public class FirebaseSettingsBuilder: DispatcherSettingsBuilder {
+public class FirebaseSettingsBuilder: DispatcherSettingsBuilder<FirebaseMappings> {
 
     typealias Keys = FirebaseDispatcherConfiguration.Keys
 

@@ -8,141 +8,142 @@
 
 @testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+import FirebaseAnalytics
 import XCTest
 
 /// Tests for all Firebase command mappings (LogEvent, SetUserId, SetUserProperty, etc.)
 final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
-    
+
     // MARK: - InitiateConversionMeasurement Command Tests
-    
+
     func test_initiateConversionMeasurement_with_email() {
         let dispatch = Dispatch(name: "conversion", type: .event, data: [
             "email": "user@example.com"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseInitiateConversionMeasurementCommand(),
-            .mapFirebaseConversionEmailAddress(sourceKey: "email")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.initiateConversionMeasurement)
+            mappings.mapFrom("email", to: .conversionEmail)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.InitiateConversionMeasurement.name,
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
+            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            "email_address": "user@example.com"
         ])
     }
-    
+
     func test_initiateConversionMeasurement_with_phone() {
         let dispatch = Dispatch(name: "conversion", type: .event, data: [
             "phone": "+1234567890"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseInitiateConversionMeasurementCommand(),
-            .mapFirebaseConversionPhoneNumber(sourceKey: "phone")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.initiateConversionMeasurement)
+            mappings.mapFrom("phone", to: .conversionPhone)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.InitiateConversionMeasurement.name,
-            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
+            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            "phone_number": "+1234567890"
         ])
     }
-    
+
     func test_initiateConversionMeasurement_with_hashed_email() {
         let dispatch = Dispatch(name: "conversion", type: .event, data: [
             "hashed_email": "abc123hash"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseInitiateConversionMeasurementCommand(),
-            .mapFirebaseConversionHashedEmailAddress(sourceKey: "hashed_email")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.initiateConversionMeasurement)
+            mappings.mapFrom("hashed_email", to: .conversionHashedEmail)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.InitiateConversionMeasurement.name,
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: "abc123hash"
+            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            "hashed_email_address": "abc123hash"
         ])
     }
-    
+
     func test_initiateConversionMeasurement_with_hashed_phone() {
         let dispatch = Dispatch(name: "conversion", type: .event, data: [
             "hashed_phone": "xyz789hash"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseInitiateConversionMeasurementCommand(),
-            .mapFirebaseConversionHashedPhoneNumber(sourceKey: "hashed_phone")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.initiateConversionMeasurement)
+            mappings.mapFrom("hashed_phone", to: .conversionHashedPhone)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.InitiateConversionMeasurement.name,
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: "xyz789hash"
+            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            "hashed_phone_number": "xyz789hash"
         ])
     }
-    
+
     // MARK: - LogEvent Command Tests
-    
+
     func test_logEvent_basic_mapping() {
         let dispatch = Dispatch(name: "screen_view", type: .event)
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseLogEventCommand(),
-            .mapFirebaseLogEventName()
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.logEvent)
+            mappings.mapFrom(TealiumDataKey.event, to: .eventName)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "screen_view"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            "event_name": "screen_view"
         ])
     }
-    
+
     func test_logEvent_with_parameters() {
         let dispatch = Dispatch(name: "purchase", type: .event, data: [
             "total": 99.99,
             "currency": "USD"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseLogEventCommand(),
-            .mapFirebaseLogEventName(),
-            .mapFirebaseEventParameter(from: "total", to: "value"),
-            .mapFirebaseEventParameter(from: "currency", to: "currency")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.logEvent)
+            mappings.mapFrom(TealiumDataKey.event, to: .eventName)
+            mappings.mapFrom("total", to: .eventParam(AnalyticsParameterValue))
+            mappings.mapFrom("currency", to: .eventParam(AnalyticsParameterCurrency))
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "purchase",
-            FirebaseConstants.LogEvent.Param.eventParams: [
-                "value": 99.99,
-                "currency": "USD"
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            "event_name": "purchase",
+            "parameters": [
+                AnalyticsParameterValue: 99.99,
+                AnalyticsParameterCurrency: "USD"
             ] as DataObject
         ])
     }
-    
-    func test_logEvent_with_items() { 
+
+    func test_logEvent_with_items() {
         let dispatch = Dispatch(name: "view_item_list", type: .event, data: [
             "item_id": ["SKU001", "SKU002"],
             "item_name": ["Widget", "Gadget"]
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseLogEventCommand(),
-            .mapFirebaseLogEventName(),
-            .mapFirebaseItemParameter(from: "item_id", to: "item_id"),
-            .mapFirebaseItemParameter(from: "item_name", to: "item_name")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.logEvent)
+            mappings.mapFrom(TealiumDataKey.event, to: .eventName)
+            mappings.mapFrom("item_id", to: .itemParam(AnalyticsParameterItemID))
+            mappings.mapFrom("item_name", to: .itemParam(AnalyticsParameterItemName))
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "view_item_list",
-            FirebaseConstants.LogEvent.Param.eventParams: [
-                FirebaseConstants.LogEvent.Param.items: [
-                    "item_id": ["SKU001", "SKU002"],
-                    "item_name": ["Widget", "Gadget"]
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            "event_name": "view_item_list",
+            "parameters": [
+                AnalyticsParameterItems: [
+                    AnalyticsParameterItemID: ["SKU001", "SKU002"],
+                    AnalyticsParameterItemName: ["Widget", "Gadget"]
                 ] as DataObject
             ] as DataObject
         ])
     }
-    
+
     func test_logEvent_with_bulk_parameters_dictionary() {
         let dispatch = Dispatch(name: "custom_event", type: .event, data: [
             "event_params": [
@@ -151,58 +152,58 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
                 "session_count": 5
             ] as DataObject
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseLogEventCommand(),
-            .mapFirebaseLogEventName(),
-            .mapFirebaseLogEventParameters(parametersKey: "event_params")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.logEvent)
+            mappings.mapFrom(TealiumDataKey.event, to: .eventName)
+            mappings.mapFrom("event_params", to: .eventParams)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.LogEvent.name,
-            FirebaseConstants.LogEvent.Param.eventName: "custom_event",
-            FirebaseConstants.LogEvent.Param.eventParams: [
+            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            "event_name": "custom_event",
+            "parameters": [
                 "screen_name": "Home",
                 "user_type": "premium",
                 "session_count": 5
             ] as DataObject
         ])
     }
-    
+
     // MARK: - ResetData Command Tests
-    
+
     func test_resetData_basic_mapping() {
         let dispatch = Dispatch(name: "delete_data", type: .event)
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseResetDataCommand()
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.resetData)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.ResetData.name
+            FirebaseConstants.commandName: FirebaseCommand.resetData.rawValue
         ])
     }
-    
+
     // MARK: - SetAnalyticsCollectionEnabled Command Tests
-    
+
     func test_setAnalyticsCollectionEnabled_basic_mapping() {
         let dispatch = Dispatch(name: "toggle_analytics", type: .event, data: [
             "enabled": true
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetAnalyticsCollectionEnabledCommand(),
-            .mapFirebaseSetAnalyticsCollectionEnabledValue(sourceKey: "enabled")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setAnalyticsCollectionEnabled)
+            mappings.mapFrom("enabled", to: .analyticsEnabled)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetAnalyticsCollectionEnabled.name,
-            FirebaseConstants.SetAnalyticsCollectionEnabled.Param.analyticsEnabled: true
+            FirebaseConstants.commandName: FirebaseCommand.setAnalyticsCollectionEnabled.rawValue,
+            "analytics_collection_enabled": true
         ])
     }
-    
+
     // MARK: - SetConsent Command Tests
-    
+
     func test_setConsent_all_consent_types() {
         let dispatch = Dispatch(name: "consent_update", type: .event, data: [
             "analytics": "granted",
@@ -210,49 +211,49 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
             "ad_user": "granted",
             "ad_personalization": "denied"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetConsentCommand(),
-            .mapFirebaseAnalyticsStorage(sourceKey: "analytics"),
-            .mapFirebaseAdStorage(sourceKey: "ad"),
-            .mapFirebaseAdUserData(sourceKey: "ad_user"),
-            .mapFirebaseAdPersonalization(sourceKey: "ad_personalization")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setConsent)
+            mappings.mapFrom("analytics", to: .consentSetting(.analyticsStorage))
+            mappings.mapFrom("ad", to: .consentSetting(.adStorage))
+            mappings.mapFrom("ad_user", to: .consentSetting(.adUserData))
+            mappings.mapFrom("ad_personalization", to: .consentSetting(.adPersonalization))
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetConsent.name,
-            FirebaseConstants.SetConsent.Param.consentSettings: [
-                FirebaseConstants.SetConsent.Param.analyticsStorage: "granted",
-                FirebaseConstants.SetConsent.Param.adStorage: "denied",
-                FirebaseConstants.SetConsent.Param.adUserData: "granted",
-                FirebaseConstants.SetConsent.Param.adPersonalization: "denied"
+            FirebaseConstants.commandName: FirebaseCommand.setConsent.rawValue,
+            "consent_settings": [
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied",
+                ConsentType.adUserData.rawValue: "granted",
+                ConsentType.adPersonalization.rawValue: "denied"
             ] as DataObject
         ])
     }
-    
+
     // MARK: - SetDefaultParameters Command Tests
-    
+
     func test_setDefaultParameters_basic_mapping() {
         let dispatch = Dispatch(name: "set_defaults", type: .event, data: [
             "version": "2.0",
             "env": "prod"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetDefaultParametersCommand(),
-            .mapFirebaseDefaultParameter(from: "version", to: "app_version"),
-            .mapFirebaseDefaultParameter(from: "env", to: "environment")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setDefaultParameters)
+            mappings.mapFrom("version", to: .defaultParam("app_version"))
+            mappings.mapFrom("env", to: .defaultParam("environment"))
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetDefaultParameters.name,
-            FirebaseConstants.SetDefaultParameters.Param.params: [
+            FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
+            "parameters": [
                 "app_version": "2.0",
                 "environment": "prod"
             ] as DataObject
         ])
     }
-    
+
     func test_setDefaultParameters_with_bulk_parameters_dictionary() {
         let dispatch = Dispatch(name: "set_defaults", type: .event, data: [
             "default_params": [
@@ -261,95 +262,95 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
                 "feature_flag_enabled": true
             ] as DataObject
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetDefaultParametersCommand(),
-            .mapFirebaseDefaultParameters(paramsKey: "default_params")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setDefaultParameters)
+            mappings.mapFrom("default_params", to: .defaultParams)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetDefaultParameters.name,
-            FirebaseConstants.SetDefaultParameters.Param.params: [
+            FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
+            "parameters": [
                 "app_version": "2.0",
                 "environment": "production",
                 "feature_flag_enabled": true
             ] as DataObject
         ])
     }
-    
+
     // MARK: - SetSessionTimeout Command Tests
-    
+
     func test_setSessionTimeout_basic_mapping() {
         let dispatch = Dispatch(name: "update_timeout", type: .event, data: [
             "timeout": 3600
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetSessionTimeoutCommand(),
-            .mapFirebaseSetSessionTimeoutValue(sourceKey: "timeout")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setSessionTimeout)
+            mappings.mapFrom("timeout", to: .sessionTimeout)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetSessionTimeout.name,
-            FirebaseConstants.SetSessionTimeout.Param.sessionTimeout: 3600
+            FirebaseConstants.commandName: FirebaseCommand.setSessionTimeout.rawValue,
+            "session_timeout_seconds": 3600
         ])
     }
-    
+
     // MARK: - SetUserId Command Tests
-    
+
     func test_setUserId_basic_mapping() {
         let dispatch = Dispatch(name: "login", type: .event, data: ["customer_id": "USER_123"])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetUserIdCommand(),
-            .mapFirebaseUserId(userIdKey: "customer_id")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setUserId)
+            mappings.mapFrom("customer_id", to: .userId)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetUserId.name,
-            FirebaseConstants.SetUserId.Param.userId: "USER_123"
+            FirebaseConstants.commandName: FirebaseCommand.setUserId.rawValue,
+            "user_id": "USER_123"
         ])
     }
-    
+
     // MARK: - SetUserProperty Command Tests (Multiple Properties)
-    
+
     func test_setUserProperties_basic_mapping() {
         let dispatch = Dispatch(name: "bulk_props", type: .event, data: [
             "prop_names": ["tier", "level", "status"],
             "prop_values": ["premium", "expert", "active"]
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetUserPropertyCommand(),
-            .mapFirebaseUserPropertyName(propertyNameKey: "prop_names"),
-            .mapFirebaseUserPropertyValue(propertyValueKey: "prop_values")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setUserProperty)
+            mappings.mapFrom("prop_names", to: .userPropertyName)
+            mappings.mapFrom("prop_values", to: .userPropertyValue)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetUserProperty.name,
-            FirebaseConstants.SetUserProperty.Param.propertyName: ["tier", "level", "status"],
-            FirebaseConstants.SetUserProperty.Param.propertyValue: ["premium", "expert", "active"]
+            FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
+            "property_name": ["tier", "level", "status"],
+            "property_value": ["premium", "expert", "active"]
         ])
     }
-    
+
     // MARK: - SetUserProperty Command Tests
-    
+
     func test_setUserProperty_basic_mapping() {
         let dispatch = Dispatch(name: "set_tier", type: .event, data: [
             "prop_name": "membership_tier",
             "prop_value": "premium"
         ])
-        
-        let result = map(dispatch: dispatch, mappings: [
-            .mapFirebaseSetUserPropertyCommand(),
-            .mapFirebaseUserPropertyName(propertyNameKey: "prop_name"),
-            .mapFirebaseUserPropertyValue(propertyValueKey: "prop_value")
-        ])
-        
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setUserProperty)
+            mappings.mapFrom("prop_name", to: .userPropertyName)
+            mappings.mapFrom("prop_value", to: .userPropertyValue)
+        }
+
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseConstants.SetUserProperty.name,
-            FirebaseConstants.SetUserProperty.Param.propertyName: "membership_tier",
-            FirebaseConstants.SetUserProperty.Param.propertyValue: "premium"
+            FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
+            "property_name": "membership_tier",
+            "property_value": "premium"
         ])
     }
 }

@@ -13,7 +13,7 @@ import CryptoKit
 
 final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
-    let mockFirebase = MockFirebaseCommand()
+    let mockFirebase = MockFirebaseAnalytics()
     lazy var command = InitiateConversionMeasurementCommand(firebaseInstance: mockFirebase)
 
     // MARK: - Basic Tests
@@ -34,7 +34,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_email_address() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
+            "email_address": "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -44,7 +44,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_email_address_throws_error() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: ""
+            "email_address": ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -61,7 +61,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_phone_number() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
+            "phone_number": "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -71,7 +71,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_phone_number_throws_error() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: ""
+            "phone_number": ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -93,7 +93,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: base64Hash
+            "hashed_email_address": base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -103,7 +103,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_email_address_throws_error() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: ""
+            "hashed_email_address": ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -125,7 +125,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         
         for invalidHash in invalidHashes {
             let payload: DataObject = [
-                FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: invalidHash
+                "hashed_email_address": invalidHash
             ]
             
             XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -147,7 +147,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: base64Hash
+            "hashed_email_address": base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -164,7 +164,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let base64Hash = Data(hash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: base64Hash
+            "hashed_phone_number": base64Hash
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -174,7 +174,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_with_empty_hashed_phone_number_throws_error() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: ""
+            "hashed_phone_number": ""
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -191,7 +191,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         // Test with invalid Base64 string
         let invalidHash = "invalidbase64!@#"
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: invalidHash
+            "hashed_phone_number": invalidHash
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
@@ -216,8 +216,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: emailBase64,
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64
+            "hashed_email_address": emailBase64,
+            "hashed_phone_number": phoneBase64
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -231,8 +231,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64,
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com"
+            "hashed_phone_number": phoneBase64,
+            "email_address": "user@example.com"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -242,8 +242,8 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
     
     func test_execute_prioritizes_email_over_phone() {
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
-            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
+            "email_address": "user@example.com",
+            "phone_number": "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -262,10 +262,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let phoneBase64 = Data(phoneHash).base64EncodedString()
         
         let payload: DataObject = [
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedEmailAddress: emailBase64,
-            FirebaseConstants.InitiateConversionMeasurement.Param.hashedPhoneNumber: phoneBase64,
-            FirebaseConstants.InitiateConversionMeasurement.Param.emailAddress: "user@example.com",
-            FirebaseConstants.InitiateConversionMeasurement.Param.phoneNumber: "+1234567890"
+            "hashed_email_address": emailBase64,
+            "hashed_phone_number": phoneBase64,
+            "email_address": "user@example.com",
+            "phone_number": "+1234567890"
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
