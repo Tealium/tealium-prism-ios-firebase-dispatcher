@@ -1,0 +1,96 @@
+name: Build and Test
+
+on: [pull_request]
+
+jobs:
+  inspect:
+    name: Inspect Machine
+    runs-on: 'macOS-15'
+    timeout-minutes: 10
+    steps:
+      - name: List available Xcode versions
+        run: ls /Applications | grep Xcode
+        shell: bash
+      - name: List available devices
+        run: xcrun simctl list devices
+        shell: bash
+      - name: List runtimes
+        run: xcrun simctl list runtimes
+        shell: bash
+  build_example:
+    name: Example Builds | ${{ matrix.scheme }}
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        scheme:
+            - Example
+        destination:
+            - "generic/platform=iOS Simulator"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build - "${{ matrix.scheme }}"
+        working-directory: Example
+        run: ../scripts/build.sh --scheme "${{ matrix.scheme }}" --destination "${{ matrix.destination }}"
+  build_SPM:
+    name: SPM Builds | ${{ matrix.destination }}
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        destination:
+          - "generic/platform=iOS"
+          - "generic/platform=iOS Simulator"
+          - "generic/platform=tvOS"
+          - "generic/platform=tvOS Simulator"
+          - "generic/platform=macOS"
+          - "generic/platform=watchOS"
+          - "generic/platform=watchOS Simulator"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build - TealiumPrismFirebase
+        run: scripts/build.sh --scheme "TealiumPrismFirebase" --destination "${{ matrix.destination }}"
+  test_iOS:
+    name: iOS Tests
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
+  test_tvOS:
+    name: tvOS Tests
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
+  test_macOS:
+    name: macOS Tests
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=macOS"
+  test_watchOS:
+    name: watchOS Tests
+    runs-on: 'macOS-15'
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=watchOS Simulator,name=Apple Watch Series 10 (42mm)"
