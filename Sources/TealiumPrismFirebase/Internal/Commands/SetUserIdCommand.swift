@@ -27,7 +27,7 @@ import TealiumPrismCore
 /// ]
 /// ```
 class SetUserIdCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
@@ -35,15 +35,15 @@ class SetUserIdCommand: FirebaseCommandProtocol {
     }
 
     let name = FirebaseCommand.setUserId.rawValue
-    
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         guard let userId = payload.extract(path: FirebaseDestination.userId.path, as: String.self) else {
             throw FirebaseCommandError.missingParameter(FirebaseDestination.userId.path.render())
         }
-        
+
         // Empty string clears the user ID
         let userIdToSet = userId.isEmpty ? nil : userId
-        
+
         firebaseInstance.setUserId(userIdToSet)
     }
 }

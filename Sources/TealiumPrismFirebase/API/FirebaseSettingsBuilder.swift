@@ -6,8 +6,8 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseCore
+import Foundation
 import TealiumPrismCore
 
 /// Builder for Firebase Dispatcher configuration settings.
@@ -39,7 +39,7 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder<FirebaseMappings
     typealias Keys = FirebaseDispatcherConfiguration.Keys
 
     // MARK: - Session Configuration
-    
+
     /// Set the session timeout duration.
     ///
     /// This configures how long a session lasts before timing out.
@@ -52,9 +52,9 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder<FirebaseMappings
         _configurationObject.set(sessionTimeout.inSeconds(), key: Keys.sessionTimeout)
         return self
     }
-    
+
     // MARK: - Analytics Collection Configuration
-    
+
     /// Enable or disable analytics collection.
     ///
     /// When disabled, no analytics data will be collected or sent to Firebase.
@@ -66,9 +66,9 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder<FirebaseMappings
         _configurationObject.set(enabled, key: Keys.analyticsEnabled)
         return self
     }
-    
+
     // MARK: - Logging Configuration
-    
+
     /// Set the Firebase internal log level.
     ///
     /// Controls the verbosity of Firebase SDK logging.

@@ -6,9 +6,9 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseAnalytics
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 final class LogEventCommandTests: XCTestCase {
@@ -280,6 +280,5 @@ final class LogEventCommandTests: XCTestCase {
 
         XCTAssertEqual(items[1]["custom_in_stock"] as? Bool, false)
     }
-
 
 }

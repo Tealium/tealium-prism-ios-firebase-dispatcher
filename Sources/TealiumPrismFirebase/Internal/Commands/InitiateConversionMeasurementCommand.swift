@@ -36,15 +36,15 @@ import TealiumPrismCore
 ///
 /// **Priority**: hashed_email > hashed_phone > email > phone (only first available is used)
 class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
-    
+
     let name = FirebaseCommand.initiateConversionMeasurement.rawValue
-    
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.extract(path: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
@@ -64,23 +64,23 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
             ])
         }
     }
-    
+
     // MARK: - Private Helpers
-    
+
     private func initiateWithEmail(_ email: String) throws(FirebaseCommandError) {
         guard !email.isEmpty else {
             throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionEmail.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
     }
-    
+
     private func initiateWithPhone(_ phone: String) throws(FirebaseCommandError) {
         guard !phone.isEmpty else {
             throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionPhone.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
     }
-    
+
     private func initiateWithHashedEmail(_ hashedEmail: String) throws(FirebaseCommandError) {
         guard !hashedEmail.isEmpty else {
             throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedEmail.path.render())
@@ -93,7 +93,7 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: data)
     }
-    
+
     private func initiateWithHashedPhone(_ hashedPhone: String) throws(FirebaseCommandError) {
         guard !hashedPhone.isEmpty else {
             throw FirebaseCommandError.emptyParameter(FirebaseDestination.conversionHashedPhone.path.render())
@@ -107,4 +107,3 @@ class InitiateConversionMeasurementCommand: FirebaseCommandProtocol {
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: data)
     }
 }
-

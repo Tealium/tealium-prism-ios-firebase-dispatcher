@@ -37,9 +37,9 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
 
     /// Internal initializer called by the generic one and by the tests.
     init(firebaseInstance: FirebaseAnalyticsInterface,
-          commandRegistry: FirebaseCommandRegistry,
-          configuration: FirebaseDispatcherConfiguration,
-          logger: LoggerProtocol?) {
+         commandRegistry: FirebaseCommandRegistry,
+         configuration: FirebaseDispatcherConfiguration,
+         logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.commandRegistry = commandRegistry
         self.configuration = configuration
@@ -85,11 +85,11 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
         let commands = dispatch.getCommands()
         guard !commands.isEmpty else {
             logger?.debug(category: LogCategory.firebase,
-                         "No command in dispatch \(dispatch.logDescription())")
+                          "No command in dispatch \(dispatch.logDescription())")
             return
         }
         logger?.debug(category: LogCategory.firebase,
-                     "Processing dispatch \(dispatch.logDescription()) with commands: \(commands)")
+                      "Processing dispatch \(dispatch.logDescription()) with commands: \(commands)")
         let payload = dispatch.payload
 
         // Execute each command
@@ -123,7 +123,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
         if let logLevel = config.logLevel {
             firebaseInstance.setLoggerLevel(logLevel.value)
             logger?.debug(category: LogCategory.firebase,
-                "Firebase log level set to \(logLevel.stringValue) from configuration")
+                          "Firebase log level set to \(logLevel.stringValue) from configuration")
         }
 
         // 2. Configure session timeout

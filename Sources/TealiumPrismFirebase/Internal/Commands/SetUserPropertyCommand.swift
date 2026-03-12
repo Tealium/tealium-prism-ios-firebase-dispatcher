@@ -42,7 +42,7 @@ import TealiumPrismCore
 /// ]
 /// ```
 class SetUserPropertyCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
@@ -50,22 +50,22 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
     }
 
     let name = FirebaseCommand.setUserProperty.rawValue
-    
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         let properties = try extractNamesAndValues(payload: payload)
-        
+
         guard !properties.isEmpty else {
             throw FirebaseCommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
         }
-        
+
         // Set each property
         for (name, value) in properties {
             setProperty(name: name, value: value)
         }
     }
-    
+
     // MARK: - Private Helpers
-    
+
     /// Extracts property names and values from the payload.
     /// Automatically handles both single values and arrays.
     private func extractNamesAndValues(payload: DataObject) throws(FirebaseCommandError) -> [(name: String, value: String?)] {
@@ -90,7 +90,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
                 count2: valuesArray.count
             )
         }
-        
+
         return zip(namesArray, valuesArray).compactMap { name, value in
             guard let name else {
                 return nil
@@ -98,7 +98,7 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
             return (name, value)
         }
     }
-    
+
     private func setProperty(name: String, value: String?) {
         // Empty string or nil removes the property
         if let value, !value.isEmpty {
@@ -108,4 +108,3 @@ class SetUserPropertyCommand: FirebaseCommandProtocol {
         }
     }
 }
-

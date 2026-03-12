@@ -26,15 +26,15 @@ import TealiumPrismCore
 /// ]
 /// ```
 class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
-    
+
     let name = FirebaseCommand.setAnalyticsCollectionEnabled.rawValue
-    
+
     func execute(payload: DataObject) throws(FirebaseCommandError) {
         guard let enabled = payload.extractConvertible(path: FirebaseDestination.analyticsEnabled.path, converter: LenientConverters.bool) else {
             throw FirebaseCommandError.invalidParameterType(
@@ -42,8 +42,7 @@ class SetAnalyticsCollectionEnabledCommand: FirebaseCommandProtocol {
                 expectedType: "boolean (true/false)"
             )
         }
-        
+
         firebaseInstance.setAnalyticsCollectionEnabled(enabled)
     }
 }
-

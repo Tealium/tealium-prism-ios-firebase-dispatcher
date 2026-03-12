@@ -14,7 +14,7 @@ import TealiumPrismCore
 protocol FirebaseCommandProtocol {
     /// Command name for routing (lowercase, e.g. "logevent", "setuserid")
     var name: String { get }
-    
+
     /// Executes the command with payload.
     /// - Throws: `FirebaseCommandError` if validation fails or required parameters are missing
     func execute(payload: DataObject) throws(FirebaseCommandError)

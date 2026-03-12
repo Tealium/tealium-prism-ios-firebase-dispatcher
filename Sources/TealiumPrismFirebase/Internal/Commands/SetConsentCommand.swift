@@ -6,9 +6,9 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
+import FirebaseAnalytics
 import Foundation
 import TealiumPrismCore
-import FirebaseAnalytics
 
 /// Command for configuring Firebase Analytics consent settings.
 ///
@@ -36,13 +36,13 @@ import FirebaseAnalytics
 /// Known types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`.
 /// Known values: `granted`, `denied`.
 class SetConsentCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
-    
+
     let name = FirebaseCommand.setConsent.rawValue
 
     func execute(payload: DataObject) throws(FirebaseCommandError) {
@@ -50,7 +50,7 @@ class SetConsentCommand: FirebaseCommandProtocol {
             throw FirebaseCommandError.noValidConsentSettings
         }
 
-        let consentSettings = Dictionary(uniqueKeysWithValues: consentData.compactMap { (key, value) -> (ConsentType, ConsentStatus)? in
+        let consentSettings = Dictionary(uniqueKeysWithValues: consentData.compactMap { key, value -> (ConsentType, ConsentStatus)? in
             guard let statusString = value.get(as: String.self) else {
                 return nil
             }

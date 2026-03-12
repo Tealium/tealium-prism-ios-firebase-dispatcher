@@ -9,15 +9,15 @@
 import XCTest
 
 extension XCTestCase {
-    
+
     static let defaultTimeout: TimeInterval = 0.1
-    
+
     func waitForDefaultTimeout() {
         waitForExpectations(timeout: Self.defaultTimeout)
     }
-    
+
     static let longTimeout: TimeInterval = 10
-    
+
     func waitForLongTimeout() {
         waitForExpectations(timeout: Self.longTimeout)
     }

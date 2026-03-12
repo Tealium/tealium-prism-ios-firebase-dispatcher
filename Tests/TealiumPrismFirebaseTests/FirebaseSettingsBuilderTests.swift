@@ -6,13 +6,13 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseCore
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 final class FirebaseSettingsBuilderTests: XCTestCase {
-    
+
     func test_firebaseSettingsBuilder_build_returns_configuration() throws {
         let settings = FirebaseSettingsBuilder()
             .setSessionTimeout(1800.seconds)
@@ -28,7 +28,7 @@ final class FirebaseSettingsBuilderTests: XCTestCase {
             ] as DataObject
         ])
     }
-    
+
     func test_firebaseSettingsBuilder_empty_returns_empty_configuration() {
         let settings = FirebaseSettingsBuilder().build()
         XCTAssertEqual(settings, ["configuration": DataObject()])

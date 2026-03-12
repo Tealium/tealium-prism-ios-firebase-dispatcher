@@ -6,8 +6,8 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseCore
+import Foundation
 
 // MARK: - Firebase Log Level
 

@@ -6,9 +6,9 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseAnalytics
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 final class SetConsentCommandTests: XCTestCase {
@@ -91,7 +91,7 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Multiple Consent Types Tests
 
-    func test_execute_sets_multiple_consent_types() {
+    func test_execute_sets_multiple_consent_types() throws {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -104,7 +104,7 @@ final class SetConsentCommandTests: XCTestCase {
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setConsentCalled)
 
-        let consentSettings = mockFirebase.lastConsentSettings!
+        let consentSettings = try XCTUnwrap(mockFirebase.lastConsentSettings)
         XCTAssertEqual(consentSettings.count, 4)
         XCTAssertEqual(consentSettings[.adStorage], .granted)
         XCTAssertEqual(consentSettings[.analyticsStorage], .granted)

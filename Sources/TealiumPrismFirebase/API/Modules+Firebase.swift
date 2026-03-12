@@ -10,7 +10,7 @@ import Foundation
 import TealiumPrismCore
 
 public extension Modules {
-    
+
     /**
      * Returns a factory for creating the `FirebaseDispatcher`.
      *

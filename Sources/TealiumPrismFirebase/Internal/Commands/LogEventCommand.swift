@@ -6,8 +6,8 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseAnalytics
+import Foundation
 import TealiumPrismCore
 
 /// Command for logging Firebase Analytics events with parameter and item support.
@@ -53,13 +53,13 @@ import TealiumPrismCore
 /// ]
 /// ```
 class LogEventCommand: FirebaseCommandProtocol {
-    
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
     }
-    
+
     let name = FirebaseCommand.logEvent.rawValue
 
     func execute(payload: DataObject) throws(FirebaseCommandError) {
@@ -72,34 +72,34 @@ class LogEventCommand: FirebaseCommandProtocol {
         guard let rawEventName = payload.extract(path: FirebaseDestination.eventName.path, as: String.self) else {
             throw FirebaseCommandError.missingParameter(FirebaseDestination.eventName.path.render())
         }
-        
+
         return rawEventName
     }
-    
+
     /// Builds all Firebase parameters from payload (including items).
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
     private func buildParameters(from payload: DataObject) throws(FirebaseCommandError) -> [String: Any] {
         guard let eventParamsData = payload.extractDataDictionary(path: FirebaseDestination.eventParams.path) else {
             return [:]
         }
-        
+
         var parameters: [String: Any] = [:]
-        
+
         // Build items first (if present)
         if let items = try buildItems(from: eventParamsData) {
             parameters[AnalyticsParameterItems] = items
         }
-        
+
         // Build regular parameters
         let regularParams = buildRegularParameters(from: eventParamsData)
         parameters.merge(regularParams) { _, new in new }
-        
+
         return parameters
     }
-    
+
     private func buildRegularParameters(from eventParamsData: [String: DataItem]) -> [String: Any] {
         var result: [String: Any] = [:]
-        
+
         for (key, dataItem) in eventParamsData {
             // Skip items - handled separately via the items key
             guard key != AnalyticsParameterItems else {
@@ -108,10 +108,10 @@ class LogEventCommand: FirebaseCommandProtocol {
 
             result[key] = dataItem.toDataInput()
         }
-        
+
         return result
     }
-    
+
     /// Builds Firebase items array from either parallel arrays or array of objects format.
     /// - Returns: Array of item dictionaries, or nil if no items found.
     /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
@@ -138,7 +138,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         }
         return items.isEmpty ? nil : items
     }
-    
+
     /// Converts array of objects to Firebase items format.
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
@@ -155,17 +155,17 @@ class LogEventCommand: FirebaseCommandProtocol {
             return mappedItem.isEmpty ? nil : mappedItem
         }
     }
-    
+
     /// Converts parallel arrays to array of item dictionaries.
     /// Input:  { "item_id": ["SKU1", "SKU2"], "item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
     private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]] {
         let arrays = extractArrays(from: parallelArrays)
-        
+
         guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {
             return []
         }
-        
+
         // Validate all arrays have the same length
         if let mismatch = arrays.first(where: { $0.value.count != itemCount }),
            let expected = arrays.first(where: { $0.value.count == itemCount }) {
@@ -176,26 +176,24 @@ class LogEventCommand: FirebaseCommandProtocol {
                 count2: mismatch.value.count
             )
         }
-        
+
         return (0..<itemCount).compactMap { index in
             let item = buildItem(from: arrays, at: index)
             return item.isEmpty ? nil : item
         }
     }
-    
+
     private func buildItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
         var item: [String: Any] = [:]
-        
+
         for (key, array) in arrays where index < array.count {
             item[key] = array[index]
         }
-        
+
         return item
     }
-    
+
     private func extractArrays(from dict: [String: DataItem]) -> [String: [DataInput]] {
         dict.compactMapValues { $0.getDataArray()?.map { $0.toDataInput() } }
     }
 }
-
-

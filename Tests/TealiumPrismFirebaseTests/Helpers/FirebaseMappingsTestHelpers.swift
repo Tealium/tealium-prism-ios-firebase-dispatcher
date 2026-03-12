@@ -6,8 +6,8 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 /// Base test class with common helpers for Firebase mappings tests

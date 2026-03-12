@@ -6,8 +6,8 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseCore
+import Foundation
 import TealiumPrismCore
 
 /// Configuration for Firebase Dispatcher module.
@@ -20,13 +20,13 @@ struct FirebaseDispatcherConfiguration {
     let analyticsEnabled: Bool?
     /// Firebase internal log level. If nil (not provided or invalid), Firebase's default is used.
     let logLevel: FirebaseLogLevel?
-    
+
     enum Keys {
         static let sessionTimeout = "session_timeout_seconds"
         static let analyticsEnabled = "analytics_collection_enabled"
         static let logLevel = "log_level"
     }
-    
+
     init(configuration: DataObject) {
         sessionTimeout = configuration.getConvertible(key: Keys.sessionTimeout, converter: LenientConverters.double)
         analyticsEnabled = configuration.getConvertible(key: Keys.analyticsEnabled, converter: LenientConverters.bool)
