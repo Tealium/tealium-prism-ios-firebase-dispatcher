@@ -31,7 +31,7 @@ public extension Modules {
      *         .setMappings { mappings in
      *             mappings.mapCommand(.logEvent)
      *             mappings.mapFrom("tealium_event", to: .eventName)
-     *             mappings.mapFrom("total", to: .eventParam(.value))
+     *             mappings.mapFrom("total", to: .eventParam(AnalyticsParameterValue))
      *         }
      * })
      * ```

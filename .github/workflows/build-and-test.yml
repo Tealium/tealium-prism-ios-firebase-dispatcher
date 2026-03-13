@@ -46,8 +46,6 @@ jobs:
           - "generic/platform=tvOS"
           - "generic/platform=tvOS Simulator"
           - "generic/platform=macOS"
-          - "generic/platform=watchOS"
-          - "generic/platform=watchOS Simulator"
     steps:
       - uses: actions/checkout@v4
       - name: "Run Local Action: Setup Machine"
@@ -84,13 +82,3 @@ jobs:
         uses: ./.github/workflows/setup-machine
       - name: Test - TealiumPrismFirebaseTests
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=macOS"
-  test_watchOS:
-    name: watchOS Tests
-    runs-on: 'macOS-15'
-    timeout-minutes: 60
-    steps:
-      - uses: actions/checkout@v4
-      - name: "Run Local Action: Setup Machine"
-        uses: ./.github/workflows/setup-machine
-      - name: Test - TealiumPrismFirebaseTests
-        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=watchOS Simulator,name=Apple Watch Series 10 (42mm)"
