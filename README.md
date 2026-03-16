@@ -71,11 +71,13 @@ The Firebase Dispatcher can be configured via a local JSON settings file, remote
 
 ### Configuration Options
 
-| Setting | JSON Key | Type | Default |
-|---|---|---|---|
-| Session timeout | `session_timeout_seconds` | `Double` (seconds) | 1800 (30 min) |
-| Analytics collection enabled | `analytics_collection_enabled` | `Bool` | Firebase default |
-| Log level | `log_level` | `String` (`"min"`, `"error"`, `"warning"`, `"notice"`, `"info"`, `"debug"`, `"max"`) | Firebase default |
+| Setting | JSON Key | Type |
+|---|---|---|
+| Session timeout | `session_timeout_seconds` | `Double` (seconds) |
+| Analytics collection enabled | `analytics_collection_enabled` | `Bool` |
+| Log level | `log_level` | `String` (`"min"`, `"error"`, `"warning"`, `"notice"`, `"info"`, `"debug"`, `"max"`) |
+
+If a setting is omitted, Firebase uses its own default value.
 
 ### JSON Settings
 
@@ -115,7 +117,7 @@ Modules.firebaseDispatcher(forcingSettings: { builder in
 
 The Firebase Dispatcher routes dispatch data to Firebase using the Tealium Prism [Mappings](https://github.com/Tealium/tealium-prism-swift) system. Each command below includes the JSON and programmatic mapping configuration.
 
-JSON mapping objects are entries in the `"mappings"` array of your `TealiumSettings.json` module configuration. Programmatic mappings use `FirebaseMappings` with type-safe `FirebaseCommand` and `FirebaseDestination` enums.
+JSON mapping objects are entries in the `"mappings"` array of your `TealiumSettings.json` module configuration. Programmatic mappings use `FirebaseMappings` with type-safe `FirebaseCommand` and `FirebaseDestination` enums — `mapCommand(_:)` declares which command a mapping group handles, and `mapFrom(_:to:)` maps a source key to a Firebase destination. See the [Tealium Prism SDK documentation](https://github.com/Tealium/tealium-prism-swift) for a full explanation of the Mappings API.
 
 > See the Example app's `TealiumSettings.json` for a complete configuration covering all commands.
 
@@ -129,7 +131,7 @@ Logs an event to Firebase Analytics. Supports predefined Firebase events and cus
 
 There are two mapping approaches for this command:
 
-#### Approach 1 — Explicit event name (recommended)
+#### Approach 1 — Explicit event name
 
 `tealium_event` identifies the command type. The Firebase event name is passed as a separate `event_name` field in the dispatch data. This is consistent with all other commands.
 

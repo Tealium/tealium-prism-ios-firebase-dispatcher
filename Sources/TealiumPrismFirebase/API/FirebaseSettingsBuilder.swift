@@ -17,7 +17,7 @@ import TealiumPrismCore
 ///
 /// ## Available Configuration Options
 ///
-/// - `setSessionTimeout(_:)` - Session timeout duration (default: 30 minutes)
+/// - `setSessionTimeout(_:)` - Session timeout duration
 /// - `setAnalyticsEnabled(_:)` - Enable/disable analytics collection
 /// - `setLogLevel(_:)` - Firebase internal logging verbosity
 ///
@@ -43,8 +43,6 @@ public class FirebaseSettingsBuilder: DispatcherSettingsBuilder<FirebaseMappings
     /// Set the session timeout duration.
     ///
     /// This configures how long a session lasts before timing out.
-    /// Default Firebase session timeout is 30 minutes.
-    ///
     /// - Parameter sessionTimeout: The session timeout as a `TimeFrame` (e.g. `30.minutes`).
     /// - Returns: Self for method chaining.
     @discardableResult
