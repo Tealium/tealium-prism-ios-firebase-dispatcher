@@ -61,7 +61,7 @@ jobs:
       - name: "Run Local Action: Setup Machine"
         uses: ./.github/workflows/setup-machine
       - name: Test - TealiumPrismFirebaseTests
-        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
   test_tvOS:
     name: tvOS Tests
     runs-on: 'macOS-15'
@@ -71,7 +71,7 @@ jobs:
       - name: "Run Local Action: Setup Machine"
         uses: ./.github/workflows/setup-machine
       - name: Test - TealiumPrismFirebaseTests
-        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
   test_macOS:
     name: macOS Tests
     runs-on: 'macOS-15'
@@ -81,4 +81,4 @@ jobs:
       - name: "Run Local Action: Setup Machine"
         uses: ./.github/workflows/setup-machine
       - name: Test - TealiumPrismFirebaseTests
-        run: scripts/run_tests.sh --scheme "TealiumPrismFirebaseTests" --destination "platform=macOS"
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=macOS"
