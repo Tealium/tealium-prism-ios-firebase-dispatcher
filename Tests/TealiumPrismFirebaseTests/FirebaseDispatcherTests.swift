@@ -24,7 +24,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_single_command_executes_command() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "test_event"
         ])
         
@@ -41,7 +41,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_returns_disposed_disposable() {
         let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "test_event"
         ])
         
@@ -59,7 +59,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_command_array_executes_all_commands() {
         let dispatch = Dispatch(name: "multi_command", data: [
-            FirebaseConstants.commandName: [
+            TealiumDataKey.commandName: [
                 FirebaseCommand.logEvent.rawValue,
                 FirebaseCommand.setUserId.rawValue
             ],
@@ -81,12 +81,12 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_multiple_dispatches_processes_all() {
         let dispatch1 = Dispatch(name: "event1", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "event_one"
         ])
         
         let dispatch2 = Dispatch(name: "event2", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "event_two"
         ])
         
@@ -121,7 +121,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_empty_command_array_does_not_execute() {
         let dispatch = Dispatch(name: "empty_commands", data: [
-            FirebaseConstants.commandName: [] as [String]
+            TealiumDataKey.commandName: [] as [String]
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -137,7 +137,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_unknown_command_does_not_execute() {
         let dispatch = Dispatch(name: "unknown", data: [
-            FirebaseConstants.commandName: "unknowncommand"
+            TealiumDataKey.commandName: "unknowncommand"
         ])
         
         let completionCalled = expectation(description: "Completion called")
@@ -154,7 +154,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
         let dispatch = Dispatch(name: "mixed", data: [
-            FirebaseConstants.commandName: [
+            TealiumDataKey.commandName: [
                 "invalid_command",
                 FirebaseCommand.logEvent.rawValue
             ],
@@ -174,7 +174,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     
     func test_dispatch_with_command_as_number_does_not_crash() {
         let dispatch = Dispatch(name: "invalid_type", data: [
-            FirebaseConstants.commandName: 123  // Wrong type
+            TealiumDataKey.commandName: 123  // Wrong type
         ])
         
         let completionCalled = expectation(description: "Completion called")
