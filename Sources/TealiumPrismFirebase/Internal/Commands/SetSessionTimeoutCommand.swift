@@ -25,7 +25,7 @@ import TealiumPrismCore
 ///     "session_timeout_seconds": 3600
 /// ]
 /// ```
-class SetSessionTimeoutCommand: FirebaseCommandProtocol {
+class SetSessionTimeoutCommand: RemoteCommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -35,9 +35,9 @@ class SetSessionTimeoutCommand: FirebaseCommandProtocol {
     
     let name = FirebaseCommand.setSessionTimeout.rawValue
     
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
+    func execute(payload: DataObject) throws(RemoteCommandError) {
         guard let sessionTimeout = payload.extractConvertible(path: FirebaseDestination.sessionTimeout.path, converter: LenientConverters.double) else {
-            throw FirebaseCommandError.invalidParameterType(
+            throw RemoteCommandError.invalidParameterType(
                 parameter: FirebaseDestination.sessionTimeout.path.render(),
                 expectedType: "numeric value (seconds)"
             )

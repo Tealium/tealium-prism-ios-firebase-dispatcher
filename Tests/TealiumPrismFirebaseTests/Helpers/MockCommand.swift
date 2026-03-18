@@ -10,23 +10,23 @@
 @testable import TealiumPrismCore
 import Foundation
 
-/// Mock implementation of FirebaseCommandProtocol for testing command execution.
+/// Mock implementation of RemoteCommandProtocol for testing command execution.
 /// Tracks execution calls and can be configured to succeed or throw an error.
-class MockCommand: FirebaseCommandProtocol {
+class MockCommand: RemoteCommandProtocol {
     
     let name: String
-    let errorToThrow: FirebaseCommandError?
+    let errorToThrow: RemoteCommandError?
 
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
 
-    init(name: String, errorToThrow: FirebaseCommandError? = nil) {
+    init(name: String, errorToThrow: RemoteCommandError? = nil) {
         self.name = name
         self.errorToThrow = errorToThrow
     }
 
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
+    func execute(payload: DataObject) throws(RemoteCommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1

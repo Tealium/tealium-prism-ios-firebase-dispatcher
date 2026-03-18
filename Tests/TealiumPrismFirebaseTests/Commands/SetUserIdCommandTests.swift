@@ -21,7 +21,7 @@ final class SetUserIdCommandTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
+            guard let commandError = error as? RemoteCommandError,
                   case .missingParameter = commandError else {
                 XCTFail("Expected missingParameter error but got \(error)")
                 return

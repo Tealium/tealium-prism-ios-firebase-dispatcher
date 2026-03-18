@@ -52,7 +52,7 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
-class LogEventCommand: FirebaseCommandProtocol {
+class LogEventCommand: RemoteCommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -62,23 +62,23 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     let name = FirebaseCommand.logEvent.rawValue
 
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
+    func execute(payload: DataObject) throws(RemoteCommandError) {
         let eventName = try extractEventName(from: payload)
         let parameters = try buildParameters(from: payload)
         firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
     }
 
-    private func extractEventName(from payload: DataObject) throws(FirebaseCommandError) -> String {
+    private func extractEventName(from payload: DataObject) throws(RemoteCommandError) -> String {
         guard let rawEventName = payload.extract(path: FirebaseDestination.eventName.path, as: String.self) else {
-            throw FirebaseCommandError.missingParameter(FirebaseDestination.eventName.path.render())
+            throw RemoteCommandError.missingParameter(FirebaseDestination.eventName.path.render())
         }
         
         return rawEventName
     }
     
     /// Builds all Firebase parameters from payload (including items).
-    /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
-    private func buildParameters(from payload: DataObject) throws(FirebaseCommandError) -> [String: Any] {
+    /// - Throws: `RemoteCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
+    private func buildParameters(from payload: DataObject) throws(RemoteCommandError) -> [String: Any] {
         guard let eventParamsData = payload.extractDataDictionary(path: FirebaseDestination.eventParams.path) else {
             return [:]
         }
@@ -114,14 +114,14 @@ class LogEventCommand: FirebaseCommandProtocol {
     
     /// Builds Firebase items array from either parallel arrays or array of objects format.
     /// - Returns: Array of item dictionaries, or nil if no items found.
-    /// - Throws: `FirebaseCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
+    /// - Throws: `RemoteCommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
     ///
     /// Only checks the `items` key. This allows users to use other parameter names freely.
     ///
     /// Supported formats:
     /// 1. Object of arrays: `{"item_id": ["SKU1", "SKU2"], ...}`
     /// 2. Array of objects: `[{"item_id": "SKU1"}, {"item_id": "SKU2"}]`
-    private func buildItems(from eventParamsData: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]]? {
+    private func buildItems(from eventParamsData: [String: DataItem]) throws(RemoteCommandError) -> [[String: Any]]? {
         guard let itemsData = eventParamsData[AnalyticsParameterItems] else {
             return nil
         }
@@ -159,7 +159,7 @@ class LogEventCommand: FirebaseCommandProtocol {
     /// Converts parallel arrays to array of item dictionaries.
     /// Input:  { "item_id": ["SKU1", "SKU2"], "item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
-    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws(FirebaseCommandError) -> [[String: Any]] {
+    private func buildItemsFromParallelArrays(_ parallelArrays: [String: DataItem]) throws(RemoteCommandError) -> [[String: Any]] {
         let arrays = extractArrays(from: parallelArrays)
         
         guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {
@@ -169,7 +169,7 @@ class LogEventCommand: FirebaseCommandProtocol {
         // Validate all arrays have the same length
         if let mismatch = arrays.first(where: { $0.value.count != itemCount }),
            let expected = arrays.first(where: { $0.value.count == itemCount }) {
-            throw FirebaseCommandError.arrayLengthMismatch(
+            throw RemoteCommandError.arrayLengthMismatch(
                 array1: expected.key,
                 count1: expected.value.count,
                 array2: mismatch.key,

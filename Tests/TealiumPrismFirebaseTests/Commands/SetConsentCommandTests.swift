@@ -22,9 +22,9 @@ final class SetConsentCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .noValidConsentSettings = commandError else {
-                XCTFail("Expected noValidConsentSettings error but got \(error)")
+            guard let commandError = error as? RemoteCommandError,
+                  case .noValidSettings = commandError else {
+                XCTFail("Expected noValidSettings error but got \(error)")
                 return
             }
         }
@@ -150,7 +150,7 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is RemoteCommandError)
         }
         XCTAssertFalse(mockFirebase.setConsentCalled)
     }

@@ -21,7 +21,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
     // MARK: - Dependencies
 
     private let firebaseInstance: FirebaseAnalyticsInterface
-    private let commandRegistry: FirebaseCommandRegistry
+    private let commandRegistry: RemoteCommandRegistry
     private let logger: LoggerProtocol?
     private var configuration: FirebaseDispatcherConfiguration
 
@@ -30,14 +30,14 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
     /// Generic `Dispatcher` initializer called by `BasicModuleFactory`.
     required convenience init?(context: TealiumContext, moduleConfiguration: DataObject) {
         self.init(firebaseInstance: FirebaseInstance(),
-                  commandRegistry: FirebaseCommandRegistry(),
+                  commandRegistry: RemoteCommandRegistry(),
                   configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
                   logger: context.logger)
     }
 
     /// Internal initializer called by the generic one and by the tests.
     init(firebaseInstance: FirebaseAnalyticsInterface,
-          commandRegistry: FirebaseCommandRegistry,
+          commandRegistry: RemoteCommandRegistry,
           configuration: FirebaseDispatcherConfiguration,
           logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance

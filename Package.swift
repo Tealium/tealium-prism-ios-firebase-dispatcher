@@ -16,16 +16,15 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/Tealium/tealium-prism-swift", from: "0.4.0"),
-        // LOCAL DEVELOPMENT: swap to local path when working on both repos:
-        // .package(path: "../tealium-prism-swift"),
+        // .package(url: "https://github.com/Tealium/tealium-prism-swift", from: "0.4.0"),
+        .package(url: "https://github.com/Tealium/tealium-swift-v3", branch: "MT-1952"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "12.0.0")
     ],
     targets: [
         .target(
             name: "TealiumPrismFirebase",
             dependencies: [
-                .product(name: "TealiumPrismCore", package: "tealium-prism-swift"),
+                .product(name: "TealiumPrismCore", package: "tealium-swift-v3"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
             path: "./Sources/TealiumPrismFirebase"

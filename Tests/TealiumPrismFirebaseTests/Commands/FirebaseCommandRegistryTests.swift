@@ -1,5 +1,5 @@
 //
-//  FirebaseCommandRegistryTests.swift
+//  RemoteCommandRegistryTests.swift
 //  TealiumPrismFirebaseTests
 //
 //  Created by Sebastian Krajna on 14/01/2026.
@@ -10,9 +10,9 @@
 @testable import TealiumPrismCore
 import XCTest
 
-final class FirebaseCommandRegistryTests: XCTestCase {
+final class RemoteCommandRegistryTests: XCTestCase {
     
-    let registry = FirebaseCommandRegistry()
+    let registry = RemoteCommandRegistry()
 
     // MARK: - Registration Tests
     
@@ -64,7 +64,7 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try registry.execute(commandName: "unknown", payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
+            guard let commandError = error as? RemoteCommandError,
                   case .commandNotFound(let name) = commandError else {
                 XCTFail("Expected commandNotFound but got \(error)")
                 return
@@ -113,7 +113,7 @@ final class FirebaseCommandRegistryTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try registry.execute(commandName: "failure", payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is RemoteCommandError)
         }
     }
 }

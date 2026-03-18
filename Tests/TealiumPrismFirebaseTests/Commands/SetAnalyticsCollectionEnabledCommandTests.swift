@@ -21,7 +21,7 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is RemoteCommandError)
         }
         XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
     }

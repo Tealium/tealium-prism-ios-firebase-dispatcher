@@ -22,7 +22,7 @@ final class LogEventCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
+            guard let commandError = error as? RemoteCommandError,
                   case .missingParameter = commandError else {
                 XCTFail("Expected missingParameter error but got \(error)")
                 return
@@ -177,7 +177,7 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
+            guard let commandError = error as? RemoteCommandError,
                   case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
                 XCTFail("Expected arrayLengthMismatch error but got \(error)")
                 return

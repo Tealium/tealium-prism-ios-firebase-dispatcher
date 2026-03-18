@@ -24,7 +24,7 @@ import TealiumPrismCore
 ///     "command_name": "resetdata"
 /// ]
 /// ```
-class ResetDataCommand: FirebaseCommandProtocol {
+class ResetDataCommand: RemoteCommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -34,7 +34,7 @@ class ResetDataCommand: FirebaseCommandProtocol {
 
     let name = FirebaseCommand.resetData.rawValue
     
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
+    func execute(payload: DataObject) throws(RemoteCommandError) {
         firebaseInstance.resetAnalyticsData()
     }
 }
