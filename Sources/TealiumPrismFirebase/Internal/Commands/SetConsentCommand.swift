@@ -47,7 +47,7 @@ class SetConsentCommand: RemoteCommandProtocol {
 
     func execute(payload: DataObject) throws(RemoteCommandError) {
         guard let consentData = payload.extractDataDictionary(path: FirebaseDestination.consentSettings.path) else {
-            throw RemoteCommandError.underlyingError(FirebaseCommandError.noValidConsentSettings)
+            throw .missingParameter(FirebaseDestination.consentSettings.path.render())
         }
 
         let consentSettings = Dictionary(uniqueKeysWithValues: consentData.compactMap { (key, value) -> (ConsentType, ConsentStatus)? in
@@ -60,7 +60,7 @@ class SetConsentCommand: RemoteCommandProtocol {
         })
 
         guard !consentSettings.isEmpty else {
-            throw RemoteCommandError.underlyingError(FirebaseCommandError.noValidConsentSettings)
+            throw .noValidParameters(expected: [FirebaseDestination.consentSettings.path.render()])
         }
 
         firebaseInstance.setConsent(consentSettings)

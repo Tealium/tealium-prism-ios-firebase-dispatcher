@@ -23,9 +23,8 @@ final class SetConsentCommandTests: XCTestCase {
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? RemoteCommandError,
-                  case .underlyingError(let underlying) = commandError,
-                  underlying is FirebaseCommandError else {
-                XCTFail("Expected FirebaseCommandError.noValidConsentSettings but got \(error)")
+                  case .missingParameter = commandError else {
+                XCTFail("Expected missingParameter error but got \(error)")
                 return
             }
         }
