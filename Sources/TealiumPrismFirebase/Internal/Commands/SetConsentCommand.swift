@@ -35,7 +35,7 @@ import FirebaseAnalytics
 /// directly, allowing future Firebase additions to work without SDK updates.
 /// Known types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`.
 /// Known values: `granted`, `denied`.
-class SetConsentCommand: RemoteCommandProtocol {
+class SetConsentCommand: CommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -45,7 +45,7 @@ class SetConsentCommand: RemoteCommandProtocol {
     
     let name = FirebaseCommand.setConsent.rawValue
 
-    func execute(payload: DataObject) throws(RemoteCommandError) {
+    func execute(payload: DataObject) throws(CommandError) {
         guard let consentData = payload.extractDataDictionary(path: FirebaseDestination.consentSettings.path) else {
             throw .missingParameter(FirebaseDestination.consentSettings.path.render())
         }

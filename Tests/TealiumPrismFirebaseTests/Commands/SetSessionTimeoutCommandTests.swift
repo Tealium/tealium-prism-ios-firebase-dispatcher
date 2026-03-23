@@ -21,7 +21,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is RemoteCommandError)
+            XCTAssert(error is CommandError)
         }
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
     }
@@ -68,7 +68,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is RemoteCommandError)
+            XCTAssert(error is CommandError)
         }
         XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
     }

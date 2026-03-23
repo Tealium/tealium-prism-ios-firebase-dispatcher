@@ -22,7 +22,7 @@ final class SetConsentCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .missingParameter = commandError else {
                 XCTFail("Expected missingParameter error but got \(error)")
                 return
@@ -150,7 +150,7 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is RemoteCommandError)
+            XCTAssert(error is CommandError)
         }
         XCTAssertFalse(mockFirebase.setConsentCalled)
     }

@@ -35,7 +35,7 @@ import TealiumPrismCore
 /// **Note**: Hashed credentials should be Base64-encoded SHA-256 hashes (44 characters).
 ///
 /// **Priority**: hashed_email > hashed_phone > email > phone (only first available is used)
-class InitiateConversionMeasurementCommand: RemoteCommandProtocol {
+class InitiateConversionMeasurementCommand: CommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -45,7 +45,7 @@ class InitiateConversionMeasurementCommand: RemoteCommandProtocol {
     
     let name = FirebaseCommand.initiateConversionMeasurement.rawValue
     
-    func execute(payload: DataObject) throws(RemoteCommandError) {
+    func execute(payload: DataObject) throws(CommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.extract(path: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
             try initiateWithHashedEmail(hashedEmail)
@@ -56,7 +56,7 @@ class InitiateConversionMeasurementCommand: RemoteCommandProtocol {
         } else if let phone = payload.extract(path: FirebaseDestination.conversionPhone.path, as: String.self) {
             try initiateWithPhone(phone)
         } else {
-            throw RemoteCommandError.noValidParameters(expected: [
+            throw CommandError.noValidParameters(expected: [
                 FirebaseDestination.conversionEmail.path.render(),
                 FirebaseDestination.conversionPhone.path.render(),
                 FirebaseDestination.conversionHashedEmail.path.render(),
@@ -67,26 +67,26 @@ class InitiateConversionMeasurementCommand: RemoteCommandProtocol {
     
     // MARK: - Private Helpers
     
-    private func initiateWithEmail(_ email: String) throws(RemoteCommandError) {
+    private func initiateWithEmail(_ email: String) throws(CommandError) {
         guard !email.isEmpty else {
-            throw RemoteCommandError.emptyParameter(FirebaseDestination.conversionEmail.path.render())
+            throw CommandError.emptyParameter(FirebaseDestination.conversionEmail.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
     }
     
-    private func initiateWithPhone(_ phone: String) throws(RemoteCommandError) {
+    private func initiateWithPhone(_ phone: String) throws(CommandError) {
         guard !phone.isEmpty else {
-            throw RemoteCommandError.emptyParameter(FirebaseDestination.conversionPhone.path.render())
+            throw CommandError.emptyParameter(FirebaseDestination.conversionPhone.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
     }
     
-    private func initiateWithHashedEmail(_ hashedEmail: String) throws(RemoteCommandError) {
+    private func initiateWithHashedEmail(_ hashedEmail: String) throws(CommandError) {
         guard !hashedEmail.isEmpty else {
-            throw RemoteCommandError.emptyParameter(FirebaseDestination.conversionHashedEmail.path.render())
+            throw CommandError.emptyParameter(FirebaseDestination.conversionHashedEmail.path.render())
         }
         guard let data = Data(base64Encoded: hashedEmail) else {
-            throw RemoteCommandError.invalidParameterType(
+            throw CommandError.invalidParameterType(
                 parameter: FirebaseDestination.conversionHashedEmail.path.render(),
                 expectedType: "Base64-encoded SHA-256 hash"
             )
@@ -94,12 +94,12 @@ class InitiateConversionMeasurementCommand: RemoteCommandProtocol {
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: data)
     }
     
-    private func initiateWithHashedPhone(_ hashedPhone: String) throws(RemoteCommandError) {
+    private func initiateWithHashedPhone(_ hashedPhone: String) throws(CommandError) {
         guard !hashedPhone.isEmpty else {
-            throw RemoteCommandError.emptyParameter(FirebaseDestination.conversionHashedPhone.path.render())
+            throw CommandError.emptyParameter(FirebaseDestination.conversionHashedPhone.path.render())
         }
         guard let data = Data(base64Encoded: hashedPhone) else {
-            throw RemoteCommandError.invalidParameterType(
+            throw CommandError.invalidParameterType(
                 parameter: FirebaseDestination.conversionHashedPhone.path.render(),
                 expectedType: "Base64-encoded SHA-256 hash"
             )

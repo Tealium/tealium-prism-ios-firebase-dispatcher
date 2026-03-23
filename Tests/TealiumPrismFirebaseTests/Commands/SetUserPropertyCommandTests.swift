@@ -21,7 +21,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is RemoteCommandError)
+            XCTAssert(error is CommandError)
         }
         XCTAssertFalse(mockFirebase.setUserPropertyCalled)
     }
@@ -32,7 +32,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is RemoteCommandError)
+            XCTAssert(error is CommandError)
         }
     }
     
@@ -74,7 +74,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .emptyArray = commandError else {
                 XCTFail("Expected emptyArray error but got \(error)")
                 return
@@ -89,7 +89,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .arrayLengthMismatch = commandError else {
                 XCTFail("Expected arrayLengthMismatch error but got \(error)")
                 return

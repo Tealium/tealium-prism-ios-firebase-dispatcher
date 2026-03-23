@@ -13,7 +13,7 @@ import TealiumPrismCore
 // MARK: - Firebase Commands
 
 /// Type-safe Firebase Analytics commands for use with `FirebaseMappings.mapCommand(_:)`.
-public enum FirebaseCommand: String {
+public enum FirebaseCommand: String, CommandNamed {
     case logEvent = "logevent"
     case setUserId = "setuserid"
     case setUserProperty = "setuserproperty"
@@ -23,6 +23,8 @@ public enum FirebaseCommand: String {
     case setSessionTimeout = "setsessiontimeout"
     case setAnalyticsCollectionEnabled = "setanalyticscollectionenabled"
     case initiateConversionMeasurement = "initiateconversionmeasurement"
+
+    public var commandName: String { rawValue }
 }
 
 // MARK: - Firebase Destinations
@@ -31,7 +33,7 @@ public enum FirebaseCommand: String {
 ///
 /// Each case maps to a specific key or path in the Firebase command payload.
 /// Use with `mapFrom(_:to:)`, `mapConstant(_:to:)`, and `keep(_:)`.
-public enum FirebaseDestination: ReferenceContainerConvertible {
+public enum FirebaseDestination: JSONObjectPathConvertible {
 
     // MARK: LogEvent
 
@@ -106,57 +108,57 @@ public enum FirebaseDestination: ReferenceContainerConvertible {
     /// The hashed phone number for conversion measurement.
     case conversionHashedPhone
 
-    public func asReferenceContainer() -> ReferenceContainer {
+    public var path: JSONObjectPath {
         switch self {
         // LogEvent
         case .eventName:
-            return ReferenceContainer(key: "event_name")
+            JSONPath["event_name"]
         case .eventParams:
-            return ReferenceContainer(key: "parameters")
+            JSONPath["parameters"]
         case .eventParam(let param):
-            return ReferenceContainer(path: JSONPath["parameters"][param])
+            JSONPath["parameters"][param]
         case .itemParam(let param):
-            return ReferenceContainer(path: JSONPath["parameters"][AnalyticsParameterItems][param])
+            JSONPath["parameters"][AnalyticsParameterItems][param]
 
         // SetUserId
         case .userId:
-            return ReferenceContainer(key: "user_id")
+            JSONPath["user_id"]
 
         // SetUserProperty
         case .userPropertyName:
-            return ReferenceContainer(key: "property_name")
+            JSONPath["property_name"]
         case .userPropertyValue:
-            return ReferenceContainer(key: "property_value")
+            JSONPath["property_value"]
 
         // SetDefaultParameters
         case .defaultParams:
-            return ReferenceContainer(key: "parameters")
+            JSONPath["parameters"]
         case .defaultParam(let name):
-            return ReferenceContainer(path: JSONPath["parameters"][name])
+            JSONPath["parameters"][name]
 
         // SetConsent
         case .consentSettings:
-            return ReferenceContainer(key: "consent_settings")
+            JSONPath["consent_settings"]
         case .consentSetting(let type):
-            return ReferenceContainer(path: JSONPath["consent_settings"][type.rawValue])
+            JSONPath["consent_settings"][type.rawValue]
 
         // SetSessionTimeout
         case .sessionTimeout:
-            return ReferenceContainer(key: "session_timeout_seconds")
+            JSONPath["session_timeout_seconds"]
 
         // SetAnalyticsCollectionEnabled
         case .analyticsEnabled:
-            return ReferenceContainer(key: "analytics_collection_enabled")
+            JSONPath["analytics_collection_enabled"]
 
         // InitiateConversionMeasurement
         case .conversionEmail:
-            return ReferenceContainer(key: "email_address")
+            JSONPath["email_address"]
         case .conversionPhone:
-            return ReferenceContainer(key: "phone_number")
+            JSONPath["phone_number"]
         case .conversionHashedEmail:
-            return ReferenceContainer(key: "hashed_email_address")
+            JSONPath["hashed_email_address"]
         case .conversionHashedPhone:
-            return ReferenceContainer(key: "hashed_phone_number")
+            JSONPath["hashed_phone_number"]
         }
     }
 }
@@ -178,6 +180,6 @@ public enum FirebaseDestination: ReferenceContainerConvertible {
 ///     }
 /// })
 /// ```
-public class FirebaseMappings: RemoteCommandMappingsBuilder<FirebaseCommand, FirebaseDestination> {
+public class FirebaseMappings: CommandMappingsBuilder<FirebaseCommand, FirebaseDestination> {
     required public init() { super.init() }
 }

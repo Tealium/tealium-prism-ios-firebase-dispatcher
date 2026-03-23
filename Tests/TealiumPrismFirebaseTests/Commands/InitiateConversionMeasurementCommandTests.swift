@@ -22,7 +22,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         let payload: DataObject = [:]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .noValidParameters = commandError else {
                 XCTFail("Expected noValidParameters error but got \(error)")
                 return
@@ -48,7 +48,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
@@ -75,7 +75,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
@@ -107,7 +107,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
@@ -129,7 +129,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
             ]
             
             XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-                guard let commandError = error as? RemoteCommandError,
+                guard let commandError = error as? CommandError,
                       case .invalidParameterType = commandError else {
                     XCTFail("Expected invalidParameterType error for '\(invalidHash)' but got \(error)")
                     return
@@ -178,7 +178,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
@@ -195,7 +195,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? RemoteCommandError,
+            guard let commandError = error as? CommandError,
                   case .invalidParameterType = commandError else {
                 XCTFail("Expected invalidParameterType error but got \(error)")
                 return

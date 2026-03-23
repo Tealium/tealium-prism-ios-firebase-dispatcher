@@ -41,7 +41,7 @@ import TealiumPrismCore
 ///     "property_value": ["premium", "expert"]
 /// ]
 /// ```
-class SetUserPropertyCommand: RemoteCommandProtocol {
+class SetUserPropertyCommand: CommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -51,11 +51,11 @@ class SetUserPropertyCommand: RemoteCommandProtocol {
 
     let name = FirebaseCommand.setUserProperty.rawValue
     
-    func execute(payload: DataObject) throws(RemoteCommandError) {
+    func execute(payload: DataObject) throws(CommandError) {
         let properties = try extractNamesAndValues(payload: payload)
         
         guard !properties.isEmpty else {
-            throw RemoteCommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
+            throw CommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
         }
         
         // Set each property
@@ -68,7 +68,7 @@ class SetUserPropertyCommand: RemoteCommandProtocol {
     
     /// Extracts property names and values from the payload.
     /// Automatically handles both single values and arrays.
-    private func extractNamesAndValues(payload: DataObject) throws(RemoteCommandError) -> [(name: String, value: String?)] {
+    private func extractNamesAndValues(payload: DataObject) throws(CommandError) -> [(name: String, value: String?)] {
         guard let namesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyName.path),
               let valuesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyValue.path) else {
             return []
@@ -79,11 +79,11 @@ class SetUserPropertyCommand: RemoteCommandProtocol {
         let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.get(as: String.self)]
 
         guard !namesArray.isEmpty else {
-            throw RemoteCommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())
+            throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())
         }
 
         guard namesArray.count == valuesArray.count else {
-            throw RemoteCommandError.arrayLengthMismatch(
+            throw CommandError.arrayLengthMismatch(
                 array1: FirebaseDestination.userPropertyName.path.render(),
                 count1: namesArray.count,
                 array2: FirebaseDestination.userPropertyValue.path.render(),

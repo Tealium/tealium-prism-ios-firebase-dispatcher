@@ -10,23 +10,23 @@
 @testable import TealiumPrismCore
 import Foundation
 
-/// Mock implementation of RemoteCommandProtocol for testing command execution.
+/// Mock implementation of CommandProtocol for testing command execution.
 /// Tracks execution calls and can be configured to succeed or throw an error.
-class MockCommand: RemoteCommandProtocol {
+class MockCommand: CommandProtocol {
     
     let name: String
-    let errorToThrow: RemoteCommandError?
+    let errorToThrow: CommandError?
 
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
 
-    init(name: String, errorToThrow: RemoteCommandError? = nil) {
+    init(name: String, errorToThrow: CommandError? = nil) {
         self.name = name
         self.errorToThrow = errorToThrow
     }
 
-    func execute(payload: DataObject) throws(RemoteCommandError) {
+    func execute(payload: DataObject) throws(CommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1

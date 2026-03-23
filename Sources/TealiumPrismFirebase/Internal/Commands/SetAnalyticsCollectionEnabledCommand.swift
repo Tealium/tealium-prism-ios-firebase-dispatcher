@@ -25,7 +25,7 @@ import TealiumPrismCore
 ///     "analytics_collection_enabled": true
 /// ]
 /// ```
-class SetAnalyticsCollectionEnabledCommand: RemoteCommandProtocol {
+class SetAnalyticsCollectionEnabledCommand: CommandProtocol {
     
     private let firebaseInstance: FirebaseAnalyticsInterface
 
@@ -35,9 +35,9 @@ class SetAnalyticsCollectionEnabledCommand: RemoteCommandProtocol {
     
     let name = FirebaseCommand.setAnalyticsCollectionEnabled.rawValue
     
-    func execute(payload: DataObject) throws(RemoteCommandError) {
+    func execute(payload: DataObject) throws(CommandError) {
         guard let enabled = payload.extractConvertible(path: FirebaseDestination.analyticsEnabled.path, converter: LenientConverters.bool) else {
-            throw RemoteCommandError.invalidParameterType(
+            throw CommandError.invalidParameterType(
                 parameter: FirebaseDestination.analyticsEnabled.path.render(),
                 expectedType: "boolean (true/false)"
             )

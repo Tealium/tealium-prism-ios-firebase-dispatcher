@@ -21,7 +21,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
     // MARK: - Dependencies
 
     private let firebaseInstance: FirebaseAnalyticsInterface
-    private let commandRegistry: RemoteCommandRegistry
+    private let commandRegistry: CommandRegistry
     private let logger: LoggerProtocol?
     private var configuration: FirebaseDispatcherConfiguration
 
@@ -29,15 +29,18 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
 
     /// Generic `Dispatcher` initializer called by `BasicModuleFactory`.
     required convenience init?(context: TealiumContext, moduleConfiguration: DataObject) {
-        self.init(firebaseInstance: FirebaseInstance(),
-                  commandRegistry: RemoteCommandRegistry(),
-                  configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
-                  logger: context.logger)
+        let firebaseInstance = FirebaseInstance()
+        self.init(
+            firebaseInstance: firebaseInstance,
+            commandRegistry: CommandRegistry(commands: Self.makeCommands(firebaseInstance: firebaseInstance)),
+            configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
+            logger: context.logger
+        )
     }
 
     /// Internal initializer called by the generic one and by the tests.
     init(firebaseInstance: FirebaseAnalyticsInterface,
-          commandRegistry: RemoteCommandRegistry,
+          commandRegistry: CommandRegistry,
           configuration: FirebaseDispatcherConfiguration,
           logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
@@ -45,17 +48,13 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
         self.configuration = configuration
         self.logger = logger
 
-        // Apply initial configuration settings
         applyConfigurationSettings(configuration)
-
-        // Register commands after configuration is applied
-        registerCommands()
     }
 
-    // MARK: - Command Registration
+    // MARK: - Command Factory
 
-    private func registerCommands() {
-        commandRegistry.registerAll([
+    private static func makeCommands(firebaseInstance: FirebaseAnalyticsInterface) -> [CommandProtocol] {
+        [
             SetSessionTimeoutCommand(firebaseInstance: firebaseInstance),
             SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
             LogEventCommand(firebaseInstance: firebaseInstance),
@@ -65,7 +64,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
             ResetDataCommand(firebaseInstance: firebaseInstance),
             SetConsentCommand(firebaseInstance: firebaseInstance),
             InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance)
-        ])
+        ]
     }
 
     // MARK: - Dispatcher Protocol
