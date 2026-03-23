@@ -17,7 +17,7 @@ let package = Package(
     ],
     dependencies: [
         // .package(url: "https://github.com/Tealium/tealium-prism-swift", from: "0.4.0"),
-        .package(url: "https://github.com/Tealium/tealium-swift-v3", branch: "MT-1952"),
+        .package(url: "https://github.com/Tealium/tealium-swift-v3", branch: "command-api-cleanup"),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "12.0.0")
     ],
     targets: [
