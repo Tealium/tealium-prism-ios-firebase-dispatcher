@@ -15,7 +15,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     let mockFirebase = MockFirebaseAnalytics()
     lazy var dispatcher = FirebaseDispatcher(
         firebaseInstance: mockFirebase,
-        commandRegistry: CommandRegistry(),
+        commandRegistry: CommandRegistry(commands: FirebaseDispatcher.makeCommands(firebaseInstance: mockFirebase)),
         configuration: FirebaseDispatcherConfiguration(configuration: [:]),
         logger: nil
     )
@@ -211,7 +211,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: CommandRegistry(),
+            commandRegistry: CommandRegistry(commands: []),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
@@ -228,7 +228,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: CommandRegistry(),
+            commandRegistry: CommandRegistry(commands: []),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
@@ -245,7 +245,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: CommandRegistry(),
+            commandRegistry: CommandRegistry(commands: []),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
@@ -264,7 +264,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: CommandRegistry(),
+            commandRegistry: CommandRegistry(commands: []),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
@@ -283,7 +283,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: CommandRegistry(),
+            commandRegistry: CommandRegistry(commands: []),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )

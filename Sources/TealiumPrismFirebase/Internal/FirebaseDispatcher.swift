@@ -53,7 +53,7 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
 
     // MARK: - Command Factory
 
-    private static func makeCommands(firebaseInstance: FirebaseAnalyticsInterface) -> [CommandProtocol] {
+    static func makeCommands(firebaseInstance: FirebaseAnalyticsInterface) -> [CommandProtocol] {
         [
             SetSessionTimeoutCommand(firebaseInstance: firebaseInstance),
             SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
