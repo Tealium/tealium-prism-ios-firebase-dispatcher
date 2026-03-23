@@ -32,7 +32,6 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
         let firebaseInstance = FirebaseInstance()
         self.init(
             firebaseInstance: firebaseInstance,
-            commandRegistry: CommandRegistry(commands: Self.makeCommands(firebaseInstance: firebaseInstance)),
             configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
             logger: context.logger
         )
@@ -40,31 +39,24 @@ class FirebaseDispatcher: Dispatcher, BasicModule {
 
     /// Internal initializer called by the generic one and by the tests.
     init(firebaseInstance: FirebaseAnalyticsInterface,
-          commandRegistry: CommandRegistry,
-          configuration: FirebaseDispatcherConfiguration,
-          logger: LoggerProtocol?) {
+         configuration: FirebaseDispatcherConfiguration,
+         logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
-        self.commandRegistry = commandRegistry
+        self.commandRegistry = CommandRegistry(commands: [
+                SetSessionTimeoutCommand(firebaseInstance: firebaseInstance),
+                SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
+                LogEventCommand(firebaseInstance: firebaseInstance),
+                SetUserPropertyCommand(firebaseInstance: firebaseInstance),
+                SetDefaultParametersCommand(firebaseInstance: firebaseInstance),
+                SetUserIdCommand(firebaseInstance: firebaseInstance),
+                ResetDataCommand(firebaseInstance: firebaseInstance),
+                SetConsentCommand(firebaseInstance: firebaseInstance),
+                InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance)
+            ])
         self.configuration = configuration
         self.logger = logger
 
         applyConfigurationSettings(configuration)
-    }
-
-    // MARK: - Command Factory
-
-    static func makeCommands(firebaseInstance: FirebaseAnalyticsInterface) -> [CommandProtocol] {
-        [
-            SetSessionTimeoutCommand(firebaseInstance: firebaseInstance),
-            SetAnalyticsCollectionEnabledCommand(firebaseInstance: firebaseInstance),
-            LogEventCommand(firebaseInstance: firebaseInstance),
-            SetUserPropertyCommand(firebaseInstance: firebaseInstance),
-            SetDefaultParametersCommand(firebaseInstance: firebaseInstance),
-            SetUserIdCommand(firebaseInstance: firebaseInstance),
-            ResetDataCommand(firebaseInstance: firebaseInstance),
-            SetConsentCommand(firebaseInstance: firebaseInstance),
-            InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance)
-        ]
     }
 
     // MARK: - Dispatcher Protocol
