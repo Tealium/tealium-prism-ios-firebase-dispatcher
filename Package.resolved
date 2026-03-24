@@ -123,17 +123,8 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": null,
-          "revision": "392dd6058624d9f6c5b4c769d165ddd8c7293394",
-          "version": "0.15.4"
-        }
-      },
-      {
-        "package": "swift-toolchain-sqlite",
-        "repositoryURL": "https://github.com/swiftlang/swift-toolchain-sqlite",
-        "state": {
-          "branch": null,
-          "revision": "b626d3002773b1a1304166643e7f118f724b2132",
-          "version": "1.0.4"
+          "revision": "964c300fb0736699ce945c9edb56ecd62eba27a3",
+          "version": "0.16.0"
         }
       },
       {
@@ -141,7 +132,7 @@
         "repositoryURL": "https://github.com/Tealium/tealium-swift-v3",
         "state": {
           "branch": "command-api-cleanup",
-          "revision": "7d2e40bf09a1bd60b06ce5143cd84f08cc1d5024",
+          "revision": "1382a4dda53c389bf4bc10325837097c5f749f32",
           "version": null
         }
       }
