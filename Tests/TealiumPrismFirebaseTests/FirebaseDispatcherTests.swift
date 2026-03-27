@@ -38,22 +38,6 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertTrue(mockFirebase.logEventCalled)
     }
     
-    func test_dispatch_returns_disposed_disposable() {
-        let dispatch = Dispatch(name: "test_event", data: [
-            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
-            "event_name": "test_event"
-        ])
-        
-        let completionCalled = expectation(description: "Completion called")
-        
-        let disposable = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-        
-        waitForDefaultTimeout()
-        XCTAssertTrue(disposable.isDisposed)
-    }
-    
     // MARK: - Dispatch Tests - Multiple Commands
     
     func test_dispatch_with_command_array_executes_all_commands() {

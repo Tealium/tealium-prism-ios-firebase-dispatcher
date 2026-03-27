@@ -10,7 +10,7 @@ import Foundation
 import TealiumPrismCore
 
 /// Firebase Analytics Dispatcher for Tealium Prism SDK
-class FirebaseDispatcher: CommandDispatcher {
+class FirebaseDispatcher: CommandDispatcher, BasicModule {
 
     // MARK: - Firebase-specific
 
@@ -54,12 +54,13 @@ class FirebaseDispatcher: CommandDispatcher {
         applySettings(configuration)
     }
 
-    // MARK: - CommandDispatcher
+    // MARK: - Module
 
-    override func applyConfigurationSettings(_ configuration: DataObject) {
+    func updateConfiguration(_ configuration: DataObject) -> Self? {
         let config = FirebaseDispatcherConfiguration(configuration: configuration)
         self.configuration = config
         applySettings(config)
+        return self
     }
 
     // MARK: - Private

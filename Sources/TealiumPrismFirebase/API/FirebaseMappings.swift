@@ -24,7 +24,6 @@ public enum FirebaseCommand: String, CommandNamed {
     case setAnalyticsCollectionEnabled = "setanalyticscollectionenabled"
     case initiateConversionMeasurement = "initiateconversionmeasurement"
 
-    public var commandName: String { rawValue }
 }
 
 // MARK: - Firebase Destinations

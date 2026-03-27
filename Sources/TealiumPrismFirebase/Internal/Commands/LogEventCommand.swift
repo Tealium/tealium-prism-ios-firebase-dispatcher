@@ -52,17 +52,16 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
-class LogEventCommand: CommandProtocol {
-    
+class LogEventCommand: SyncCommand {
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
+        super.init(name: FirebaseCommand.logEvent.rawValue)
     }
-    
-    let name = FirebaseCommand.logEvent.rawValue
 
-    func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws(CommandError) {
         let eventName = try extractEventName(from: payload)
         let parameters = try buildParameters(from: payload)
         firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)

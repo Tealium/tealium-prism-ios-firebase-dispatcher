@@ -35,17 +35,16 @@ import TealiumPrismCore
 /// **Note**: Hashed credentials should be Base64-encoded SHA-256 hashes (44 characters).
 ///
 /// **Priority**: hashed_email > hashed_phone > email > phone (only first available is used)
-class InitiateConversionMeasurementCommand: CommandProtocol {
-    
+class InitiateConversionMeasurementCommand: SyncCommand {
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
+        super.init(name: FirebaseCommand.initiateConversionMeasurement.rawValue)
     }
-    
-    let name = FirebaseCommand.initiateConversionMeasurement.rawValue
-    
-    func execute(payload: DataObject) throws(CommandError) {
+
+    override func execute(payload: DataObject) throws(CommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.extract(path: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
             try initiateWithHashedEmail(hashedEmail)

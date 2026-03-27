@@ -26,17 +26,16 @@ import TealiumPrismCore
 ///     "user_id": "USER_12345"  // Empty string clears user ID
 /// ]
 /// ```
-class SetUserIdCommand: CommandProtocol {
-    
+class SetUserIdCommand: SyncCommand {
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
+        super.init(name: FirebaseCommand.setUserId.rawValue)
     }
 
-    let name = FirebaseCommand.setUserId.rawValue
-    
-    func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws(CommandError) {
         guard let userId = payload.extract(path: FirebaseDestination.userId.path, as: String.self) else {
             throw CommandError.missingParameter(FirebaseDestination.userId.path.render())
         }

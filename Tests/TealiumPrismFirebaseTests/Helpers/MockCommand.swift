@@ -10,11 +10,10 @@
 @testable import TealiumPrismCore
 import Foundation
 
-/// Mock implementation of CommandProtocol for testing command execution.
+/// Mock implementation of SyncCommand for testing command execution.
 /// Tracks execution calls and can be configured to succeed or throw an error.
-class MockCommand: CommandProtocol {
-    
-    let name: String
+class MockCommand: SyncCommand {
+
     let errorToThrow: CommandError?
 
     var executeCalled = false
@@ -22,11 +21,11 @@ class MockCommand: CommandProtocol {
     var executeCallCount = 0
 
     init(name: String, errorToThrow: CommandError? = nil) {
-        self.name = name
         self.errorToThrow = errorToThrow
+        super.init(name: name)
     }
 
-    func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws(CommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1

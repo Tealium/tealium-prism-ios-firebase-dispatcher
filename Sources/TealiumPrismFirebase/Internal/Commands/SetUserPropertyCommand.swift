@@ -41,17 +41,16 @@ import TealiumPrismCore
 ///     "property_value": ["premium", "expert"]
 /// ]
 /// ```
-class SetUserPropertyCommand: CommandProtocol {
-    
+class SetUserPropertyCommand: SyncCommand {
+
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
+        super.init(name: FirebaseCommand.setUserProperty.rawValue)
     }
 
-    let name = FirebaseCommand.setUserProperty.rawValue
-    
-    func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws(CommandError) {
         let properties = try extractNamesAndValues(payload: payload)
         
         guard !properties.isEmpty else {
