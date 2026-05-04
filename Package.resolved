@@ -131,8 +131,8 @@
         "package": "TealiumPrism",
         "repositoryURL": "https://github.com/Tealium/tealium-swift-v3",
         "state": {
-          "branch": "command-api-cleanup",
-          "revision": "1382a4dda53c389bf4bc10325837097c5f749f32",
+          "branch": "dev",
+          "revision": "74f492ac84ed789985e203b7657f15c7317a5d13",
           "version": null
         }
       }

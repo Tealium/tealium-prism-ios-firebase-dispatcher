@@ -67,19 +67,20 @@ final class FirebaseDispatcherTests: XCTestCase {
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "event_one"
         ])
-        
+
         let dispatch2 = Dispatch(name: "event2", data: [
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "event_two"
         ])
-        
+
         let completionCalled = expectation(description: "Completion called")
-        
+        completionCalled.expectedFulfillmentCount = 2
+
         _ = dispatcher.dispatch([dispatch1, dispatch2]) { processedDispatches in
-            XCTAssertEqual(processedDispatches.count, 2)
+            XCTAssertEqual(processedDispatches.count, 1)
             completionCalled.fulfill()
         }
-        
+
         waitForDefaultTimeout()
         XCTAssertEqual(mockFirebase.logEventCallCount, 2)
     }

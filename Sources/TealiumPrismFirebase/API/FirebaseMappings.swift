@@ -13,7 +13,7 @@ import TealiumPrismCore
 // MARK: - Firebase Commands
 
 /// Type-safe Firebase Analytics commands for use with `FirebaseMappings.mapCommand(_:)`.
-public enum FirebaseCommand: String, CommandNamed {
+public enum FirebaseCommand: String, CommandName {
     case logEvent = "logevent"
     case setUserId = "setuserid"
     case setUserProperty = "setuserproperty"

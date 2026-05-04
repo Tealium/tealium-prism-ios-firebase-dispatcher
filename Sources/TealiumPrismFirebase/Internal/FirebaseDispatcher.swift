@@ -24,6 +24,7 @@ class FirebaseDispatcher: CommandDispatcher, BasicModule {
         self.init(
             firebaseInstance: FirebaseInstance(),
             configuration: FirebaseDispatcherConfiguration(configuration: moduleConfiguration),
+            queue: context.queue,
             logger: context.logger
         )
     }
@@ -31,6 +32,7 @@ class FirebaseDispatcher: CommandDispatcher, BasicModule {
     /// Internal initializer called by the generic one and by the tests.
     init(firebaseInstance: FirebaseAnalyticsInterface,
          configuration: FirebaseDispatcherConfiguration,
+         queue: TealiumQueue = .worker,
          logger: LoggerProtocol?) {
         self.firebaseInstance = firebaseInstance
         self.configuration = configuration
@@ -49,6 +51,7 @@ class FirebaseDispatcher: CommandDispatcher, BasicModule {
                 InitiateConversionMeasurementCommand(firebaseInstance: firebaseInstance)
             ],
             logCategory: LogCategory.firebase,
+            queue: queue,
             logger: logger
         )
         applySettings(configuration)
