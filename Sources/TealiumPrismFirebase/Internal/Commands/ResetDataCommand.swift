@@ -30,7 +30,7 @@ class ResetDataCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.resetData.rawValue)
+        super.init(name: FirebaseCommand.resetData.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

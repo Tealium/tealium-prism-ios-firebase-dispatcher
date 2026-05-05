@@ -32,11 +32,11 @@ class SetUserIdCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setUserId.rawValue)
+        super.init(name: FirebaseCommand.setUserId.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        guard let userId = payload.extract(path: FirebaseDestination.userId.path, as: String.self) else {
+        guard let userId = payload.extractConvertible(path: FirebaseDestination.userId.path, converter: LenientConverters.string) else {
             throw CommandError.missingParameter(FirebaseDestination.userId.path.render())
         }
         

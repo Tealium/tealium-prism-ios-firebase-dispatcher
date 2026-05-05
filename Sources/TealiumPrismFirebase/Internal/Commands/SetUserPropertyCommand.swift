@@ -47,7 +47,7 @@ class SetUserPropertyCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setUserProperty.rawValue)
+        super.init(name: FirebaseCommand.setUserProperty.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
@@ -74,8 +74,8 @@ class SetUserPropertyCommand: SyncCommand {
         }
 
         // Try to extract as arrays first, fallback to single values
-        let namesArray = namesItem.getArray(of: String.self) ?? [namesItem.get(as: String.self)].compactMap { $0 }
-        let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.get(as: String.self)]
+        let namesArray = namesItem.getArray(of: String.self) ?? [namesItem.getConvertible(converter: LenientConverters.string)].compactMap { $0 }
+        let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.getConvertible(converter: LenientConverters.string)]
 
         guard !namesArray.isEmpty else {
             throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())

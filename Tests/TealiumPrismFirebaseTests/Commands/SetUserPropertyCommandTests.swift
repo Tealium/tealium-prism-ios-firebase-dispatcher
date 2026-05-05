@@ -176,11 +176,37 @@ final class SetUserPropertyCommandTests: XCTestCase {
             "property_name": ["prop_a", nil, "prop_c"] as [String?],
             "property_value": ["value_a", nil, "value_c"] as [String?]
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.setUserPropertyCalls.count, 2)
         let propDict = Dictionary(uniqueKeysWithValues: mockFirebase.setUserPropertyCalls.map { ($0.name, $0.value) })
         XCTAssertEqual(propDict["prop_a"], "value_a")
         XCTAssertEqual(propDict["prop_c"], "value_c")
+    }
+
+    // MARK: - Lenient Conversion Tests
+
+    func test_execute_sets_property_with_numeric_name_and_value() {
+        let payload: DataObject = [
+            "property_name": 42,
+            "property_value": 99
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.setUserPropertyCalled)
+        XCTAssertEqual(mockFirebase.lastUserPropertyName, "42")
+        XCTAssertEqual(mockFirebase.lastUserPropertyValue, "99")
+    }
+
+    func test_execute_sets_property_with_double_value() {
+        let payload: DataObject = [
+            "property_name": "score",
+            "property_value": 9.5
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.setUserPropertyCalled)
+        XCTAssertEqual(mockFirebase.lastUserPropertyName, "score")
+        XCTAssertEqual(mockFirebase.lastUserPropertyValue, "9.5")
     }
 }

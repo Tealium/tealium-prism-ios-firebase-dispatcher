@@ -41,7 +41,7 @@ class SetConsentCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setConsent.rawValue)
+        super.init(name: FirebaseCommand.setConsent.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

@@ -31,7 +31,7 @@ class SetSessionTimeoutCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setSessionTimeout.rawValue)
+        super.init(name: FirebaseCommand.setSessionTimeout.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

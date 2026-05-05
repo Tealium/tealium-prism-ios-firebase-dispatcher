@@ -41,7 +41,7 @@ class InitiateConversionMeasurementCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.initiateConversionMeasurement.rawValue)
+        super.init(name: FirebaseCommand.initiateConversionMeasurement.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

@@ -31,7 +31,7 @@ class SetAnalyticsCollectionEnabledCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setAnalyticsCollectionEnabled.rawValue)
+        super.init(name: FirebaseCommand.setAnalyticsCollectionEnabled.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

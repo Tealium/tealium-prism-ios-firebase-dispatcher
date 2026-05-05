@@ -58,7 +58,7 @@ class LogEventCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.logEvent.rawValue)
+        super.init(name: FirebaseCommand.logEvent.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
@@ -68,7 +68,7 @@ class LogEventCommand: SyncCommand {
     }
 
     private func extractEventName(from payload: DataObject) throws(CommandError) -> String {
-        guard let rawEventName = payload.extract(path: FirebaseDestination.eventName.path, as: String.self) else {
+        guard let rawEventName = payload.extractConvertible(path: FirebaseDestination.eventName.path, converter: LenientConverters.string) else {
             throw CommandError.missingParameter(FirebaseDestination.eventName.path.render())
         }
         

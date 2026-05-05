@@ -36,7 +36,7 @@ class SetDefaultParametersCommand: SyncCommand {
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
-        super.init(name: FirebaseCommand.setDefaultParameters.rawValue)
+        super.init(name: FirebaseCommand.setDefaultParameters.commandName)
     }
 
     override func execute(payload: DataObject) throws(CommandError) {

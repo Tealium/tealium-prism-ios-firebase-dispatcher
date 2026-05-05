@@ -241,6 +241,28 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterCurrency] as? String, "USD")
     }
 
+    // MARK: - Lenient Conversion Tests
+
+    func test_execute_logs_event_with_numeric_event_name() {
+        let payload: DataObject = [
+            "event_name": 42
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.logEventCalled)
+        XCTAssertEqual(mockFirebase.lastEventName, "42")
+    }
+
+    func test_execute_logs_event_with_double_event_name() {
+        let payload: DataObject = [
+            "event_name": 3.14
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.logEventCalled)
+        XCTAssertEqual(mockFirebase.lastEventName, "3.14")
+    }
+
     func test_execute_logs_event_with_items_array_of_objects_mixed_types() {
         // Test array of objects with various types
         let itemsArray: [DataObject] = [

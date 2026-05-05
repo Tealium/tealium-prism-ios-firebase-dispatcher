@@ -43,15 +43,37 @@ final class SetUserIdCommandTests: XCTestCase {
     }
     
     // MARK: - Clear User ID Tests
-    
+
     func test_execute_clears_user_id_with_empty_string() {
         let payload: DataObject = [
             "user_id": ""
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertTrue(mockFirebase.setUserIdCalled)
         XCTAssertNil(mockFirebase.lastUserId)
     }
-    
+
+    // MARK: - Lenient Conversion Tests
+
+    func test_execute_sets_integer_user_id_as_string() {
+        let payload: DataObject = [
+            "user_id": 12345
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.lastUserId, "12345")
+    }
+
+    func test_execute_sets_double_user_id_as_string() {
+        let payload: DataObject = [
+            "user_id": 123.0
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.lastUserId, "123")
+    }
+
 }
