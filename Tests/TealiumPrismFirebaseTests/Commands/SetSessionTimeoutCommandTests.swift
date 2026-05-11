@@ -23,54 +23,54 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
-    
+
     // MARK: - Double Value Tests
-    
+
     func test_execute_sets_timeout_from_double() {
         let payload: DataObject = [
             "session_timeout_seconds": 1800.5
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
-    
+
     // MARK: - Int Value Tests
-    
+
     func test_execute_sets_timeout_from_int() {
         let payload: DataObject = [
             "session_timeout_seconds": 3600
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
     }
-    
+
     // MARK: - String Value Tests
-    
+
     func test_execute_sets_timeout_from_string() {
         let payload: DataObject = [
             "session_timeout_seconds": "1800.5"
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
-    
+
     func test_execute_throws_error_for_invalid_string() {
         let payload: DataObject = [
             "session_timeout_seconds": "invalid"
         ]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
     
 }

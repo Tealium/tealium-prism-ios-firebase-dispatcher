@@ -38,15 +38,15 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastEmailAddress, "user@example.com")
     }
-    
+
     func test_execute_with_empty_email_address_throws_error() {
         let payload: DataObject = [
             "email_address": ""
         ]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
@@ -54,7 +54,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
     
     // MARK: - Phone Number Tests
@@ -65,15 +65,15 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 1)
         XCTAssertEqual(mockFirebase.lastPhoneNumber, "+1234567890")
     }
-    
+
     func test_execute_with_empty_phone_number_throws_error() {
         let payload: DataObject = [
             "phone_number": ""
         ]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
@@ -81,7 +81,7 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
     
     // MARK: - Hashed Email Address Tests
@@ -97,15 +97,15 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
-    
+
     func test_execute_with_empty_hashed_email_address_throws_error() {
         let payload: DataObject = [
             "hashed_email_address": ""
         ]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
@@ -113,9 +113,9 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
     }
-    
+
     func test_execute_with_invalid_hashed_email_throws_error() {
         // Test invalid Base64 strings that should fail decoding
         let invalidHashes = [
@@ -135,10 +135,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                     return
                 }
             }
-            XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+            XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
         }
     }
-    
+
     func test_execute_with_normalized_gmail_hashed_email() {
         // Test with Gmail normalization scenario (like in TealiumHelper example)
         let rawEmail = "An.Email.User0125@googlemail.com"
@@ -151,10 +151,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
-    
+
     // MARK: - Hashed Phone Number Tests
     
     func test_execute_with_hashed_phone_number() {
@@ -168,15 +168,15 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data(hash))
     }
-    
+
     func test_execute_with_empty_hashed_phone_number_throws_error() {
         let payload: DataObject = [
             "hashed_phone_number": ""
         ]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? CommandError,
                   case .emptyParameter = commandError else {
@@ -184,9 +184,9 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
-    
+
     func test_execute_with_invalid_hashed_phone_throws_error() {
         // Test with invalid Base64 string
         let invalidHash = "invalidbase64!@#"
@@ -201,9 +201,9 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
-    
+
     // MARK: - Priority Tests
     
     func test_execute_prioritizes_hashed_email_over_hashed_phone() {
@@ -221,10 +221,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
-    
+
     func test_execute_prioritizes_hashed_phone_over_email() {
         let phone = "+15555551234"
         let phoneHash = SHA256.hash(data: Data(phone.utf8))
@@ -236,10 +236,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
-    
+
     func test_execute_prioritizes_email_over_phone() {
         let payload: DataObject = [
             "email_address": "user@example.com",
@@ -247,10 +247,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
-    
+
     func test_execute_full_priority_chain() {
         // All parameters provided - should use hashed_email (highest priority)
         let email = "user@example.com"
@@ -269,10 +269,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         ]
         
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementHashedEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementHashedPhoneCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
     
     // MARK: - Helper Methods

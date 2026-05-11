@@ -40,15 +40,13 @@ class SetDefaultParametersCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        // parameters is missing -> clear all default parameters
         guard let defaultParamsData = payload.extractDataDictionary(path: FirebaseDestination.defaultParams.path) else {
             firebaseInstance.setDefaultEventParameters(nil)
             return
         }
-        
+
         let defaultParams = defaultParamsData.mapValues { $0.toDataInput() }
-        
-        firebaseInstance.setDefaultEventParameters(defaultParams)
+        firebaseInstance.setDefaultEventParameters(defaultParams.isEmpty ? nil : defaultParams)
     }
 }
 

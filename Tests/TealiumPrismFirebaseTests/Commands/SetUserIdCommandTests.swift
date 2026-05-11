@@ -27,18 +27,18 @@ final class SetUserIdCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
-    
+
     // MARK: - Set User ID Tests
-    
+
     func test_execute_sets_user_id() {
         let payload: DataObject = [
             "user_id": "user@example.com"
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertEqual(mockFirebase.lastUserId, "user@example.com")
     }
     
@@ -50,7 +50,7 @@ final class SetUserIdCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertNil(mockFirebase.lastUserId)
     }
 
@@ -62,7 +62,7 @@ final class SetUserIdCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertEqual(mockFirebase.lastUserId, "12345")
     }
 
@@ -72,7 +72,7 @@ final class SetUserIdCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertEqual(mockFirebase.lastUserId, "123")
     }
 

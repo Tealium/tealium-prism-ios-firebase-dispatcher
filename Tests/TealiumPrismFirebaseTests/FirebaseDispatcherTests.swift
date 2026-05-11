@@ -35,11 +35,11 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
     }
-    
+
     // MARK: - Dispatch Tests - Multiple Commands
-    
+
     func test_dispatch_with_command_array_executes_all_commands() {
         let dispatch = Dispatch(name: "multi_command", data: [
             TealiumDataKey.commandName: [
@@ -58,8 +58,8 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
     }
     
     func test_dispatch_with_multiple_dispatches_processes_all() {
@@ -82,7 +82,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertEqual(mockFirebase.logEventCallCount, 2)
+        XCTAssertEqual(mockFirebase.loggedEvents.count, 2)
     }
     
     // MARK: - Dispatch Tests - Missing/Empty Command
@@ -100,9 +100,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
-    
+
     func test_dispatch_with_empty_command_array_does_not_execute() {
         let dispatch = Dispatch(name: "empty_commands", data: [
             TealiumDataKey.commandName: [] as [String]
@@ -116,9 +116,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
-    
+
     func test_dispatch_with_unknown_command_does_not_execute() {
         let dispatch = Dispatch(name: "unknown", data: [
             TealiumDataKey.commandName: "unknowncommand"
@@ -131,9 +131,9 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
-    
+
     // MARK: - Edge Cases
     
     func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
@@ -152,8 +152,8 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
         
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertEqual(mockFirebase.logEventCallCount, 1)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.loggedEvents.count, 1)
     }
     
     func test_dispatch_with_command_as_number_does_not_crash() {
@@ -169,7 +169,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         waitForDefaultTimeout()
         // Should complete without crashing
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
     
     // MARK: - Module Protocol Tests
@@ -199,10 +199,10 @@ final class FirebaseDispatcherTests: XCTestCase {
             logger: nil
         )
         
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .debug)
     }
-    
+
     func test_init_applies_sessionTimeout_from_configuration() {
         let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
@@ -215,10 +215,10 @@ final class FirebaseDispatcherTests: XCTestCase {
             logger: nil
         )
         
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
     }
-    
+
     func test_init_applies_analyticsEnabled_from_configuration() {
         let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
@@ -231,10 +231,10 @@ final class FirebaseDispatcherTests: XCTestCase {
             logger: nil
         )
         
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
-    
+
     func test_init_applies_all_configuration_settings() {
         let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [
@@ -249,14 +249,14 @@ final class FirebaseDispatcherTests: XCTestCase {
             logger: nil
         )
         
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .warning)
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.0)
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
-    
+
     func test_init_with_empty_configuration_does_not_apply_settings() {
         let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [:]
@@ -267,9 +267,9 @@ final class FirebaseDispatcherTests: XCTestCase {
             logger: nil
         )
         
-        XCTAssertFalse(mockFirebase.setLoggerLevelCalled)
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 0)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
     
     // MARK: - Configuration Application Tests (Update)
@@ -281,10 +281,10 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = dispatcher.updateConfiguration(newConfig)
         
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .error)
     }
-    
+
     func test_updateConfiguration_applies_sessionTimeout() {
         let newConfig: DataObject = [
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 7200.0
@@ -292,10 +292,10 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = dispatcher.updateConfiguration(newConfig)
         
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 7200.0)
     }
-    
+
     func test_updateConfiguration_applies_analyticsEnabled() {
         let newConfig: DataObject = [
             FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true
@@ -303,10 +303,10 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = dispatcher.updateConfiguration(newConfig)
         
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
-    
+
     func test_updateConfiguration_applies_all_settings() {
         let newConfig: DataObject = [
             FirebaseDispatcherConfiguration.Keys.logLevel: "info",
@@ -316,11 +316,11 @@ final class FirebaseDispatcherTests: XCTestCase {
         
         _ = dispatcher.updateConfiguration(newConfig)
         
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .info)
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 900.0)
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
 }

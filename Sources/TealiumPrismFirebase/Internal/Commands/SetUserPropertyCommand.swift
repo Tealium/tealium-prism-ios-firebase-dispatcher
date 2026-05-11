@@ -52,28 +52,21 @@ class SetUserPropertyCommand: SyncCommand {
 
     override func execute(payload: DataObject) throws(CommandError) {
         let properties = try extractNamesAndValues(payload: payload)
-        
-        guard !properties.isEmpty else {
-            throw CommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
-        }
-        
-        // Set each property
         for (name, value) in properties {
             setProperty(name: name, value: value)
         }
     }
-    
+
     // MARK: - Private Helpers
-    
-    /// Extracts property names and values from the payload.
-    /// Automatically handles both single values and arrays.
+
     private func extractNamesAndValues(payload: DataObject) throws(CommandError) -> [(name: String, value: String?)] {
-        guard let namesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyName.path),
-              let valuesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyValue.path) else {
-            return []
+        guard let namesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyName.path) else {
+            throw CommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
+        }
+        guard let valuesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyValue.path) else {
+            throw CommandError.missingParameter(FirebaseDestination.userPropertyValue.path.render())
         }
 
-        // Try to extract as arrays first, fallback to single values
         let namesArray = namesItem.getArray(of: String.self) ?? [namesItem.getConvertible(converter: LenientConverters.string)].compactMap { $0 }
         let valuesArray = valuesItem.getArray(of: String.self) ?? [valuesItem.getConvertible(converter: LenientConverters.string)]
 
@@ -90,12 +83,18 @@ class SetUserPropertyCommand: SyncCommand {
             )
         }
         
-        return zip(namesArray, valuesArray).compactMap { name, value in
+        let properties = zip(namesArray, valuesArray).compactMap { name, value -> (name: String, value: String?)? in
             guard let name else {
                 return nil
             }
             return (name, value)
         }
+
+        guard !properties.isEmpty else {
+            throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())
+        }
+
+        return properties
     }
     
     private func setProperty(name: String, value: String?) {

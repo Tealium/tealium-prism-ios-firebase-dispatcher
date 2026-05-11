@@ -312,6 +312,44 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         ])
     }
 
+    // MARK: - SetConsent Bulk Mapping Tests
+
+    func test_setConsent_bulk_mapping() {
+        let dispatch = Dispatch(name: "consent_update", type: .event, data: [
+            "consent": [
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied"
+            ] as DataObject
+        ])
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setConsent)
+            mappings.mapFrom("consent", to: .consentSettings)
+        }
+
+        XCTAssertEqual(result.payload, [
+            TealiumDataKey.commandName: FirebaseCommand.setConsent.rawValue,
+            "consent_settings": [
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied"
+            ] as DataObject
+        ])
+    }
+
+    // MARK: - Keep Mapping Tests
+
+    func test_keep_preserves_destination_as_source() {
+        let dispatch = Dispatch(name: "login", type: .event, data: [
+            "user_id": "USER_123"
+        ])
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.keep(.userId)
+        }
+
+        XCTAssertEqual(result.payload, ["user_id": "USER_123"])
+    }
+
     // MARK: - SetUserProperty Command Tests (Multiple Properties)
 
     func test_setUserProperties_basic_mapping() {

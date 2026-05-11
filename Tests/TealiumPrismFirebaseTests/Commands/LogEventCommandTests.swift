@@ -28,7 +28,7 @@ final class LogEventCommandTests: XCTestCase {
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Simple Event Tests
@@ -39,9 +39,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertEqual(mockFirebase.lastEventName, "test_event")
-        XCTAssertNil(mockFirebase.lastEventParameters)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "test_event")
+        XCTAssertNil(mockFirebase.loggedEvents.last?.parameters)
     }
 
     // MARK: - Event with Parameters Tests
@@ -55,8 +55,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterCurrency] as? String, "USD")
+        XCTAssertNotNil(mockFirebase.loggedEvents.last?.parameters)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterCurrency] as? String, "USD")
     }
 
     func test_execute_logs_event_with_numeric_parameters() {
@@ -69,9 +69,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterValue] as? Double, 99.99)
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterQuantity] as? Int, 2)
+        XCTAssertNotNil(mockFirebase.loggedEvents.last?.parameters)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterValue] as? Double, 99.99)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterQuantity] as? Int, 2)
     }
 
     func test_execute_logs_event_with_boolean_parameter() {
@@ -83,8 +83,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
-        XCTAssertEqual(mockFirebase.lastEventParameters?["custom_is_first_time"] as? Bool, true)
+        XCTAssertNotNil(mockFirebase.loggedEvents.last?.parameters)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?["custom_is_first_time"] as? Bool, true)
     }
 
     // MARK: - Items (E-commerce) Tests
@@ -108,9 +108,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
+        XCTAssertNotNil(mockFirebase.loggedEvents.last?.parameters)
 
-        guard let items = mockFirebase.lastEventParameters?[AnalyticsParameterItems] as? [[String: Any]] else {
+        guard let items = mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterItems] as? [[String: Any]] else {
             XCTFail("Items should be present in parameters under 'items' key")
             return
         }
@@ -128,8 +128,8 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertEqual(items[1][AnalyticsParameterPrice] as? Double, 70.00)
 
         // Verify other parameters are also present
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterValue] as? Double, 99.99)
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterCurrency] as? String, "USD")
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterValue] as? Double, 99.99)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterCurrency] as? String, "USD")
     }
 
     func test_execute_logs_event_with_items_mixed_types() {
@@ -150,7 +150,7 @@ final class LogEventCommandTests: XCTestCase {
 
         XCTAssertNoThrow(try command.execute(payload: payload))
 
-        guard let items = mockFirebase.lastEventParameters?[AnalyticsParameterItems] as? [[String: Any]] else {
+        guard let items = mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterItems] as? [[String: Any]] else {
             XCTFail("Items should be present under 'items' key")
             return
         }
@@ -187,7 +187,7 @@ final class LogEventCommandTests: XCTestCase {
         }
 
         // Event should not be logged
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Array of Objects Format Tests
@@ -217,9 +217,9 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertNotNil(mockFirebase.lastEventParameters)
+        XCTAssertNotNil(mockFirebase.loggedEvents.last?.parameters)
 
-        guard let items = mockFirebase.lastEventParameters?[AnalyticsParameterItems] as? [[String: Any]] else {
+        guard let items = mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterItems] as? [[String: Any]] else {
             XCTFail("Items should be present in parameters under 'items' key")
             return
         }
@@ -237,8 +237,8 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertEqual(items[1][AnalyticsParameterPrice] as? Double, 70.00)
 
         // Verify other parameters are also present
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterValue] as? Double, 99.99)
-        XCTAssertEqual(mockFirebase.lastEventParameters?[AnalyticsParameterCurrency] as? String, "USD")
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterValue] as? Double, 99.99)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterCurrency] as? String, "USD")
     }
 
     // MARK: - Lenient Conversion Tests
@@ -249,8 +249,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertEqual(mockFirebase.lastEventName, "42")
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "42")
     }
 
     func test_execute_logs_event_with_double_event_name() {
@@ -259,8 +259,8 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertEqual(mockFirebase.lastEventName, "3.14")
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "3.14")
     }
 
     func test_execute_logs_event_with_items_array_of_objects_mixed_types() {
@@ -289,7 +289,7 @@ final class LogEventCommandTests: XCTestCase {
 
         XCTAssertNoThrow(try command.execute(payload: payload))
 
-        guard let items = mockFirebase.lastEventParameters?[AnalyticsParameterItems] as? [[String: Any]] else {
+        guard let items = mockFirebase.loggedEvents.last?.parameters?[AnalyticsParameterItems] as? [[String: Any]] else {
             XCTFail("Items should be present")
             return
         }

@@ -75,13 +75,13 @@ class FirebaseDispatcher: CommandDispatcher, BasicModule {
             logger?.debug(category: logCategory,
                 "Firebase log level set to \(logLevel.stringValue) from configuration")
         }
-        if let sessionTimeout = config.sessionTimeout {
-            firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
-            logger?.debug(category: logCategory, "Session timeout set to \(sessionTimeout) seconds from configuration")
+        if let sessionTimeoutSeconds = config.sessionTimeoutSeconds {
+            firebaseInstance.setSessionTimeoutInterval(sessionTimeoutSeconds)
+            logger?.debug(category: logCategory, "Session timeout set to \(sessionTimeoutSeconds) seconds from configuration")
         }
-        if let analyticsEnabled = config.analyticsEnabled {
-            firebaseInstance.setAnalyticsCollectionEnabled(analyticsEnabled)
-            logger?.debug(category: logCategory, "Analytics collection enabled: \(analyticsEnabled) from configuration")
+        if let analyticsCollectionEnabled = config.analyticsCollectionEnabled {
+            firebaseInstance.setAnalyticsCollectionEnabled(analyticsCollectionEnabled)
+            logger?.debug(category: logCategory, "Analytics collection enabled: \(analyticsCollectionEnabled) from configuration")
         }
     }
 }

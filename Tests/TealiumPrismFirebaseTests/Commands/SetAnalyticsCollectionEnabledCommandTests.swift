@@ -23,28 +23,28 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
-    
+
     // MARK: - Boolean Value Tests
-    
+
     func test_execute_enables_analytics_collection_with_true() {
         let payload: DataObject = [
             "analytics_collection_enabled": true
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
-    
+
     func test_execute_disables_analytics_collection_with_false() {
         let payload: DataObject = [
             "analytics_collection_enabled": false
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
     
