@@ -10,7 +10,7 @@
 @testable import TealiumPrismFirebase
 import XCTest
 
-final class AnalyticsCollectionEnabledCommandTests: XCTestCase {
+final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
 
     let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase)

@@ -5,7 +5,7 @@ on: [pull_request]
 jobs:
   inspect:
     name: Inspect Machine
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 10
     steps:
       - name: List available Xcode versions
@@ -19,7 +19,7 @@ jobs:
         shell: bash
   build_example:
     name: Example Builds | ${{ matrix.scheme }}
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 60
     strategy:
       matrix:
@@ -36,7 +36,7 @@ jobs:
         run: ../scripts/build.sh --scheme "${{ matrix.scheme }}" --destination "${{ matrix.destination }}"
   build_SPM:
     name: SPM Builds | ${{ matrix.destination }}
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 60
     strategy:
       matrix:
@@ -54,7 +54,7 @@ jobs:
         run: scripts/build.sh --scheme "TealiumPrismFirebase" --destination "${{ matrix.destination }}"
   test_iOS:
     name: iOS Tests
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -64,7 +64,7 @@ jobs:
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
   test_tvOS:
     name: tvOS Tests
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
@@ -74,7 +74,7 @@ jobs:
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
   test_macOS:
     name: macOS Tests
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4

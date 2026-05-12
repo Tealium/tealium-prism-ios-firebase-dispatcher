@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy_cocoapods:
-    runs-on: 'macOS-15'
+    runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
       - name: "Run Local Action: Setup Machine"

@@ -26,4 +26,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - XCTest-based unit tests with mocked Firebase interface.
 - SwiftUI example app demonstrating all commands.
 - SPM and CocoaPods support.
-- Multi-platform: iOS 15+, macOS 10.15+, tvOS 15+, watchOS 7+.
+- Multi-platform: iOS 15+, macOS 10.15+, tvOS 15+.

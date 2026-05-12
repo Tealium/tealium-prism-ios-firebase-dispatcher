@@ -12,7 +12,7 @@ import XCTest
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
 
-final class ConversionMeasurementCommandTests: XCTestCase {
+final class InitiateConversionMeasurementCommandTests: XCTestCase {
 
     let mockFirebase = MockFirebaseAnalytics()
     lazy var command = InitiateConversionMeasurementCommand(firebaseInstance: mockFirebase)
