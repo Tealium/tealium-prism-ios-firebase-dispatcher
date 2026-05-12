@@ -6,16 +6,16 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
+import XCTest
+
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
-import XCTest
 
 final class FirebaseDispatcherTests: XCTestCase {
 
     let mockFirebase = MockFirebaseAnalytics()
     lazy var dispatcher = FirebaseDispatcher(
         firebaseInstance: mockFirebase,
-        commandRegistry: FirebaseCommandRegistry(),
         configuration: FirebaseDispatcherConfiguration(configuration: [:]),
         logger: nil
     )
@@ -23,10 +23,12 @@ final class FirebaseDispatcherTests: XCTestCase {
     // MARK: - Dispatch Tests - Single Command
 
     func test_dispatch_with_single_command_executes_command() {
-        let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            "event_name": "test_event"
-        ])
+        let dispatch = Dispatch(
+            name: "test_event",
+            data: [
+                TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
+                "event_name": "test_event",
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -36,36 +38,22 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
-    }
-
-    func test_dispatch_returns_disposed_disposable() {
-        let dispatch = Dispatch(name: "test_event", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            "event_name": "test_event"
-        ])
-
-        let completionCalled = expectation(description: "Completion called")
-
-        let disposable = dispatcher.dispatch([dispatch]) { _ in
-            completionCalled.fulfill()
-        }
-
-        waitForDefaultTimeout()
-        XCTAssertTrue(disposable.isDisposed)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Dispatch Tests - Multiple Commands
 
     func test_dispatch_with_command_array_executes_all_commands() {
-        let dispatch = Dispatch(name: "multi_command", data: [
-            FirebaseConstants.commandName: [
-                FirebaseCommand.logEvent.rawValue,
-                FirebaseCommand.setUserId.rawValue
-            ],
-            "event_name": "test_event",
-            "user_id": "user123"
-        ])
+        let dispatch = Dispatch(
+            name: "multi_command",
+            data: [
+                TealiumDataKey.commandName: [
+                    FirebaseCommand.logEvent.rawValue,
+                    FirebaseCommand.setUserId.rawValue,
+                ],
+                "event_name": "test_event",
+                "user_id": "user123",
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -75,38 +63,45 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
     }
 
     func test_dispatch_with_multiple_dispatches_processes_all() {
-        let dispatch1 = Dispatch(name: "event1", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            "event_name": "event_one"
-        ])
+        let dispatch1 = Dispatch(
+            name: "event1",
+            data: [
+                TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
+                "event_name": "event_one",
+            ])
 
-        let dispatch2 = Dispatch(name: "event2", data: [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
-            "event_name": "event_two"
-        ])
+        let dispatch2 = Dispatch(
+            name: "event2",
+            data: [
+                TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
+                "event_name": "event_two",
+            ])
 
         let completionCalled = expectation(description: "Completion called")
+        completionCalled.expectedFulfillmentCount = 2
 
         _ = dispatcher.dispatch([dispatch1, dispatch2]) { processedDispatches in
-            XCTAssertEqual(processedDispatches.count, 2)
+            XCTAssertEqual(processedDispatches.count, 1)
             completionCalled.fulfill()
         }
 
         waitForDefaultTimeout()
-        XCTAssertEqual(mockFirebase.logEventCallCount, 2)
+        XCTAssertEqual(mockFirebase.loggedEvents.count, 2)
     }
 
     // MARK: - Dispatch Tests - Missing/Empty Command
 
     func test_dispatch_without_command_key_does_not_execute() {
-        let dispatch = Dispatch(name: "no_command", data: [
-            "some_key": "some_value"
-        ])
+        let dispatch = Dispatch(
+            name: "no_command",
+            data: [
+                "some_key": "some_value"
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -116,13 +111,15 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     func test_dispatch_with_empty_command_array_does_not_execute() {
-        let dispatch = Dispatch(name: "empty_commands", data: [
-            FirebaseConstants.commandName: [] as [String]
-        ])
+        let dispatch = Dispatch(
+            name: "empty_commands",
+            data: [
+                TealiumDataKey.commandName: [] as [String]
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -132,13 +129,15 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     func test_dispatch_with_unknown_command_does_not_execute() {
-        let dispatch = Dispatch(name: "unknown", data: [
-            FirebaseConstants.commandName: "unknowncommand"
-        ])
+        let dispatch = Dispatch(
+            name: "unknown",
+            data: [
+                TealiumDataKey.commandName: "unknowncommand"
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -147,19 +146,21 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Edge Cases
 
     func test_dispatch_with_mixed_valid_invalid_commands_executes_valid_only() {
-        let dispatch = Dispatch(name: "mixed", data: [
-            FirebaseConstants.commandName: [
-                "invalid_command",
-                FirebaseCommand.logEvent.rawValue
-            ],
-            "event_name": "test_event"
-        ])
+        let dispatch = Dispatch(
+            name: "mixed",
+            data: [
+                TealiumDataKey.commandName: [
+                    "invalid_command",
+                    FirebaseCommand.logEvent.rawValue,
+                ],
+                "event_name": "test_event",
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -168,14 +169,16 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(mockFirebase.logEventCalled)
-        XCTAssertEqual(mockFirebase.logEventCallCount, 1)
+        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.loggedEvents.count, 1)
     }
 
     func test_dispatch_with_command_as_number_does_not_crash() {
-        let dispatch = Dispatch(name: "invalid_type", data: [
-            FirebaseConstants.commandName: 123  // Wrong type
-        ])
+        let dispatch = Dispatch(
+            name: "invalid_type",
+            data: [
+                TealiumDataKey.commandName: 123  // Wrong type
+            ])
 
         let completionCalled = expectation(description: "Completion called")
 
@@ -185,7 +188,7 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         waitForDefaultTimeout()
         // Should complete without crashing
-        XCTAssertFalse(mockFirebase.logEventCalled)
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Module Protocol Tests
@@ -211,12 +214,11 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
 
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .debug)
     }
 
@@ -228,12 +230,11 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
 
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
     }
 
@@ -245,12 +246,11 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
 
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
 
@@ -259,21 +259,20 @@ final class FirebaseDispatcherTests: XCTestCase {
         let config: DataObject = [
             FirebaseDispatcherConfiguration.Keys.logLevel: "warning",
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 1800.0,
-            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: true,
         ]
 
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
 
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .warning)
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.0)
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
 
@@ -283,14 +282,13 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = FirebaseDispatcher(
             firebaseInstance: mockFirebase,
-            commandRegistry: FirebaseCommandRegistry(),
             configuration: FirebaseDispatcherConfiguration(configuration: config),
             logger: nil
         )
 
-        XCTAssertFalse(mockFirebase.setLoggerLevelCalled)
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 0)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
 
     // MARK: - Configuration Application Tests (Update)
@@ -302,7 +300,7 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = dispatcher.updateConfiguration(newConfig)
 
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .error)
     }
 
@@ -313,7 +311,7 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = dispatcher.updateConfiguration(newConfig)
 
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 7200.0)
     }
 
@@ -324,7 +322,7 @@ final class FirebaseDispatcherTests: XCTestCase {
 
         _ = dispatcher.updateConfiguration(newConfig)
 
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
 
@@ -332,16 +330,16 @@ final class FirebaseDispatcherTests: XCTestCase {
         let newConfig: DataObject = [
             FirebaseDispatcherConfiguration.Keys.logLevel: "info",
             FirebaseDispatcherConfiguration.Keys.sessionTimeout: 900.0,
-            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false
+            FirebaseDispatcherConfiguration.Keys.analyticsEnabled: false,
         ]
 
         _ = dispatcher.updateConfiguration(newConfig)
 
-        XCTAssertTrue(mockFirebase.setLoggerLevelCalled)
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 1)
         XCTAssertEqual(mockFirebase.lastLoggerLevel, .info)
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 900.0)
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
 }

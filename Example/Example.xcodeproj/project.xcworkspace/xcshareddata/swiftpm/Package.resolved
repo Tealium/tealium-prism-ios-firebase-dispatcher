@@ -1,5 +1,5 @@
 {
-  "originHash" : "f9c0e44884c9569f952013f09557f3d0701fb5fa91dc507acbcfee577b105980",
+  "originHash" : "a1dfeb881a3e97e72b5ba2a82abc217bd9a69b8152c7eaffe72f18cd500b68d5",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/firebase/firebase-ios-sdk.git",
       "state" : {
-        "revision" : "85560b48b0ff099ad83fe53d67df3c67fbc2b7a6",
-        "version" : "12.10.0"
+        "revision" : "d10045cace0b4c335c4efa8f7df7e9a9fc5a7c60",
+        "version" : "12.13.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/googleads/google-ads-on-device-conversion-ios-sdk",
       "state" : {
-        "revision" : "a5cd95c80e8efdd02155c6cea1cecf743bb683a5",
-        "version" : "3.3.0"
+        "revision" : "19dffda9a9caf8d86570ff846535902d8509d7bf",
+        "version" : "3.5.0"
       }
     },
     {
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/GoogleAppMeasurement.git",
       "state" : {
-        "revision" : "68ba955e540dcff5e0805970ef4b1fd0150be100",
-        "version" : "12.10.0"
+        "revision" : "c2c76bebcfbb90d90ea10599f934f9af160e1604",
+        "version" : "12.13.0"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/gtm-session-fetcher.git",
       "state" : {
-        "revision" : "a883ddb9fd464216133a5ab441f1ae8995978573",
-        "version" : "5.1.0"
+        "revision" : "0be208810d2e8b90fcd2464d1816723b47819fe7",
+        "version" : "5.2.0"
       }
     },
     {
@@ -123,17 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/stephencelis/SQLite.swift.git",
       "state" : {
-        "revision" : "0c08856385fe24f7b76d8c51842d78a196e8e817",
-        "version" : "0.15.5"
-      }
-    },
-    {
-      "identity" : "tealium-prism-swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Tealium/tealium-prism-swift",
-      "state" : {
-        "revision" : "a38ee08f3dc5b979b6087d486fdc3a0cba992cba",
-        "version" : "0.4.0"
+        "revision" : "964c300fb0736699ce945c9edb56ecd62eba27a3",
+        "version" : "0.16.0"
       }
     }
   ],

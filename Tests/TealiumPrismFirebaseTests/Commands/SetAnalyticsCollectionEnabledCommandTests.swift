@@ -21,9 +21,9 @@ final class AnalyticsCollectionEnabledCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
 
     // MARK: - Boolean Value Tests
@@ -34,7 +34,7 @@ final class AnalyticsCollectionEnabledCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
 
@@ -44,7 +44,7 @@ final class AnalyticsCollectionEnabledCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
 

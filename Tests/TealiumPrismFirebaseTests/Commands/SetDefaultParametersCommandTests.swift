@@ -6,9 +6,10 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
+import XCTest
+
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
-import XCTest
 
 final class SetDefaultParametersCommandTests: XCTestCase {
 
@@ -25,25 +26,25 @@ final class SetDefaultParametersCommandTests: XCTestCase {
             ] as DataObject
         ]
         XCTAssertNoThrow(try command.execute(payload: payloadWithParams))
-        XCTAssertNotNil(mockFirebase.lastDefaultParameters, "Sanity: params should be set before clear test")
+        XCTAssertNotNil(
+            mockFirebase.lastDefaultParameters, "Sanity: params should be set before clear test")
 
         // Now clear by executing with payload that has no parameters
         let payload: DataObject = [:]
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
-        XCTAssertNil(mockFirebase.lastDefaultParameters, "Empty payload should clear default parameters")
+        XCTAssertEqual(mockFirebase.setDefaultEventParametersCount, 2)
+        XCTAssertNil(
+            mockFirebase.lastDefaultParameters, "Empty payload should clear default parameters")
     }
 
-    func test_execute_with_empty_firebase_params_sets_empty_parameters() {
+    func test_execute_with_empty_parameters_clears_defaults() {
         let payload: DataObject = [
             "parameters": [:] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
-        // Empty dictionary should set empty parameters, not nil (which would clear all)
-        XCTAssertNotNil(mockFirebase.lastDefaultParameters)
-        XCTAssertEqual(mockFirebase.lastDefaultParameters?.count, 0)
+        XCTAssertEqual(mockFirebase.setDefaultEventParametersCount, 1)
+        XCTAssertNil(mockFirebase.lastDefaultParameters)
     }
 
     // MARK: - String Parameter Tests
@@ -52,12 +53,12 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         let payload: DataObject = [
             "parameters": [
                 "version": "2.1.0",
-                "language": "en"
+                "language": "en",
             ] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setDefaultEventParametersCalled)
+        XCTAssertEqual(mockFirebase.setDefaultEventParametersCount, 1)
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["version"] as? String, "2.1.0")
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["language"] as? String, "en")
     }
@@ -92,7 +93,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         let payload: DataObject = [
             "parameters": [
                 "is_premium": true,
-                "opted_out": false
+                "opted_out": false,
             ] as DataObject
         ]
 
@@ -107,12 +108,13 @@ final class SetDefaultParametersCommandTests: XCTestCase {
         let payload: DataObject = [
             "parameters": [
                 "tags": ["sale", "featured", "new"] as [String],
-                "counts": [1, 2, 3] as [Int]
+                "counts": [1, 2, 3] as [Int],
             ] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastDefaultParameters?["tags"] as? [String], ["sale", "featured", "new"])
+        XCTAssertEqual(
+            mockFirebase.lastDefaultParameters?["tags"] as? [String], ["sale", "featured", "new"])
         XCTAssertEqual(mockFirebase.lastDefaultParameters?["counts"] as? [Int], [1, 2, 3])
     }
 
@@ -123,7 +125,7 @@ final class SetDefaultParametersCommandTests: XCTestCase {
             "parameters": [
                 "metadata": [
                     "source": "app",
-                    "campaign_id": 42
+                    "campaign_id": 42,
                 ] as DataObject
             ] as DataObject
         ]

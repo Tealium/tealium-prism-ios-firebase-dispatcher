@@ -21,9 +21,9 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
 
     // MARK: - Double Value Tests
@@ -34,7 +34,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
 
@@ -46,7 +46,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 3600.0)
     }
 
@@ -58,7 +58,7 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 1)
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
 
@@ -68,9 +68,9 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setSessionTimeoutIntervalCalled)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
 
 }

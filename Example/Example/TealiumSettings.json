@@ -37,12 +37,6 @@
                     }
                 },
                 {
-                    "destination": { "path": "parameters" },
-                    "parameters": {
-                        "reference": { "key": "params" }
-                    }
-                },
-                {
                     "destination": { "path": "parameters.value" },
                     "parameters": {
                         "reference": { "key": "value" }

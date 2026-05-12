@@ -7,9 +7,10 @@
 //
 
 import CryptoKit
+import XCTest
+
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
-import XCTest
 
 final class ConversionMeasurementCommandTests: XCTestCase {
 
@@ -22,8 +23,9 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .noValidParameters = commandError else {
+            guard let commandError = error as? CommandError,
+                case .noValidParameters = commandError
+            else {
                 XCTFail("Expected noValidParameters error but got \(error)")
                 return
             }
@@ -38,7 +40,7 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastEmailAddress, "user@example.com")
     }
 
@@ -48,13 +50,14 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .emptyParameter = commandError else {
+            guard let commandError = error as? CommandError,
+                case .emptyParameter = commandError
+            else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
 
     // MARK: - Phone Number Tests
@@ -65,7 +68,7 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 1)
         XCTAssertEqual(mockFirebase.lastPhoneNumber, "+1234567890")
     }
 
@@ -75,13 +78,14 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .emptyParameter = commandError else {
+            guard let commandError = error as? CommandError,
+                case .emptyParameter = commandError
+            else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
     // MARK: - Hashed Email Address Tests
@@ -97,7 +101,7 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedEmailConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
 
@@ -107,20 +111,21 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .emptyParameter = commandError else {
+            guard let commandError = error as? CommandError,
+                case .emptyParameter = commandError
+            else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.hashedEmailConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
     }
 
     func test_execute_with_invalid_hashed_email_throws_error() {
         // Test invalid Base64 strings that should fail decoding
         let invalidHashes = [
-            "!@#$%^&*()",                       // Invalid Base64 characters
-            "abc",                              // Valid Base64 but too short
+            "!@#$%^&*()",  // Invalid Base64 characters
+            "abc",  // Valid Base64 but too short
         ]
 
         for invalidHash in invalidHashes {
@@ -129,13 +134,15 @@ final class ConversionMeasurementCommandTests: XCTestCase {
             ]
 
             XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-                guard let commandError = error as? FirebaseCommandError,
-                      case .invalidParameterType = commandError else {
-                    XCTFail("Expected invalidParameterType error for '\(invalidHash)' but got \(error)")
+                guard let commandError = error as? CommandError,
+                    case .invalidParameterType = commandError
+                else {
+                    XCTFail(
+                        "Expected invalidParameterType error for '\(invalidHash)' but got \(error)")
                     return
                 }
             }
-            XCTAssertFalse(mockFirebase.hashedEmailConversionCalled)
+            XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
         }
     }
 
@@ -151,7 +158,7 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedEmailConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
 
@@ -168,7 +175,7 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedPhoneConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
         XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data(hash))
     }
 
@@ -178,13 +185,14 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .emptyParameter = commandError else {
+            guard let commandError = error as? CommandError,
+                case .emptyParameter = commandError
+            else {
                 XCTFail("Expected emptyParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.hashedPhoneConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 
     func test_execute_with_invalid_hashed_phone_throws_error() {
@@ -195,13 +203,14 @@ final class ConversionMeasurementCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .invalidParameterType = commandError else {
+            guard let commandError = error as? CommandError,
+                case .invalidParameterType = commandError
+            else {
                 XCTFail("Expected invalidParameterType error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.hashedPhoneConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 
     // MARK: - Priority Tests
@@ -217,12 +226,12 @@ final class ConversionMeasurementCommandTests: XCTestCase {
 
         let payload: DataObject = [
             "hashed_email_address": emailBase64,
-            "hashed_phone_number": phoneBase64
+            "hashed_phone_number": phoneBase64,
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedEmailConversionCalled)
-        XCTAssertFalse(mockFirebase.hashedPhoneConversionCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 
     func test_execute_prioritizes_hashed_phone_over_email() {
@@ -232,23 +241,23 @@ final class ConversionMeasurementCommandTests: XCTestCase {
 
         let payload: DataObject = [
             "hashed_phone_number": phoneBase64,
-            "email_address": "user@example.com"
+            "email_address": "user@example.com",
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedPhoneConversionCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
 
     func test_execute_prioritizes_email_over_phone() {
         let payload: DataObject = [
             "email_address": "user@example.com",
-            "phone_number": "+1234567890"
+            "phone_number": "+1234567890",
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.initiateConversionMeasurementEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
     func test_execute_full_priority_chain() {
@@ -265,14 +274,14 @@ final class ConversionMeasurementCommandTests: XCTestCase {
             "hashed_email_address": emailBase64,
             "hashed_phone_number": phoneBase64,
             "email_address": "user@example.com",
-            "phone_number": "+1234567890"
+            "phone_number": "+1234567890",
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.hashedEmailConversionCalled)
-        XCTAssertFalse(mockFirebase.hashedPhoneConversionCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementEmailCalled)
-        XCTAssertFalse(mockFirebase.initiateConversionMeasurementPhoneCalled)
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
     // MARK: - Helper Methods
@@ -290,7 +299,8 @@ final class ConversionMeasurementCommandTests: XCTestCase {
             let domain = String(components[1])
 
             username = username.replacingOccurrences(of: ".", with: "")
-            username = username
+            username =
+                username
                 .replacingOccurrences(of: "i", with: "l")
                 .replacingOccurrences(of: "1", with: "l")
                 .replacingOccurrences(of: "0", with: "o")

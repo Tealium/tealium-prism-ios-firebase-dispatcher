@@ -1,38 +1,41 @@
-# tealium-prism-ios-firebase-dispatcher
+# Tealium Prism Firebase Dispatcher for iOS
 
 [![Version](https://img.shields.io/cocoapods/v/TealiumPrismFirebase.svg?style=flat)](https://cocoapods.org/pods/TealiumPrismFirebase)
 [![License](https://img.shields.io/cocoapods/l/TealiumPrismFirebase.svg?style=flat)](https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher/blob/main/LICENSE)
 [![Platform](https://img.shields.io/cocoapods/p/TealiumPrismFirebase.svg?style=flat)](https://cocoapods.org/pods/TealiumPrismFirebase)
 
-A Firebase Analytics dispatcher for the [Tealium Prism iOS SDK](https://github.com/Tealium/tealium-prism-swift). It bridges Tealium Prism dispatches to Firebase Analytics events, user properties, consent settings, and more.
+Command Dispatcher that routes Tealium Prism tracking events to the Firebase Analytics iOS SDK — events, user properties, consent settings, and more.
 
-## Example
+Full payload schema, reserved event names, and cross-platform semantics are documented on Confluence (internal, requires Tealium SSO):
+[Firebase Dispatcher](https://tealium.atlassian.net/wiki/spaces/MOB/pages/5903974885/Firebase+Dispatcher).
 
-To run the example project, clone the repo and open `Example/Example.xcodeproj` in Xcode.
-
-The example app demonstrates:
-- Automatic and manual Firebase initialization approaches
-- Every Firebase command with real-world use cases
-- Purchase events with items and custom parameters
-- User ID and user property management
-- Consent settings (grant/deny all)
-- On-device conversion measurement with plaintext and hashed credentials
+> **Important:** Firebase Analytics only supports a single shared instance. Only one `firebaseDispatcher` can be active at a time in your app.
 
 ## Requirements
 
-Minimum OS versions:
-- iOS: 15.0
-- tvOS: 15.0
-- macOS: 10.15
+| Dependency              | Version |
+|-------------------------|---------|
+| iOS                     | 15.0+   |
+| macOS                   | 10.15+  |
+| tvOS                    | 15.0+   |
+| Swift                   | 5.5+    |
+| Tealium Prism Core      | >= 0.4.0 |
+| Firebase iOS SDK        | 12.0.0+ |
 
 ## Installation
 
 ### Swift Package Manager
 
-1. In your Xcode project, select **File > Add Package Dependencies**.
+1. In Xcode, select **File > Add Package Dependencies**.
 2. Enter the repository URL: `https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher`
 3. Configure the version rules. **Up to Next Major** is recommended.
 4. Select `TealiumPrismFirebase` and add it to your app target.
+
+Or add it manually to `Package.swift`:
+
+```swift
+.package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "1.0.0")
+```
 
 ### CocoaPods
 
@@ -42,7 +45,23 @@ Add the following line to your `Podfile`:
 pod 'TealiumPrismFirebase'
 ```
 
-## Usage
+### Firebase Setup
+
+Place `GoogleService-Info.plist` in the app target root. The Firebase Dispatcher calls `FirebaseApp.configure()` automatically on first use. If you need custom initialization order (e.g. for Crashlytics), call `FirebaseApp.configure()` manually — add `import FirebaseCore` to your app entry point and call it before `Tealium.create(config:)`. The dispatcher will detect the existing `FirebaseApp` and skip its own initialization.
+
+## Example App
+
+To run the example project, clone the repo and open `Example/Example.xcodeproj` in Xcode. Add a real `GoogleService-Info.plist` and run the Example scheme.
+
+The example app demonstrates:
+- Automatic and manual Firebase initialization approaches
+- Every Firebase command with real-world use cases
+- Purchase events with items and custom parameters
+- User ID and user property management
+- Consent settings (grant/deny all)
+- On-device conversion measurement with plaintext and hashed credentials
+
+## Quick Start
 
 Register the Firebase Dispatcher when initializing Tealium Prism:
 
@@ -63,8 +82,6 @@ let config = TealiumConfig(
 let tealium = Tealium.create(config: config)
 ```
 
-Firebase Analytics only supports a single shared instance, so only one `firebaseDispatcher` can be active at a time. Firebase is configured automatically on first use. If you need to configure Firebase manually (e.g., for Crashlytics), call `FirebaseApp.configure()` before creating the `Tealium` instance.
-
 ## Configuration
 
 The Firebase Dispatcher can be configured via a local JSON settings file, remote settings, or programmatically.
@@ -75,9 +92,11 @@ The Firebase Dispatcher can be configured via a local JSON settings file, remote
 |---|---|---|
 | Session timeout | `session_timeout_seconds` | `Double` (seconds) |
 | Analytics collection enabled | `analytics_collection_enabled` | `Bool` |
-| Log level | `log_level` | `String` (`"min"`, `"error"`, `"warning"`, `"notice"`, `"info"`, `"debug"`, `"max"`) |
+| Log level | `log_level` | `String` — `"min"`, `"error"`, `"warning"`, `"notice"`, `"info"`, `"debug"`, `"max"` |
 
 If a setting is omitted, Firebase uses its own default value.
+
+> **Note:** JSON `log_level` strings map 1:1 to `FirebaseLoggerLevel` cases used in programmatic configuration (e.g. `"min"` → `.min`, `"debug"` → `.debug`).
 
 ### JSON Settings
 
@@ -113,13 +132,43 @@ Modules.firebaseDispatcher(forcingSettings: { builder in
 
 > **Note:** Programmatic settings always take precedence over local and remote settings. Only use them for values that must never be changed remotely.
 
+## Settings Builder Reference
+
+`FirebaseSettingsBuilder` extends `DispatcherSettingsBuilder<FirebaseMappings>` and provides these methods:
+
+| Method | Description |
+|---|---|
+| `setSessionTimeout(_ sessionTimeout: TimeFrame)` | Session timeout (e.g. `30.minutes`) |
+| `setAnalyticsEnabled(_ enabled: Bool)` | Enable or disable analytics collection |
+| `setLogLevel(_ level: FirebaseLoggerLevel)` | Firebase internal log verbosity |
+| `setMappings(_ block: (FirebaseMappings) -> Void)` | Configure data mappings |
+| `setEnabled(_ enabled: Bool)` | Enable or disable the module |
+| `setOrder(_ order: Int)` | Dispatcher execution order |
+| `setRules(_ rules: RuleGroup)` | Conditional dispatch rules |
+
 ## Commands
+
+| Command | Firebase API |
+|---|---|
+| `logevent` | `Analytics.logEvent(_:parameters:)` |
+| `setuserid` | `Analytics.setUserID(_:)` |
+| `setuserproperty` | `Analytics.setUserProperty(_:forName:)` |
+| `resetdata` | `Analytics.resetAnalyticsData()` |
+| `setdefaultparameters` | `Analytics.setDefaultEventParameters(_:)` |
+| `setconsent` | `Analytics.setConsent(_:)` |
+| `setsessiontimeout` | `Analytics.setSessionTimeoutInterval(_:)` |
+| `setanalyticscollectionenabled` | `Analytics.setAnalyticsCollectionEnabled(_:)` |
+| `initiateconversionmeasurement` | `Analytics.initiateOnDeviceConversionMeasurement(...)` |
 
 The Firebase Dispatcher routes dispatch data to Firebase using the Tealium Prism [Mappings](https://github.com/Tealium/tealium-prism-swift) system. Each command below includes the JSON and programmatic mapping configuration.
 
 JSON mapping objects are entries in the `"mappings"` array of your `TealiumSettings.json` module configuration. Programmatic mappings use `FirebaseMappings` with type-safe `FirebaseCommand` and `FirebaseDestination` enums — `mapCommand(_:)` declares which command a mapping group handles, and `mapFrom(_:to:)` maps a source key to a Firebase destination. See the [Tealium Prism SDK documentation](https://github.com/Tealium/tealium-prism-swift) for a full explanation of the Mappings API.
 
 > See the Example app's `TealiumSettings.json` for a complete configuration covering all commands.
+
+In all JSON mapping examples below, replace `YOUR_EVENT_NAME` with the `tealium_event` value you use in your `teal.track(...)` calls to trigger the command (e.g. `"user_logout"` for `resetdata`, `"app_launch"` for `setdefaultparameters`).
+
+Firebase-reserved parameter constants (`AnalyticsParameterValue`, `AnalyticsParameterCurrency`, etc.) are documented in the [Firebase Analytics event parameters reference](https://firebase.google.com/docs/reference/swift/firebaseanalytics/api/reference/Constants).
 
 ---
 
@@ -150,7 +199,7 @@ teal.track("log_event", data: [
     "destination": { "key": "command_name" },
     "parameters": {
         "reference": { "key": "tealium_event" },
-        "filter": { "value": "YOUR_EVENT_NAME" },
+        "filter": { "value": "log_event" },
         "map_to": { "value": "logevent" }
     }
 },
@@ -196,7 +245,7 @@ teal.track("purchase", data: [
     "destination": { "key": "command_name" },
     "parameters": {
         "reference": { "key": "tealium_event" },
-        "filter": { "value": "YOUR_EVENT_NAME" },
+        "filter": { "value": "purchase" },
         "map_to": { "value": "logevent" }
     }
 },
@@ -316,7 +365,7 @@ Sets one or more user properties. Properties persist across sessions. Firebase s
 }
 ```
 
-To set multiple properties in a single dispatch, map source keys whose values are arrays of equal length:
+To set multiple properties in a single dispatch, map source keys whose values are arrays. Both arrays must have the same length — each index pairs one name with one value:
 
 ```json
 {
@@ -376,7 +425,11 @@ builder.setMappings { mappings in
 }
 ```
 
-> If the dispatch contains no `parameters` key, all default parameters are cleared.
+> **Clearing defaults:** To clear all previously set default parameters, dispatch the `setdefaultparameters` command with no `parameters` key in the mapped output (i.e. none of the source keys resolve to a value). Example:
+> ```swift
+> teal.track("clear_defaults", data: [:])
+> ```
+> With mappings configured so that `"clear_defaults"` triggers `setdefaultparameters` but no `parameters.*` destinations receive a value, Firebase clears all default event parameters.
 
 ---
 
@@ -494,7 +547,7 @@ builder.setMappings { mappings in
 | `ad_user_data` | `.consentSetting(.adUserData)` | `granted`, `denied` |
 | `ad_personalization` | `.consentSetting(.adPersonalization)` | `granted`, `denied` |
 
-> Unknown consent types and statuses are forwarded to Firebase directly, allowing future additions to work without SDK updates.
+> Unknown consent types or statuses are rejected and the command fails. Valid types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`. Valid statuses: `granted`, `denied`.
 
 ---
 
@@ -529,7 +582,7 @@ builder.setMappings { mappings in
 
 ### Initiate Conversion Measurement
 
-Initiates on-device conversion measurement for Google Ads attribution. Pass exactly one credential per dispatch.
+Initiates on-device conversion measurement for Google Ads attribution. You may supply multiple credentials in a single dispatch — only one is forwarded to Firebase per call, selected by the priority list below.
 
 **command_name:** `initiateconversionmeasurement`
 
@@ -561,7 +614,7 @@ builder.setMappings { mappings in
 
 #### Credential Priority
 
-Only one credential is used per dispatch, selected by this priority:
+When multiple credentials are mapped, the dispatcher picks exactly one according to this priority (first match wins):
 
 1. `hashed_email_address` → `.conversionHashedEmail`
 2. `hashed_phone_number` → `.conversionHashedPhone`
@@ -569,26 +622,6 @@ Only one credential is used per dispatch, selected by this priority:
 4. `phone_number` → `.conversionPhone`
 
 > `hashed_email_address` and `hashed_phone_number` must be **Base64-encoded SHA-256 hashes**. Passing a plain string will be rejected.
-
-## Settings Builder Reference
-
-`FirebaseSettingsBuilder` extends `DispatcherSettingsBuilder<FirebaseMappings>` and provides these methods:
-
-| Method | Description |
-|---|---|
-| `setSessionTimeout(_ sessionTimeout: TimeFrame)` | Session timeout (e.g. `30.minutes`) |
-| `setAnalyticsEnabled(_ enabled: Bool)` | Enable or disable analytics collection |
-| `setLogLevel(_ level: FirebaseLoggerLevel)` | Firebase internal log verbosity |
-| `setMappings(_ block: (FirebaseMappings) -> Void)` | Configure data mappings |
-| `setEnabled(_ enabled: Bool)` | Enable or disable the module |
-| `setOrder(_ order: Int)` | Dispatcher execution order |
-| `setRules(_ rules: RuleGroup)` | Conditional dispatch rules |
-
-## Compatibility
-
-| TealiumPrismFirebase | tealium-prism-swift |
-|---|---|
-| 1.0.0 | >= 0.4.0 |
 
 ## License
 

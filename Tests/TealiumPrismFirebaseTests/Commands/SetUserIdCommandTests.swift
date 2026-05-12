@@ -6,9 +6,10 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
+import XCTest
+
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
-import XCTest
 
 final class SetUserIdCommandTests: XCTestCase {
 
@@ -21,13 +22,14 @@ final class SetUserIdCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .missingParameter = commandError else {
+            guard let commandError = error as? CommandError,
+                case .missingParameter = commandError
+            else {
                 XCTFail("Expected missingParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
 
     // MARK: - Set User ID Tests
@@ -38,7 +40,7 @@ final class SetUserIdCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertEqual(mockFirebase.lastUserId, "user@example.com")
     }
 
@@ -50,8 +52,30 @@ final class SetUserIdCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setUserIdCalled)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
         XCTAssertNil(mockFirebase.lastUserId)
+    }
+
+    // MARK: - Lenient Conversion Tests
+
+    func test_execute_sets_integer_user_id_as_string() {
+        let payload: DataObject = [
+            "user_id": 12345
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
+        XCTAssertEqual(mockFirebase.lastUserId, "12345")
+    }
+
+    func test_execute_sets_double_user_id_as_string() {
+        let payload: DataObject = [
+            "user_id": 123.0
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
+        XCTAssertEqual(mockFirebase.lastUserId, "123")
     }
 
 }

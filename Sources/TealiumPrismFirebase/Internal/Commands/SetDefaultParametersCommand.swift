@@ -30,25 +30,25 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
-class SetDefaultParametersCommand: FirebaseCommandProtocol {
+class SetDefaultParametersCommand: SyncCommand {
 
     private let firebaseInstance: FirebaseAnalyticsInterface
 
     init(firebaseInstance: FirebaseAnalyticsInterface) {
         self.firebaseInstance = firebaseInstance
+        super.init(name: FirebaseCommand.setDefaultParameters.commandName)
     }
 
-    let name = FirebaseCommand.setDefaultParameters.rawValue
-
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
-        // parameters is missing -> clear all default parameters
-        guard let defaultParamsData = payload.extractDataDictionary(path: FirebaseDestination.defaultParams.path) else {
+    override func execute(payload: DataObject) throws(CommandError) {
+        guard
+            let defaultParamsData = payload.extractDataDictionary(
+                path: FirebaseDestination.defaultParams.path)
+        else {
             firebaseInstance.setDefaultEventParameters(nil)
             return
         }
 
         let defaultParams = defaultParamsData.mapValues { $0.toDataInput() }
-
-        firebaseInstance.setDefaultEventParameters(defaultParams)
+        firebaseInstance.setDefaultEventParameters(defaultParams.isEmpty ? nil : defaultParams)
     }
 }

@@ -21,6 +21,6 @@ final class ResetDataCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.resetAnalyticsDataCalled)
+        XCTAssertEqual(mockFirebase.resetAnalyticsDataCount, 1)
     }
 }
