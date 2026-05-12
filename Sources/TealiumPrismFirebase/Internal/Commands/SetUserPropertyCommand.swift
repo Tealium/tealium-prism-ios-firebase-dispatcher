@@ -95,8 +95,7 @@ class SetUserPropertyCommand: SyncCommand {
             )
         }
 
-        let properties = zip(namesArray, valuesArray).compactMap {
-            name, value -> (name: String, value: String?)? in
+        let properties = zip(namesArray, valuesArray).compactMap { name, value -> (name: String, value: String?)? in
             guard let name else {
                 return nil
             }

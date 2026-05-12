@@ -91,8 +91,7 @@ class LogEventCommand: SyncCommand {
         var parameters: [String: Any] = [:]
 
         if let itemsData = eventParamsData[AnalyticsParameterItems],
-            let items = try ItemsBuilder.build(from: itemsData)
-        {
+            let items = try ItemsBuilder.build(from: itemsData) {
             parameters[AnalyticsParameterItems] = items
         }
 

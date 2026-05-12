@@ -6,9 +6,9 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseAnalytics
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 final class ItemsBuilderTests: XCTestCase {

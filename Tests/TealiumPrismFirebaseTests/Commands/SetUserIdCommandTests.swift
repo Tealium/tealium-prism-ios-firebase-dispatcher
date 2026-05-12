@@ -60,7 +60,7 @@ final class SetUserIdCommandTests: XCTestCase {
 
     func test_execute_sets_integer_user_id_as_string() {
         let payload: DataObject = [
-            "user_id": 12345
+            "user_id": 12_345
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))

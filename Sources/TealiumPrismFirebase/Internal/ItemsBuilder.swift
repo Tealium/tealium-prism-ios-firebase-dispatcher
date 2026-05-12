@@ -6,8 +6,8 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseAnalytics
+import Foundation
 import TealiumPrismCore
 
 /// Converts Tealium item payloads into Firebase-compatible `[[String: Any]]` arrays.

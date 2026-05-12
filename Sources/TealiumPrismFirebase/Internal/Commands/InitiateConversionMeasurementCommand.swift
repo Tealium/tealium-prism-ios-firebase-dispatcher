@@ -47,20 +47,16 @@ class InitiateConversionMeasurementCommand: SyncCommand {
     override func execute(payload: DataObject) throws(CommandError) {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.extract(
-            path: FirebaseDestination.conversionHashedEmail.path, as: String.self)
-        {
+            path: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
             try initiateWithHashedEmail(hashedEmail)
         } else if let hashedPhone = payload.extract(
-            path: FirebaseDestination.conversionHashedPhone.path, as: String.self)
-        {
+            path: FirebaseDestination.conversionHashedPhone.path, as: String.self) {
             try initiateWithHashedPhone(hashedPhone)
         } else if let email = payload.extract(
-            path: FirebaseDestination.conversionEmail.path, as: String.self)
-        {
+            path: FirebaseDestination.conversionEmail.path, as: String.self) {
             try initiateWithEmail(email)
         } else if let phone = payload.extract(
-            path: FirebaseDestination.conversionPhone.path, as: String.self)
-        {
+            path: FirebaseDestination.conversionPhone.path, as: String.self) {
             try initiateWithPhone(phone)
         } else {
             throw CommandError.noValidParameters(expected: [
