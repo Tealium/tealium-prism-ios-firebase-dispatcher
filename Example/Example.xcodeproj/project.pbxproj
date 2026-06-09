@@ -104,7 +104,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 2620;
-				LastUpgradeCheck = 2620;
+				LastUpgradeCheck = 2650;
 				TargetAttributes = {
 					9E354EC52F1024E400A9F761 = {
 						CreatedOnToolsVersion = 26.2;
@@ -121,7 +121,6 @@
 			mainGroup = 9E354EBD2F1024E400A9F761;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				9E0CA4682F71FDB700693B10 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */,
 				9E0CA46F2F71FDCB00693B10 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -213,6 +212,7 @@
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -269,6 +269,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
@@ -360,10 +361,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		9E0CA4682F71FDB700693B10 /* XCLocalSwiftPackageReference "../../tealium-swift-v3" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../tealium-swift-v3";
-		};
 		9E0CA46F2F71FDCB00693B10 /* XCLocalSwiftPackageReference "../../tealium-prism-ios-firebase-dispatcher" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../tealium-prism-ios-firebase-dispatcher";

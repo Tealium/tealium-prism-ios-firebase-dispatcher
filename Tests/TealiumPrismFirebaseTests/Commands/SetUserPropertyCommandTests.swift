@@ -144,7 +144,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_nil_in_names_array_skips_that_pair() {
         let payload: DataObject = [
-            "property_name": ["prop_a", nil, "prop_c"] as [String?],
+            "property_name": [DataItem(value: "prop_a"), .null, DataItem(value: "prop_c")] as [DataItem],
             "property_value": ["value_a", "value_b", "value_c"],
         ]
 
@@ -159,7 +159,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
     func test_execute_with_nil_in_values_array_clears_that_property() {
         let payload: DataObject = [
             "property_name": ["prop_a", "prop_b", "prop_c"],
-            "property_value": ["value_a", nil, "value_c"] as [String?],
+            "property_value": [DataItem(value: "value_a"), .null, DataItem(value: "value_c")] as [DataItem],
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -178,8 +178,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_nil_in_both_arrays_at_same_index_skips_pair() {
         let payload: DataObject = [
-            "property_name": ["prop_a", nil, "prop_c"] as [String?],
-            "property_value": ["value_a", nil, "value_c"] as [String?],
+            "property_name": [DataItem(value: "prop_a"), .null, DataItem(value: "prop_c")] as [DataItem],
+            "property_value": [DataItem(value: "value_a"), .null, DataItem(value: "value_c")] as [DataItem],
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
@@ -192,7 +192,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_with_all_nil_names_throws_emptyArray() {
         let payload: DataObject = [
-            "property_name": [nil, nil] as [String?],
+            "property_name": [DataItem.null, DataItem.null] as [DataItem],
             "property_value": ["value_a", "value_b"],
         ]
 

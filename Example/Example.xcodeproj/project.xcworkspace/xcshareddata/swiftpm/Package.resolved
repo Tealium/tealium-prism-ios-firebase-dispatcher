@@ -1,5 +1,5 @@
 {
-  "originHash" : "a1dfeb881a3e97e72b5ba2a82abc217bd9a69b8152c7eaffe72f18cd500b68d5",
+  "originHash" : "faada0a5ce3e8f593048069974dde492f75fad8ce0bb47c869325002d7774f90",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "964c300fb0736699ce945c9edb56ecd62eba27a3",
         "version" : "0.16.0"
+      }
+    },
+    {
+      "identity" : "tealium-prism-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Tealium/tealium-prism-swift",
+      "state" : {
+        "revision" : "630c24c4fa5becaf56210dc7b1a99e1f05319ff2",
+        "version" : "0.5.0"
       }
     }
   ],

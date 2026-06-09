@@ -46,7 +46,7 @@ class FirebaseInstance: FirebaseAnalyticsInterface {
 
         TealiumQueue.worker.ensureOnQueue { [weak self] in
             guard let self, self.onReadySubject.last() == nil else { return }
-            self.onReadySubject.publish()
+            self.onReadySubject.onNext(())
         }
     }
 

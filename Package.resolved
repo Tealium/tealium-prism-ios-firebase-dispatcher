@@ -129,11 +129,11 @@
       },
       {
         "package": "TealiumPrism",
-        "repositoryURL": "https://github.com/Tealium/tealium-swift-v3",
+        "repositoryURL": "https://github.com/Tealium/tealium-prism-swift",
         "state": {
-          "branch": "dev",
-          "revision": "74f492ac84ed789985e203b7657f15c7317a5d13",
-          "version": null
+          "branch": null,
+          "revision": "630c24c4fa5becaf56210dc7b1a99e1f05319ff2",
+          "version": "0.5.0"
         }
       }
     ]
