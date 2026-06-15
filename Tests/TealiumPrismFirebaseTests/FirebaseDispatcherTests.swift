@@ -17,6 +17,7 @@ final class FirebaseDispatcherTests: XCTestCase {
     lazy var dispatcher = FirebaseDispatcher(
         firebaseInstance: mockFirebase,
         configuration: FirebaseDispatcherConfiguration(configuration: [:]),
+        queue: .main,
         logger: nil
     )
 
