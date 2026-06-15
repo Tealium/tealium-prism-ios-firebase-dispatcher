@@ -31,6 +31,21 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
+    func test_execute_with_non_string_event_name_throws_invalid_parameter_type() {
+        let payload: DataObject = [
+            "event_name": ["nested": "value"]
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                  case .invalidParameterType = commandError else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
+                return
+            }
+        }
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
+    }
+
     // MARK: - Simple Event Tests
 
     func test_execute_logs_simple_event() {

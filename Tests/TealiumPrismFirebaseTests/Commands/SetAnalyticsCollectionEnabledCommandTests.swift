@@ -17,11 +17,32 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_command_data_throws_error() {
+    func test_execute_without_command_data_throws_missing_parameter() {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
+            guard let commandError = error as? CommandError,
+                case .missingParameter = commandError
+            else {
+                XCTFail("Expected missingParameter error but got \(error)")
+                return
+            }
+        }
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
+    }
+
+    func test_execute_throws_invalid_parameter_type_for_non_boolean() {
+        let payload: DataObject = [
+            "analytics_collection_enabled": "maybe"
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                case .invalidParameterType = commandError
+            else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
+                return
+            }
         }
         XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }

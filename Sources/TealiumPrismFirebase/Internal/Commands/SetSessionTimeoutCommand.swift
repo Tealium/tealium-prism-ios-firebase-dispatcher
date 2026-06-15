@@ -36,8 +36,14 @@ class SetSessionTimeoutCommand: SyncCommand {
 
     override func execute(payload: DataObject) throws(CommandError) {
         guard
-            let sessionTimeout = payload.extractConvertible(
-                path: FirebaseDestination.sessionTimeout.path, converter: LenientConverters.double)
+            let sessionTimeoutItem = payload.extractDataItem(
+                path: FirebaseDestination.sessionTimeout.path)
+        else {
+            throw CommandError.missingParameter(FirebaseDestination.sessionTimeout.path.render())
+        }
+        guard
+            let sessionTimeout = sessionTimeoutItem.getConvertible(
+                converter: LenientConverters.double)
         else {
             throw CommandError.invalidParameterType(
                 parameter: FirebaseDestination.sessionTimeout.path.render(),

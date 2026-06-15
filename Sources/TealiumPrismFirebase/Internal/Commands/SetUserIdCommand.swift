@@ -37,10 +37,17 @@ class SetUserIdCommand: SyncCommand {
 
     override func execute(payload: DataObject) throws(CommandError) {
         guard
-            let userId = payload.extractConvertible(
-                path: FirebaseDestination.userId.path, converter: LenientConverters.string)
+            let userIdItem = payload.extractDataItem(path: FirebaseDestination.userId.path)
         else {
             throw CommandError.missingParameter(FirebaseDestination.userId.path.render())
+        }
+        guard
+            let userId = userIdItem.getConvertible(converter: LenientConverters.string)
+        else {
+            throw CommandError.invalidParameterType(
+                parameter: FirebaseDestination.userId.path.render(),
+                expectedType: "string"
+            )
         }
 
         // Empty string clears the user ID

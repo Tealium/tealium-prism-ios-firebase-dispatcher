@@ -32,6 +32,22 @@ final class SetUserIdCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
 
+    func test_execute_with_non_string_value_throws_invalid_parameter_type() {
+        let payload: DataObject = [
+            "user_id": ["nested": "value"]
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                case .invalidParameterType = commandError
+            else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
+                return
+            }
+        }
+        XCTAssertEqual(mockFirebase.setUserIdCount, 0)
+    }
+
     // MARK: - Set User ID Tests
 
     func test_execute_sets_user_id() {

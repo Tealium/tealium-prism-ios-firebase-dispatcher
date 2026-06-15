@@ -69,10 +69,17 @@ class LogEventCommand: SyncCommand {
 
     private func extractEventName(from payload: DataObject) throws(CommandError) -> String {
         guard
-            let rawEventName = payload.extractConvertible(
-                path: FirebaseDestination.eventName.path, converter: LenientConverters.string)
+            let eventNameItem = payload.extractDataItem(path: FirebaseDestination.eventName.path)
         else {
             throw CommandError.missingParameter(FirebaseDestination.eventName.path.render())
+        }
+        guard
+            let rawEventName = eventNameItem.getConvertible(converter: LenientConverters.string)
+        else {
+            throw CommandError.invalidParameterType(
+                parameter: FirebaseDestination.eventName.path.render(),
+                expectedType: "string"
+            )
         }
 
         return rawEventName

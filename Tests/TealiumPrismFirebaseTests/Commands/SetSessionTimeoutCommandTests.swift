@@ -17,11 +17,16 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_command_data_throws_error() {
+    func test_execute_without_command_data_throws_missing_parameter() {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
+            guard let commandError = error as? CommandError,
+                case .missingParameter = commandError
+            else {
+                XCTFail("Expected missingParameter error but got \(error)")
+                return
+            }
         }
         XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
@@ -62,13 +67,18 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
 
-    func test_execute_throws_error_for_invalid_string() {
+    func test_execute_throws_invalid_parameter_type_for_invalid_string() {
         let payload: DataObject = [
             "session_timeout_seconds": "invalid"
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
+            guard let commandError = error as? CommandError,
+                case .invalidParameterType = commandError
+            else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
+                return
+            }
         }
         XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
