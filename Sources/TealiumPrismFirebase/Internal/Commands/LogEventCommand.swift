@@ -62,27 +62,9 @@ class LogEventCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        let eventName = try extractEventName(from: payload)
+        let eventName = try payload.require(.eventName, converter: LenientConverters.string)
         let parameters = try buildParameters(from: payload)
         firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
-    }
-
-    private func extractEventName(from payload: DataObject) throws(CommandError) -> String {
-        guard
-            let eventNameItem = payload.extractDataItem(path: FirebaseDestination.eventName.path)
-        else {
-            throw CommandError.missingParameter(FirebaseDestination.eventName.path.render())
-        }
-        guard
-            let rawEventName = eventNameItem.getConvertible(converter: LenientConverters.string)
-        else {
-            throw CommandError.invalidParameterType(
-                parameter: FirebaseDestination.eventName.path.render(),
-                expectedType: "string"
-            )
-        }
-
-        return rawEventName
     }
 
     /// Builds all Firebase parameters from payload (including items).

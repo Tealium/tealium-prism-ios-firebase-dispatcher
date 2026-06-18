@@ -62,17 +62,8 @@ class SetUserPropertyCommand: SyncCommand {
     private func extractNamesAndValues(payload: DataObject) throws(CommandError) -> [(
         name: String, value: String?
     )] {
-        guard
-            let namesItem = payload.extractDataItem(path: FirebaseDestination.userPropertyName.path)
-        else {
-            throw CommandError.missingParameter(FirebaseDestination.userPropertyName.path.render())
-        }
-        guard
-            let valuesItem = payload.extractDataItem(
-                path: FirebaseDestination.userPropertyValue.path)
-        else {
-            throw CommandError.missingParameter(FirebaseDestination.userPropertyValue.path.render())
-        }
+        let namesItem = try payload.requireDataItem(.userPropertyName)
+        let valuesItem = try payload.requireDataItem(.userPropertyValue)
 
         let namesArray =
             namesItem.getArray(of: String.self)
@@ -83,7 +74,7 @@ class SetUserPropertyCommand: SyncCommand {
             ]
 
         guard !namesArray.isEmpty else {
-            throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())
+            throw CommandError.emptyArray(.userPropertyName)
         }
 
         guard namesArray.count == valuesArray.count else {
@@ -103,7 +94,7 @@ class SetUserPropertyCommand: SyncCommand {
         }
 
         guard !properties.isEmpty else {
-            throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())
+            throw CommandError.emptyArray(.userPropertyName)
         }
 
         return properties

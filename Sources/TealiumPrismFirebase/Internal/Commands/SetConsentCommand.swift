@@ -45,12 +45,7 @@ class SetConsentCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        guard
-            let consentData = payload.extractDataDictionary(
-                path: FirebaseDestination.consentSettings.path)
-        else {
-            throw .missingParameter(FirebaseDestination.consentSettings.path.render())
-        }
+        let consentData = try payload.requireDataDictionary(.consentSettings)
 
         var consentSettings: [ConsentType: ConsentStatus] = [:]
         for (key, value) in consentData {
@@ -78,7 +73,7 @@ class SetConsentCommand: SyncCommand {
         }
 
         guard !consentSettings.isEmpty else {
-            throw .noValidParameters(expected: [FirebaseDestination.consentSettings.path.render()])
+            throw .noValidParameters(expected: [.consentSettings])
         }
 
         firebaseInstance.setConsent(consentSettings)
