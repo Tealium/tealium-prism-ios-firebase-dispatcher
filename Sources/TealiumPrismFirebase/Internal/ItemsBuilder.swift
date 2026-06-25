@@ -40,16 +40,14 @@ enum ItemsBuilder {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     private static func buildFromArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
-        return arrayOfObjects.compactMap { itemData in
+        return arrayOfObjects.map { itemData in
             guard let itemDict = itemData.getDataDictionary() else {
-                return nil
+                return [:]
             }
 
-            let mappedItem = itemDict.reduce(into: [String: Any]()) { result, pair in
+            return itemDict.reduce(into: [String: Any]()) { result, pair in
                 result[pair.key] = pair.value.toDataInput()
             }
-
-            return mappedItem.isEmpty ? nil : mappedItem
         }
     }
 
@@ -73,20 +71,17 @@ enum ItemsBuilder {
             )
         }
 
-        return (0..<itemCount).compactMap { index in
-            let item = buildItem(from: arrays, at: index)
-            return item.isEmpty ? nil : item
+        // Keep every index slot, even when an item has no values, so item positions stay
+        // aligned across parallel arrays (matches the production remote command).
+        return (0..<itemCount).map { index in
+            buildItem(from: arrays, at: index)
         }
     }
 
     private static func buildItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
-        var item: [String: Any] = [:]
-
-        for (key, array) in arrays where index < array.count {
-            item[key] = array[index]
+        arrays.reduce(into: [String: Any]()) { result, keyValue in
+            result[keyValue.key] = keyValue.value[index]
         }
-
-        return item
     }
 
     private static func extractArrays(from dict: [String: DataItem]) -> [String: [DataInput]] {

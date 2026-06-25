@@ -74,13 +74,10 @@ class SetUserPropertyCommand: SyncCommand {
             throw CommandError.missingParameter(FirebaseDestination.userPropertyValue.path.render())
         }
 
-        let namesArray =
-            namesItem.getArray(of: String.self)
-            ?? [namesItem.getConvertible(converter: LenientConverters.string)].compactMap { $0 }
-        let valuesArray =
-            valuesItem.getArray(of: String.self) ?? [
-                valuesItem.getConvertible(converter: LenientConverters.string)
-            ]
+        let namesArray = (namesItem.getDataArray() ?? [namesItem])
+            .map { $0.getConvertible(converter: LenientConverters.string) }
+        let valuesArray = (valuesItem.getDataArray() ?? [valuesItem])
+            .map { $0.getConvertible(converter: LenientConverters.string) }
 
         guard !namesArray.isEmpty else {
             throw CommandError.emptyArray(FirebaseDestination.userPropertyName.path.render())

@@ -79,16 +79,16 @@ public enum FirebaseDestination: JSONObjectPathConvertible {
 
     // MARK: InitiateConversionMeasurement
 
-    /// The email address for conversion measurement.
+    /// The email address for conversion measurement (`"email_address"`).
     case conversionEmail
 
-    /// The phone number for conversion measurement.
+    /// The phone number for conversion measurement (`"phone_number"`).
     case conversionPhone
 
-    /// The hashed email address for conversion measurement.
+    /// The hashed email address for conversion measurement (`"hashed_email_address"`).
     case conversionHashedEmail
 
-    /// The hashed phone number for conversion measurement.
+    /// The hashed phone number for conversion measurement (`"hashed_phone_number"`).
     case conversionHashedPhone
 
     public var path: JSONObjectPath {

@@ -232,4 +232,32 @@ final class SetUserPropertyCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.userProperties.last?.name, "score")
         XCTAssertEqual(mockFirebase.userProperties.last?.value, "9.5")
     }
+
+    func test_execute_sets_single_property_with_numeric_array_format() {
+        // Numeric array elements must be coerced via the lenient converter, mirroring the scalar
+        // behaviour: `[42]` should behave like `42`.
+        let payload: DataObject = [
+            "property_name": [42],
+            "property_value": [99],
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.userProperties.count, 1)
+        XCTAssertEqual(mockFirebase.userProperties[0].name, "42")
+        XCTAssertEqual(mockFirebase.userProperties[0].value, "99")
+    }
+
+    func test_execute_sets_multiple_properties_with_mixed_numeric_array() {
+        let payload: DataObject = [
+            "property_name": [DataItem(value: "tier"), DataItem(value: 7)] as [DataItem],
+            "property_value": [DataItem(value: 1), DataItem(value: 9.5)] as [DataItem],
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.userProperties.count, 2)
+        let propDict = Dictionary(
+            uniqueKeysWithValues: mockFirebase.userProperties.map { ($0.name, $0.value) })
+        XCTAssertEqual(propDict["tier"], "1")
+        XCTAssertEqual(propDict["7"], "9.5")
+    }
 }
