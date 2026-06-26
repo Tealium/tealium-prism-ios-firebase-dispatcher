@@ -35,22 +35,7 @@ class SetSessionTimeoutCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        guard
-            let sessionTimeoutItem = payload.extractDataItem(
-                path: FirebaseDestination.sessionTimeout.path)
-        else {
-            throw CommandError.missingParameter(FirebaseDestination.sessionTimeout.path.render())
-        }
-        guard
-            let sessionTimeout = sessionTimeoutItem.getConvertible(
-                converter: LenientConverters.double)
-        else {
-            throw CommandError.invalidParameterType(
-                parameter: FirebaseDestination.sessionTimeout.path.render(),
-                expectedType: "numeric value (seconds)"
-            )
-        }
-
+        let sessionTimeout = try payload.require(.sessionTimeout, converter: LenientConverters.double)
         firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
     }
 }

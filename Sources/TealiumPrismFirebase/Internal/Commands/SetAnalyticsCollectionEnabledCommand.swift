@@ -35,21 +35,7 @@ class SetAnalyticsCollectionEnabledCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws(CommandError) {
-        guard
-            let enabledItem = payload.extractDataItem(
-                path: FirebaseDestination.analyticsEnabled.path)
-        else {
-            throw CommandError.missingParameter(FirebaseDestination.analyticsEnabled.path.render())
-        }
-        guard
-            let enabled = enabledItem.getConvertible(converter: LenientConverters.bool)
-        else {
-            throw CommandError.invalidParameterType(
-                parameter: FirebaseDestination.analyticsEnabled.path.render(),
-                expectedType: "boolean (true/false)"
-            )
-        }
-
+        let enabled = try payload.require(.analyticsEnabled, converter: LenientConverters.bool)
         firebaseInstance.setAnalyticsCollectionEnabled(enabled)
     }
 }
