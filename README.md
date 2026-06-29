@@ -6,9 +6,6 @@
 
 Command Dispatcher that routes Tealium Prism tracking events to the Firebase Analytics iOS SDK — events, user properties, consent settings, and more.
 
-Full payload schema, reserved event names, and cross-platform semantics are documented on Confluence (internal, requires Tealium SSO):
-[Firebase Dispatcher](https://tealium.atlassian.net/wiki/spaces/MOB/pages/5903974885/Firebase+Dispatcher).
-
 > **Important:** Firebase Analytics only supports a single shared instance. Only one `firebaseDispatcher` can be active at a time in your app.
 
 ## Requirements
@@ -19,7 +16,7 @@ Full payload schema, reserved event names, and cross-platform semantics are docu
 | macOS                   | 10.15+  |
 | tvOS                    | 15.0+   |
 | Swift                   | 5.5+    |
-| Tealium Prism Core      | >= 0.4.0 |
+| Tealium Prism Core      | >= 0.5.0 |
 | Firebase iOS SDK        | 12.0.0+ |
 
 ## Installation
@@ -425,11 +422,23 @@ builder.setMappings { mappings in
 }
 ```
 
-> **Clearing defaults:** To clear all previously set default parameters, dispatch the `setdefaultparameters` command with no `parameters` key in the mapped output (i.e. none of the source keys resolve to a value). Example:
+> **Clearing defaults:** To clear all previously set default parameters, dispatch the `setdefaultparameters` command with no `parameters` key in the mapped output (i.e. none of the source keys resolve to a value).
+>
+> Map a dedicated event to the command, then dispatch it with none of the parameter source keys present:
+> ```json
+> {
+>     "destination": { "key": "command_name" },
+>     "parameters": {
+>         "reference": { "key": "tealium_event" },
+>         "filter": { "value": "clear_defaults" },
+>         "map_to": { "value": "setdefaultparameters" }
+>     }
+> }
+> ```
 > ```swift
 > teal.track("clear_defaults", data: [:])
 > ```
-> With mappings configured so that `"clear_defaults"` triggers `setdefaultparameters` but no `parameters.*` destinations receive a value, Firebase clears all default event parameters.
+> Because `data` carries none of the `parameters.*` source keys (`app_version`, `app_language`), no parameters resolve and Firebase clears all default event parameters.
 
 ---
 

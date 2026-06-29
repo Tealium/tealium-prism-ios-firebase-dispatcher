@@ -31,6 +31,21 @@ final class SetConsentCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
+    func test_execute_with_empty_consent_settings_throws_noValidParameters() {
+        let payload: DataObject = [
+            "consent_settings": [:] as DataObject
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                  case .noValidParameters = commandError else {
+                XCTFail("Expected noValidParameters error but got \(error)")
+                return
+            }
+        }
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
     // MARK: - Single Consent Type Tests
 
     func test_execute_sets_ad_storage_granted() {

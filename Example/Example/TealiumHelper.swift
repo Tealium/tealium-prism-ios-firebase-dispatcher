@@ -93,9 +93,9 @@ class TealiumHelper {
             "value": 249.97,
             "currency": "USD",
             "items_aoo": [
-                ["item_id": "SKU-001", "item_name": "Premium Widget", "price": 99.99, "quantity": 1] as DataObject,
-                ["item_id": "SKU-002", "item_name": "Gadget Pro",     "price": 79.99, "quantity": 2] as DataObject,
-            ] as [DataObject]
+                DataItem(value: ["item_id": "SKU-001", "item_name": "Premium Widget", "price": 99.99, "quantity": 1]),
+                DataItem(value: ["item_id": "SKU-002", "item_name": "Gadget Pro",     "price": 79.99, "quantity": 2]),
+            ]
         ])
     }
 

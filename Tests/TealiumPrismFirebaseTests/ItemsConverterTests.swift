@@ -1,5 +1,5 @@
 //
-//  ItemsBuilderTests.swift
+//  ItemsConverterTests.swift
 //  TealiumPrismFirebaseTests
 //
 //  Created by Sebastian Krajna on 08/05/2026.
@@ -11,14 +11,14 @@ import FirebaseAnalytics
 @testable import TealiumPrismFirebase
 import XCTest
 
-final class ItemsBuilderTests: XCTestCase {
+final class ItemsConverterTests: XCTestCase {
 
     // MARK: - Empty Input Tests
 
     func test_empty_object_returns_nil() throws {
         let input = DataItem(converting: DataObject())
 
-        let result = try ItemsBuilder.build(from: input)
+        let result = try ItemsConverter.convert(from: input)
 
         XCTAssertNil(result)
     }
@@ -26,7 +26,7 @@ final class ItemsBuilderTests: XCTestCase {
     func test_empty_array_returns_nil() throws {
         let input = DataItem(value: [] as [DataInput])
 
-        let result = try ItemsBuilder.build(from: input)
+        let result = try ItemsConverter.convert(from: input)
 
         XCTAssertNil(result)
     }
@@ -34,7 +34,20 @@ final class ItemsBuilderTests: XCTestCase {
     func test_scalar_input_returns_nil() throws {
         let input = DataItem(value: "not_an_array_or_dict")
 
-        let result = try ItemsBuilder.build(from: input)
+        let result = try ItemsConverter.convert(from: input)
+
+        XCTAssertNil(result)
+    }
+
+    func test_dict_with_only_scalar_values_returns_nil() throws {
+        // compactMapValues skips keys whose values are not arrays — all scalars → empty dict → nil.
+        let itemsData: DataObject = [
+            AnalyticsParameterItemID: "SKU1",
+            AnalyticsParameterPrice: 9.99
+        ]
+        let input = DataItem(converting: itemsData)
+
+        let result = try ItemsConverter.convert(from: input)
 
         XCTAssertNil(result)
     }
@@ -48,7 +61,7 @@ final class ItemsBuilderTests: XCTestCase {
         ]
         let input = DataItem(converting: itemsData)
 
-        let items = try ItemsBuilder.build(from: input)
+        let items = try ItemsConverter.convert(from: input)
 
         XCTAssertNotNil(items)
         XCTAssertEqual(items?.count, 2)
@@ -67,7 +80,7 @@ final class ItemsBuilderTests: XCTestCase {
         ]
         let input = DataItem(converting: itemsArray)
 
-        let items = try ItemsBuilder.build(from: input)
+        let items = try ItemsConverter.convert(from: input)
 
         XCTAssertNotNil(items)
         XCTAssertEqual(items?.count, 2)
@@ -84,7 +97,7 @@ final class ItemsBuilderTests: XCTestCase {
         ]
         let input = DataItem(converting: itemsData)
 
-        XCTAssertThrowsError(try ItemsBuilder.build(from: input)) { error in
+        XCTAssertThrowsError(try ItemsConverter.convert(from: input)) { error in
             guard let commandError = error as? CommandError,
                   case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
                 XCTFail("Expected arrayLengthMismatch but got \(error)")

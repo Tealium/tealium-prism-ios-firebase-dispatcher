@@ -1,5 +1,5 @@
 //
-//  ItemsBuilder.swift
+//  ItemsConverter.swift
 //  TealiumPrismFirebase
 //
 //  Created by Sebastian Krajna on 8/05/2026.
@@ -17,21 +17,21 @@ import TealiumPrismCore
 ///
 /// 1. Array of objects (Firebase-ready): each list entry is already a dictionary.
 /// 2. Parallel arrays (Tealium convention): each key maps to an array of equal length;
-///    the builder transposes them into a list of per-item dictionaries.
+///    the converter transposes them into a list of per-item dictionaries.
 ///
 /// Any array-length mismatch in shape (2) throws `CommandError.arrayLengthMismatch`.
-enum ItemsBuilder {
+enum ItemsConverter {
 
-    /// Builds Firebase items array from either parallel arrays or array of objects format.
+    /// Converts Firebase items array from either parallel arrays or array of objects format.
     ///
     /// - Returns: Array of item dictionaries, or nil if no items found.
     /// - Throws: `CommandError.arrayLengthMismatch` if item arrays have mismatched lengths.
-    static func build(from itemsData: DataItem) throws(CommandError) -> [[String: Any]]? {
+    static func convert(from itemsData: DataItem) throws(CommandError) -> [[String: Any]]? {
         var items: [[String: Any]] = []
         if let arrayOfObjects = itemsData.getDataArray() {
-            items = buildFromArrayOfObjects(arrayOfObjects)
+            items = convertArrayOfObjects(arrayOfObjects)
         } else if let objectOfArrays = itemsData.getDataDictionary() {
-            items = try buildFromParallelArrays(objectOfArrays)
+            items = try convertParallelArrays(objectOfArrays)
         }
         return items.isEmpty ? nil : items
     }
@@ -39,7 +39,7 @@ enum ItemsBuilder {
     /// Converts array of objects to Firebase items format.
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
-    private static func buildFromArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
+    private static func convertArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
         return arrayOfObjects.map { itemData in
             guard let itemDict = itemData.getDataDictionary() else {
                 return [:]
@@ -54,7 +54,7 @@ enum ItemsBuilder {
     /// Converts parallel arrays to array of item dictionaries.
     /// Input:  { "item_id": ["SKU1", "SKU2"], "item_name": ["P1", "P2"] }
     /// Output: [["item_id": "SKU1", "item_name": "P1"], ["item_id": "SKU2", "item_name": "P2"]]
-    private static func buildFromParallelArrays(_ parallelArrays: [String: DataItem]) throws(CommandError) -> [[String: Any]] {
+    private static func convertParallelArrays(_ parallelArrays: [String: DataItem]) throws(CommandError) -> [[String: Any]] {
         let arrays = extractArrays(from: parallelArrays)
 
         guard let itemCount = arrays.values.map(\.count).max(), itemCount > 0 else {
@@ -74,11 +74,11 @@ enum ItemsBuilder {
         // Keep every index slot, even when an item has no values, so item positions stay
         // aligned across parallel arrays (matches the production remote command).
         return (0..<itemCount).map { index in
-            buildItem(from: arrays, at: index)
+            makeItem(from: arrays, at: index)
         }
     }
 
-    private static func buildItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
+    private static func makeItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
         arrays.reduce(into: [String: Any]()) { result, keyValue in
             result[keyValue.key] = keyValue.value[index]
         }

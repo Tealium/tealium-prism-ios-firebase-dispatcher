@@ -277,6 +277,21 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
 
+    func test_updateConfiguration_with_empty_configuration_does_not_apply_settings() {
+        let mockFirebase = MockFirebaseAnalytics()
+        let dispatcher = FirebaseDispatcher(
+            firebaseInstance: mockFirebase,
+            configuration: FirebaseDispatcherConfiguration(configuration: [:]),
+            logger: nil
+        )
+
+        _ = dispatcher.updateConfiguration([:])
+
+        XCTAssertEqual(mockFirebase.setLoggerLevelCount, 0)
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
+    }
+
     func test_init_with_empty_configuration_does_not_apply_settings() {
         let mockFirebase = MockFirebaseAnalytics()
         let config: DataObject = [:]

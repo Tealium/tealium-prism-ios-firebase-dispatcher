@@ -1,8 +1,13 @@
 #!/bin/bash
-# Custom script to build a specific target
-# Assumes you are calling this from a folder that contains an XCode project, workspace or Package.swift.
+# Custom script to build a specific target.
+# Anchors to the repo root, then changes into --path (relative to repo root),
+# so it works regardless of the caller's working directory. --path defaults to
+# the repo root, which contains Package.swift; pass e.g. --path Example to build
+# the Xcode project in a subdirectory.
+cd "$(dirname "$0")/.." || { echo "cd failure"; exit 1; }
 
 POSITIONAL_ARGS=()
+PATH_ARG="."
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -13,6 +18,11 @@ while [[ $# -gt 0 ]]; do
         ;;
         -d|--destination)
         DESTINATION="$2"
+        shift # past argument
+        shift # past value
+        ;;
+        -p|--path)
+        PATH_ARG="$2"
         shift # past argument
         shift # past value
         ;;
@@ -38,4 +48,7 @@ then
     echo "--destination is NULL, make sure to pass it"
     exit 1
 fi
+
+cd "$PATH_ARG" || { echo "--path '$PATH_ARG' is not a valid directory"; exit 1; }
+
 rm -rf build && bundle exec fastlane run xcodebuild scheme:"$SCHEME" destination:"$DESTINATION"
