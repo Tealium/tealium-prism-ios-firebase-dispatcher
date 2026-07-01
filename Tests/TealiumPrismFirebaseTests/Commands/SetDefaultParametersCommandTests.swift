@@ -37,14 +37,13 @@ final class SetDefaultParametersCommandTests: XCTestCase {
             mockFirebase.lastDefaultParameters, "Empty payload should clear default parameters")
     }
 
-    func test_execute_with_empty_parameters_clears_defaults() {
+    func test_execute_with_empty_parameters_is_noop() {
         let payload: DataObject = [
             "parameters": [:] as DataObject
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.setDefaultEventParametersCount, 1)
-        XCTAssertNil(mockFirebase.lastDefaultParameters)
+        XCTAssertEqual(mockFirebase.setDefaultEventParametersCount, 0, "Empty dict should not call setDefaultEventParameters")
     }
 
     // MARK: - String Parameter Tests

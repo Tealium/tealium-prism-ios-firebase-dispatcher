@@ -48,7 +48,11 @@ class SetDefaultParametersCommand: SyncCommand {
             return
         }
 
+        // Empty dict is a no-op — nothing to set, and we don't want to silently clear all defaults.
+        // Clearing only happens when the parameters key is absent entirely.
+        guard !defaultParamsData.isEmpty else { return }
+
         let defaultParams = defaultParamsData.mapValues { $0.toDataInput() }
-        firebaseInstance.setDefaultEventParameters(defaultParams.isEmpty ? nil : defaultParams)
+        firebaseInstance.setDefaultEventParameters(defaultParams)
     }
 }

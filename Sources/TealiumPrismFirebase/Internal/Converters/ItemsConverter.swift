@@ -40,9 +40,9 @@ enum ItemsConverter {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     private static func convertArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
-        return arrayOfObjects.map { itemData in
+        return arrayOfObjects.compactMap { itemData in
             guard let itemDict = itemData.getDataDictionary() else {
-                return [:]
+                return nil
             }
 
             return itemDict.reduce(into: [String: Any]()) { result, pair in
@@ -71,8 +71,6 @@ enum ItemsConverter {
             )
         }
 
-        // Keep every index slot, even when an item has no values, so item positions stay
-        // aligned across parallel arrays (matches the production remote command).
         return (0..<itemCount).map { index in
             makeItem(from: arrays, at: index)
         }

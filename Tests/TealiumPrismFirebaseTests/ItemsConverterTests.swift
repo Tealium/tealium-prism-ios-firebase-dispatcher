@@ -88,6 +88,19 @@ final class ItemsConverterTests: XCTestCase {
         XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU2")
     }
 
+    func test_array_of_objects_drops_non_dict_entries() throws {
+        // Mix a valid dict entry with a scalar (non-dict) entry using jsonValue init.
+        let input = try DataItem(jsonValue: [
+            [AnalyticsParameterItemID: "SKU1", AnalyticsParameterPrice: 29.99],
+            "not_a_dict",
+        ] as [Any])
+
+        let items = try ItemsConverter.convert(from: input)
+
+        XCTAssertEqual(items?.count, 1)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+    }
+
     // MARK: - Error Tests
 
     func test_mismatched_parallel_arrays_throw_arrayLengthMismatch() {
