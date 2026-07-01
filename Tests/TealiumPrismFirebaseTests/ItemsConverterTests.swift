@@ -39,17 +39,18 @@ final class ItemsConverterTests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func test_dict_with_only_scalar_values_returns_nil() throws {
-        // compactMapValues skips keys whose values are not arrays — all scalars → empty dict → nil.
+    func test_dict_with_scalar_values_wraps_each_as_single_element_array() throws {
         let itemsData: DataObject = [
             AnalyticsParameterItemID: "SKU1",
             AnalyticsParameterPrice: 9.99
         ]
         let input = DataItem(converting: itemsData)
 
-        let result = try ItemsConverter.convert(from: input)
+        let items = try ItemsConverter.convert(from: input)
 
-        XCTAssertNil(result)
+        XCTAssertEqual(items?.count, 1)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertEqual(items?[0][AnalyticsParameterPrice] as? Double, 9.99)
     }
 
     // MARK: - Parallel Arrays Tests
@@ -88,8 +89,8 @@ final class ItemsConverterTests: XCTestCase {
         XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU2")
     }
 
-    func test_array_of_objects_drops_non_dict_entries() throws {
-        // Mix a valid dict entry with a scalar (non-dict) entry using jsonValue init.
+    func test_array_of_objects_keeps_empty_slot_for_non_dict_entries() throws {
+        // Non-dict entries are kept as [:] to preserve item index alignment.
         let input = try DataItem(jsonValue: [
             [AnalyticsParameterItemID: "SKU1", AnalyticsParameterPrice: 29.99],
             "not_a_dict",
@@ -97,8 +98,9 @@ final class ItemsConverterTests: XCTestCase {
 
         let items = try ItemsConverter.convert(from: input)
 
-        XCTAssertEqual(items?.count, 1)
+        XCTAssertEqual(items?.count, 2)
         XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertTrue(items?[1].isEmpty == true)
     }
 
     // MARK: - Error Tests

@@ -16,7 +16,8 @@ import TealiumPrismCore
 /// array of dictionaries under `AnalyticsParameterItems`:
 ///
 /// 1. Array of objects (Firebase-ready): each list entry is already a dictionary.
-/// 2. Parallel arrays (Tealium convention): each key maps to an array of equal length;
+/// 2. Parallel arrays (Tealium convention): each key maps to an array of equal length,
+///    or a scalar value treated as a single-element array;
 ///    the converter transposes them into a list of per-item dictionaries.
 ///
 /// Any array-length mismatch in shape (2) throws `CommandError.arrayLengthMismatch`.
@@ -40,9 +41,10 @@ enum ItemsConverter {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     private static func convertArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
-        return arrayOfObjects.compactMap { itemData in
+        return arrayOfObjects.map { itemData in
             guard let itemDict = itemData.getDataDictionary() else {
-                return nil
+                // Keep every index slot so item positions stay aligned across the array.
+                return [:]
             }
 
             return itemDict.reduce(into: [String: Any]()) { result, pair in
@@ -83,6 +85,14 @@ enum ItemsConverter {
     }
 
     private static func extractArrays(from dict: [String: DataItem]) -> [String: [DataInput]] {
-        dict.compactMapValues { $0.getDataArray()?.map { $0.toDataInput() } }
+        dict.compactMapValues { item in
+            if let array = item.getDataArray() {
+                return array.map { $0.toDataInput() }
+            }
+            // Scalar treated as a single-element array so {"item_id": "SKU1"} produces one item
+            // without requiring the caller to wrap scalars in arrays.
+            let scalar = item.toDataInput()
+            return scalar is NSNull ? nil : [scalar]
+        }
     }
 }
