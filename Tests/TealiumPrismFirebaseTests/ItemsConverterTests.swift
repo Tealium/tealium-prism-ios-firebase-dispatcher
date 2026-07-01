@@ -89,18 +89,20 @@ final class ItemsConverterTests: XCTestCase {
         XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU2")
     }
 
-    func test_array_of_objects_keeps_empty_slot_for_non_dict_entries() throws {
-        // Non-dict entries are kept as [:] to preserve item index alignment.
+    func test_array_of_objects_drops_non_dict_and_empty_entries() throws {
+        // Non-dict and empty entries are dropped — Firebase discards empty items on its side anyway.
         let input = try DataItem(jsonValue: [
             [AnalyticsParameterItemID: "SKU1", AnalyticsParameterPrice: 29.99],
             "not_a_dict",
+            [String: Any](),
+            [AnalyticsParameterItemID: "SKU3", AnalyticsParameterPrice: 49.99],
         ] as [Any])
 
         let items = try ItemsConverter.convert(from: input)
 
         XCTAssertEqual(items?.count, 2)
         XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
-        XCTAssertTrue(items?[1].isEmpty == true)
+        XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU3")
     }
 
     // MARK: - Error Tests

@@ -41,10 +41,11 @@ enum ItemsConverter {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     private static func convertArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
-        return arrayOfObjects.map { itemData in
-            guard let itemDict = itemData.getDataDictionary() else {
-                // Keep every index slot so item positions stay aligned across the array.
-                return [:]
+        return arrayOfObjects.compactMap { itemData in
+            // Drop non-dict and empty entries — Firebase discards empty items itself, so keeping
+            // an empty slot has no effect and only risks approaching the per-event item limit sooner.
+            guard let itemDict = itemData.getDataDictionary(), !itemDict.isEmpty else {
+                return nil
             }
 
             return itemDict.reduce(into: [String: Any]()) { result, pair in
