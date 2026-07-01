@@ -12,6 +12,7 @@ import XCTest
 @testable import TealiumPrismCore
 @testable import TealiumPrismFirebase
 
+// swiftlint:disable:next type_name
 final class InitiateConversionMeasurementCommandTests: XCTestCase {
 
     let mockFirebase = MockFirebaseAnalytics()

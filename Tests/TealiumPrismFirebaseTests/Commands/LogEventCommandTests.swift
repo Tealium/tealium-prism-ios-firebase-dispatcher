@@ -54,7 +54,7 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
         XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "test_event")
         XCTAssertNil(mockFirebase.loggedEvents.last?.parameters)
     }
@@ -264,7 +264,7 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
         XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "42")
     }
 
@@ -274,7 +274,7 @@ final class LogEventCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
         XCTAssertEqual(mockFirebase.loggedEvents.last?.name, "3.14")
     }
 

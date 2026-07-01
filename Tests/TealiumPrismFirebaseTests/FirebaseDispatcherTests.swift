@@ -39,7 +39,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
     }
 
     // MARK: - Dispatch Tests - Multiple Commands
@@ -64,7 +64,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
         XCTAssertEqual(mockFirebase.setUserIdCount, 1)
     }
 
@@ -170,7 +170,7 @@ final class FirebaseDispatcherTests: XCTestCase {
         }
 
         waitForDefaultTimeout()
-        XCTAssertTrue(!mockFirebase.loggedEvents.isEmpty)
+        XCTAssertFalse(mockFirebase.loggedEvents.isEmpty)
         XCTAssertEqual(mockFirebase.loggedEvents.count, 1)
     }
 

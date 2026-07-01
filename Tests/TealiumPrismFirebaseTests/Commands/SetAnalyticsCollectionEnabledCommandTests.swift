@@ -10,6 +10,7 @@
 @testable import TealiumPrismFirebase
 import XCTest
 
+// swiftlint:disable:next type_name
 final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
 
     let mockFirebase = MockFirebaseAnalytics()

@@ -46,7 +46,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.userProperties.isEmpty)
+        XCTAssertFalse(mockFirebase.userProperties.isEmpty)
         XCTAssertEqual(mockFirebase.userProperties.last?.name, "tier")
         XCTAssertEqual(mockFirebase.userProperties.last?.value, "premium")
     }
@@ -59,7 +59,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.userProperties.isEmpty)
+        XCTAssertFalse(mockFirebase.userProperties.isEmpty)
         XCTAssertEqual(mockFirebase.userProperties.last?.name, "tier")
         XCTAssertNil(mockFirebase.userProperties.last?.value)
     }
@@ -107,7 +107,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.userProperties.isEmpty)
+        XCTAssertFalse(mockFirebase.userProperties.isEmpty)
         XCTAssertEqual(mockFirebase.userProperties.count, 1)
         XCTAssertEqual(mockFirebase.userProperties[0].name, "subscription_tier")
         XCTAssertEqual(mockFirebase.userProperties[0].value, "premium")
@@ -216,7 +216,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.userProperties.isEmpty)
+        XCTAssertFalse(mockFirebase.userProperties.isEmpty)
         XCTAssertEqual(mockFirebase.userProperties.last?.name, "42")
         XCTAssertEqual(mockFirebase.userProperties.last?.value, "99")
     }
@@ -228,7 +228,7 @@ final class SetUserPropertyCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(!mockFirebase.userProperties.isEmpty)
+        XCTAssertFalse(mockFirebase.userProperties.isEmpty)
         XCTAssertEqual(mockFirebase.userProperties.last?.name, "score")
         XCTAssertEqual(mockFirebase.userProperties.last?.value, "9.5")
     }
@@ -249,8 +249,8 @@ final class SetUserPropertyCommandTests: XCTestCase {
 
     func test_execute_sets_multiple_properties_with_mixed_numeric_array() {
         let payload: DataObject = [
-            "property_name": [DataItem(value: "tier"), DataItem(value: 7)] as [DataItem],
-            "property_value": [DataItem(value: 1), DataItem(value: 9.5)] as [DataItem],
+            "property_name": [DataItem(value: "tier"), DataItem(value: 7)],
+            "property_value": [DataItem(value: 1), DataItem(value: 9.5)],
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
