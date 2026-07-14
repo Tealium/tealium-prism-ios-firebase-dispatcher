@@ -6,9 +6,9 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseAnalytics
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 /// Tests for all Firebase command mappings (LogEvent, SetUserId, SetUserProperty, etc.)
@@ -27,7 +27,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
             "email_address": "user@example.com"
         ])
     }
@@ -43,7 +43,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
             "phone_number": "+1234567890"
         ])
     }
@@ -59,7 +59,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
             "hashed_email_address": "abc123hash"
         ])
     }
@@ -75,7 +75,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.initiateConversionMeasurement.rawValue,
             "hashed_phone_number": "xyz789hash"
         ])
     }
@@ -91,7 +91,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "screen_view"
         ])
     }
@@ -110,7 +110,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "purchase",
             "parameters": [
                 AnalyticsParameterValue: 99.99,
@@ -133,7 +133,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "view_item_list",
             "parameters": [
                 AnalyticsParameterItems: [
@@ -160,7 +160,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.logEvent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "custom_event",
             "parameters": [
                 "screen_name": "Home",
@@ -180,7 +180,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.resetData.rawValue
+            TealiumDataKey.commandName: FirebaseCommand.resetData.rawValue
         ])
     }
 
@@ -197,7 +197,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setAnalyticsCollectionEnabled.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setAnalyticsCollectionEnabled.rawValue,
             "analytics_collection_enabled": true
         ])
     }
@@ -221,7 +221,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setConsent.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setConsent.rawValue,
             "consent_settings": [
                 ConsentType.analyticsStorage.rawValue: "granted",
                 ConsentType.adStorage.rawValue: "denied",
@@ -246,7 +246,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setDefaultParameters.rawValue,
             "parameters": [
                 "app_version": "2.0",
                 "environment": "prod"
@@ -269,7 +269,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setDefaultParameters.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setDefaultParameters.rawValue,
             "parameters": [
                 "app_version": "2.0",
                 "environment": "production",
@@ -291,7 +291,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setSessionTimeout.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setSessionTimeout.rawValue,
             "session_timeout_seconds": 3600
         ])
     }
@@ -307,9 +307,47 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setUserId.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setUserId.rawValue,
             "user_id": "USER_123"
         ])
+    }
+
+    // MARK: - SetConsent Bulk Mapping Tests
+
+    func test_setConsent_bulk_mapping() {
+        let dispatch = Dispatch(name: "consent_update", type: .event, data: [
+            "consent": [
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied"
+            ] as DataObject
+        ])
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.mapCommand(.setConsent)
+            mappings.mapFrom("consent", to: .consentSettings)
+        }
+
+        XCTAssertEqual(result.payload, [
+            TealiumDataKey.commandName: FirebaseCommand.setConsent.rawValue,
+            "consent_settings": [
+                ConsentType.analyticsStorage.rawValue: "granted",
+                ConsentType.adStorage.rawValue: "denied"
+            ] as DataObject
+        ])
+    }
+
+    // MARK: - Keep Mapping Tests
+
+    func test_keep_preserves_destination_as_source() {
+        let dispatch = Dispatch(name: "login", type: .event, data: [
+            "user_id": "USER_123"
+        ])
+
+        let result = map(dispatch: dispatch) { mappings in
+            mappings.keep(.userId)
+        }
+
+        XCTAssertEqual(result.payload, ["user_id": "USER_123"])
     }
 
     // MARK: - SetUserProperty Command Tests (Multiple Properties)
@@ -327,7 +365,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setUserProperty.rawValue,
             "property_name": ["tier", "level", "status"],
             "property_value": ["premium", "expert", "active"]
         ])
@@ -348,7 +386,7 @@ final class FirebaseCommandMappingsTests: FirebaseMappingsTestBase {
         }
 
         XCTAssertEqual(result.payload, [
-            FirebaseConstants.commandName: FirebaseCommand.setUserProperty.rawValue,
+            TealiumDataKey.commandName: FirebaseCommand.setUserProperty.rawValue,
             "property_name": "membership_tier",
             "property_value": "premium"
         ])

@@ -1,0 +1,108 @@
+name: Build and Test
+
+on: [pull_request]
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Lint Source
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --config .swiftlint.yml
+      - name: Lint Tests
+        uses: norio-nomura/action-swiftlint@3.2.1
+        with:
+          args: --config .swiftlint_test.yml
+  validate_versions:
+    name: Validate versions
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Versions
+        run: scripts/validate_versions.sh
+  inspect:
+    name: Inspect Machine
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - name: List available Xcode versions
+        run: ls /Applications | grep Xcode
+        shell: bash
+      - name: List available devices
+        run: xcrun simctl list devices
+        shell: bash
+      - name: List runtimes
+        run: xcrun simctl list runtimes
+        shell: bash
+  build_example:
+    name: Example Builds | ${{ matrix.scheme }}
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        scheme:
+            - Example
+        destination:
+            - "generic/platform=iOS Simulator"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build - "${{ matrix.scheme }}"
+        run: scripts/build.sh --scheme "${{ matrix.scheme }}" --destination "${{ matrix.destination }}" --path Example
+  build_SPM:
+    name: SPM Builds | ${{ matrix.destination }}
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 60
+    strategy:
+      matrix:
+        destination:
+          - "generic/platform=iOS"
+          - "generic/platform=iOS Simulator"
+          - "generic/platform=tvOS"
+          - "generic/platform=tvOS Simulator"
+          - "generic/platform=macOS"
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build - TealiumPrismFirebase
+        run: scripts/build.sh --scheme "TealiumPrismFirebase" --destination "${{ matrix.destination }}" --path .
+  test_iOS:
+    name: iOS Tests
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
+  test_tvOS:
+    name: tvOS Tests
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
+  test_macOS:
+    name: macOS Tests
+    needs: [SwiftLint, validate_versions]
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Test - TealiumPrismFirebaseTests
+        run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=macOS"

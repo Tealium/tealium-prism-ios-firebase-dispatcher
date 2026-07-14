@@ -19,7 +19,4 @@ enum FirebaseConstants {
     static let version = "1.0.0"
     static let moduleType = "FirebaseDispatcher"
 
-    /// The key used to identify the command to execute in the mapped payload.
-    static let commandName = "command_name"
-
 }

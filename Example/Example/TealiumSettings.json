@@ -31,15 +31,23 @@
                     }
                 },
                 {
-                    "destination": { "path": "event_name" },
+                    "destination": { "key": "command_name" },
                     "parameters": {
-                        "reference": { "key": "event_name" }
+                        "reference": { "key": "tealium_event" },
+                        "filter": { "value": "log_event_aoo" },
+                        "map_to": { "value": "logevent" }
                     }
                 },
                 {
-                    "destination": { "path": "parameters" },
+                    "destination": { "path": "parameters.items" },
                     "parameters": {
-                        "reference": { "key": "params" }
+                        "reference": { "key": "items_aoo" }
+                    }
+                },
+                {
+                    "destination": { "path": "event_name" },
+                    "parameters": {
+                        "reference": { "key": "event_name" }
                     }
                 },
                 {

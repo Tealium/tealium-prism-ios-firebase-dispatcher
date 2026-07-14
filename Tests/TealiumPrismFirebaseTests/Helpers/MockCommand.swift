@@ -6,27 +6,27 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import Foundation
 
-/// Mock implementation of FirebaseCommandProtocol for testing command execution.
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
+
+/// Mock implementation of SyncCommand for testing command execution.
 /// Tracks execution calls and can be configured to succeed or throw an error.
-class MockCommand: FirebaseCommandProtocol {
-    
-    let name: String
-    let errorToThrow: FirebaseCommandError?
+class MockCommand: SyncCommand {
+
+    let errorToThrow: CommandError?
 
     var executeCalled = false
     var lastPayload: DataObject?
     var executeCallCount = 0
 
-    init(name: String, errorToThrow: FirebaseCommandError? = nil) {
-        self.name = name
+    init(name: String, errorToThrow: CommandError? = nil) {
         self.errorToThrow = errorToThrow
+        super.init(name: name)
     }
 
-    func execute(payload: DataObject) throws(FirebaseCommandError) {
+    override func execute(payload: DataObject) throws(CommandError) {
         executeCalled = true
         lastPayload = payload
         executeCallCount += 1

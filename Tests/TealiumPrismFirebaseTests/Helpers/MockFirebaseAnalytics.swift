@@ -6,139 +6,132 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-import FirebaseCore
 import FirebaseAnalytics
+import FirebaseCore
 import Foundation
+
+@testable import TealiumPrismFirebase
 
 /// Mock implementation of FirebaseAnalyticsInterface protocol for testing.
 /// Tracks all method calls and their parameters for verification.
 class MockFirebaseAnalytics: FirebaseAnalyticsInterface {
-    
-    // MARK: - Call Tracking
-    
-    var onReadyCalled = false
-    var onReadyCallbacks: [() -> Void] = []
-    
-    var setSessionTimeoutIntervalCalled = false
-    var lastSessionTimeout: TimeInterval?
-    
-    var logEventCalled = false
-    var lastEventName: String?
-    var lastEventParameters: [String: Any]?
-    var logEventCallCount = 0
-    var logEventCalls: [(name: String, parameters: [String: Any]?)] = []
-    
-    var setUserIdCalled = false
+
+    // MARK: - Nested Types
+
+    struct LoggedEvent {
+        let name: String
+        let parameters: [String: Any]?
+    }
+
+    struct UserProperty {
+        let value: String?
+        let name: String
+    }
+
+    // MARK: - List-Based Tracking
+
+    var loggedEvents: [LoggedEvent] = []
+    var userProperties: [UserProperty] = []
+
+    // MARK: - Count-Based Tracking
+
+    var setUserIdCount = 0
     var lastUserId: String?
-    
-    var setUserPropertyCalled = false
-    var lastUserPropertyValue: String?
-    var lastUserPropertyName: String?
-    var setUserPropertyCalls: [(value: String?, name: String)] = []
-    
-    var resetAnalyticsDataCalled = false
-    
-    var setDefaultEventParametersCalled = false
+
+    var resetAnalyticsDataCount = 0
+
+    var setDefaultEventParametersCount = 0
     var lastDefaultParameters: [String: Any]?
-    
-    var setConsentCalled = false
+
+    var setConsentCount = 0
     var lastConsentSettings: [ConsentType: ConsentStatus]?
-    
-    var setAnalyticsCollectionEnabledCalled = false
+
+    var setSessionTimeoutCount = 0
+    var lastSessionTimeout: TimeInterval?
+
+    var setAnalyticsEnabledCount = 0
     var lastAnalyticsEnabled: Bool?
-    
-    var setLoggerLevelCalled = false
+
+    var setLoggerLevelCount = 0
     var lastLoggerLevel: FirebaseLoggerLevel?
-    
-    var initiateConversionMeasurementEmailCalled = false
+
+    var conversionEmailCount = 0
     var lastEmailAddress: String?
-    
-    var initiateConversionMeasurementPhoneCalled = false
+
+    var conversionPhoneCount = 0
     var lastPhoneNumber: String?
-    
-    var initiateConversionMeasurementHashedEmailCalled = false
+
+    var conversionHashedEmailCount = 0
     var lastHashedEmailAddress: Data?
-    
-    var initiateConversionMeasurementHashedPhoneCalled = false
+
+    var conversionHashedPhoneCount = 0
     var lastHashedPhoneNumber: Data?
-    
+
     // MARK: - FirebaseAnalyticsInterface Protocol
-    
+
     func onReady(_ onReady: @escaping () -> Void) {
-        onReadyCalled = true
-        onReadyCallbacks.append(onReady)
-        // Execute immediately for testing
         onReady()
     }
-    
+
     func setSessionTimeoutInterval(_ interval: TimeInterval) {
-        setSessionTimeoutIntervalCalled = true
+        setSessionTimeoutCount += 1
         lastSessionTimeout = interval
     }
-    
+
     func logEvent(_ name: String, parameters: [String: Any]?) {
-        logEventCalled = true
-        lastEventName = name
-        lastEventParameters = parameters
-        logEventCallCount += 1
-        logEventCalls.append((name: name, parameters: parameters))
+        loggedEvents.append(LoggedEvent(name: name, parameters: parameters))
     }
-    
+
     func setUserId(_ userId: String?) {
-        setUserIdCalled = true
+        setUserIdCount += 1
         lastUserId = userId
     }
-    
+
     func setUserProperty(_ value: String?, forName name: String) {
-        setUserPropertyCalled = true
-        lastUserPropertyValue = value
-        lastUserPropertyName = name
-        setUserPropertyCalls.append((value: value, name: name))
+        userProperties.append(UserProperty(value: value, name: name))
     }
-    
+
     func resetAnalyticsData() {
-        resetAnalyticsDataCalled = true
+        resetAnalyticsDataCount += 1
     }
-    
+
     func setDefaultEventParameters(_ parameters: [String: Any]?) {
-        setDefaultEventParametersCalled = true
+        setDefaultEventParametersCount += 1
         lastDefaultParameters = parameters
     }
-    
+
     func setConsent(_ consentSettings: [ConsentType: ConsentStatus]) {
-        setConsentCalled = true
+        setConsentCount += 1
         lastConsentSettings = consentSettings
     }
-    
+
     func setAnalyticsCollectionEnabled(_ enabled: Bool) {
-        setAnalyticsCollectionEnabledCalled = true
+        setAnalyticsEnabledCount += 1
         lastAnalyticsEnabled = enabled
     }
-    
+
     func setLoggerLevel(_ loggerLevel: FirebaseLoggerLevel) {
-        setLoggerLevelCalled = true
+        setLoggerLevelCount += 1
         lastLoggerLevel = loggerLevel
     }
-    
+
     func initiateOnDeviceConversionMeasurement(emailAddress: String) {
-        initiateConversionMeasurementEmailCalled = true
+        conversionEmailCount += 1
         lastEmailAddress = emailAddress
     }
-    
+
     func initiateOnDeviceConversionMeasurement(phoneNumber: String) {
-        initiateConversionMeasurementPhoneCalled = true
+        conversionPhoneCount += 1
         lastPhoneNumber = phoneNumber
     }
-    
+
     func initiateOnDeviceConversionMeasurement(hashedEmailAddress: Data) {
-        initiateConversionMeasurementHashedEmailCalled = true
+        conversionHashedEmailCount += 1
         lastHashedEmailAddress = hashedEmailAddress
     }
-    
+
     func initiateOnDeviceConversionMeasurement(hashedPhoneNumber: Data) {
-        initiateConversionMeasurementHashedPhoneCalled = true
+        conversionHashedPhoneCount += 1
         lastHashedPhoneNumber = hashedPhoneNumber
     }
 }
-

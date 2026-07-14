@@ -6,9 +6,9 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
-@testable import TealiumPrismCore
 import FirebaseAnalytics
+@testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
 final class SetConsentCommandTests: XCTestCase {
@@ -22,13 +22,28 @@ final class SetConsentCommandTests: XCTestCase {
         let payload: DataObject = [:]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? FirebaseCommandError,
-                  case .noValidConsentSettings = commandError else {
-                XCTFail("Expected noValidConsentSettings error but got \(error)")
+            guard let commandError = error as? CommandError,
+                  case .missingParameter = commandError else {
+                XCTFail("Expected missingParameter error but got \(error)")
                 return
             }
         }
-        XCTAssertFalse(mockFirebase.setConsentCalled)
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
+    func test_execute_with_empty_consent_settings_throws_noValidParameters() {
+        let payload: DataObject = [
+            "consent_settings": [:] as DataObject
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                  case .noValidParameters = commandError else {
+                XCTFail("Expected noValidParameters error but got \(error)")
+                return
+            }
+        }
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
     // MARK: - Single Consent Type Tests
@@ -41,7 +56,7 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setConsentCalled)
+        XCTAssertEqual(mockFirebase.setConsentCount, 1)
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
     }
 
@@ -91,7 +106,7 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Multiple Consent Types Tests
 
-    func test_execute_sets_multiple_consent_types() {
+    func test_execute_sets_multiple_consent_types() throws {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -102,9 +117,9 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setConsentCalled)
+        XCTAssertEqual(mockFirebase.setConsentCount, 1)
 
-        let consentSettings = mockFirebase.lastConsentSettings!
+        let consentSettings = try XCTUnwrap(mockFirebase.lastConsentSettings)
         XCTAssertEqual(consentSettings.count, 4)
         XCTAssertEqual(consentSettings[.adStorage], .granted)
         XCTAssertEqual(consentSettings[.analyticsStorage], .granted)
@@ -114,9 +129,7 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Invalid Values Tests
 
-    func test_execute_forwards_unknown_consent_type() {
-        // ConsentType is RawRepresentable — unknown keys should be forwarded to Firebase
-        // rather than silently dropped, so future Firebase types work without SDK updates.
+    func test_execute_throws_for_unknown_consent_type() {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -124,13 +137,13 @@ final class SetConsentCommandTests: XCTestCase {
             ] as DataObject
         ]
 
-        XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 2)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is CommandError)
+        }
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
-    func test_execute_forwards_unknown_consent_status() {
-        // ConsentStatus is RawRepresentable — unknown status strings should be forwarded
-        // to Firebase rather than silently dropped, so future statuses work without SDK updates.
+    func test_execute_throws_for_unknown_consent_status() {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -138,8 +151,10 @@ final class SetConsentCommandTests: XCTestCase {
             ] as DataObject
         ]
 
-        XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertEqual(mockFirebase.lastConsentSettings?.count, 2)
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            XCTAssert(error is CommandError)
+        }
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
     func test_execute_throws_error_for_non_string_value() {
@@ -150,9 +165,9 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            XCTAssert(error is CommandError)
         }
-        XCTAssertFalse(mockFirebase.setConsentCalled)
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
     // MARK: - Case Sensitivity Tests
@@ -165,6 +180,18 @@ final class SetConsentCommandTests: XCTestCase {
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
+    }
+
+    func test_execute_handles_case_insensitive_consent_type() {
+        let payload: DataObject = [
+            "consent_settings": [
+                "AD_STORAGE": "granted"
+            ] as DataObject
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.setConsentCount, 1)
         XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
     }
 }

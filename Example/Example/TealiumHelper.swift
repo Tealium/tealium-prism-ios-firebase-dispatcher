@@ -85,6 +85,20 @@ class TealiumHelper {
         ])
     }
     
+    /// Purchase event using array-of-objects items format — items passed as pre-built list
+    /// instead of parallel arrays. Demonstrates `parameters.items` direct mapping path.
+    func logPurchaseEventArrayOfObjects() {
+        teal?.track("log_event_aoo", data: [
+            "event_name": "purchase",
+            "value": 249.97,
+            "currency": "USD",
+            "items_aoo": [
+                DataItem(value: ["item_id": "SKU-001", "item_name": "Premium Widget", "price": 99.99, "quantity": 1]),
+                DataItem(value: ["item_id": "SKU-002", "item_name": "Gadget Pro",     "price": 79.99, "quantity": 2]),
+            ]
+        ])
+    }
+
     /// Purchase event using the consistent pattern — `tealium_event` = command type,
     /// `event_name` = explicit Firebase event name passed in data.
     func logPurchaseEvent() {

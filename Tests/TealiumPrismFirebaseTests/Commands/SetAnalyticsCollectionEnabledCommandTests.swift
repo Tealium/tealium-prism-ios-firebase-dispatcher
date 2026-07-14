@@ -6,50 +6,72 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-@testable import TealiumPrismFirebase
 @testable import TealiumPrismCore
+@testable import TealiumPrismFirebase
 import XCTest
 
+// swiftlint:disable:next type_name
 final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
-    
+
     let mockFirebase = MockFirebaseAnalytics()
     lazy var command = SetAnalyticsCollectionEnabledCommand(firebaseInstance: mockFirebase)
 
     // MARK: - Basic Tests
-    
-    func test_execute_without_command_data_throws_error() {
+
+    func test_execute_without_command_data_throws_missing_parameter() {
         let payload: DataObject = [:]
-        
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is FirebaseCommandError)
+            guard let commandError = error as? CommandError,
+                case .missingParameter = commandError
+            else {
+                XCTFail("Expected missingParameter error but got \(error)")
+                return
+            }
         }
-        XCTAssertFalse(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
-    
+
+    func test_execute_throws_invalid_parameter_type_for_non_boolean() {
+        let payload: DataObject = [
+            "analytics_collection_enabled": "maybe"
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                case .invalidParameterType = commandError
+            else {
+                XCTFail("Expected invalidParameterType error but got \(error)")
+                return
+            }
+        }
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
+    }
+
     // MARK: - Boolean Value Tests
-    
+
     func test_execute_enables_analytics_collection_with_true() {
         let payload: DataObject = [
             "analytics_collection_enabled": true
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, true)
     }
-    
+
     func test_execute_disables_analytics_collection_with_false() {
         let payload: DataObject = [
             "analytics_collection_enabled": false
         ]
-        
+
         XCTAssertNoThrow(try command.execute(payload: payload))
-        XCTAssertTrue(mockFirebase.setAnalyticsCollectionEnabledCalled)
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 1)
         XCTAssertEqual(mockFirebase.lastAnalyticsEnabled, false)
     }
-    
+
     // MARK: - String and Integer Value Tests (parameterized)
-    
+
     func test_execute_parses_enabling_values_correctly() {
         let param = "analytics_collection_enabled"
         let enablingStrings: [String] = ["true", "TRUE", "yes", "YES", "1"]

@@ -6,8 +6,8 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-import Foundation
 import FirebaseCore
+import Foundation
 
 // MARK: - Firebase Log Level
 
@@ -31,7 +31,7 @@ enum FirebaseLogLevel: String, CaseIterable {
     /// Maps string log level names to FirebaseLogLevel.
     ///
     /// Case-insensitive. Returns nil if the string is not recognized.
-    static func map(_ levelString: String) -> FirebaseLogLevel? {
+    static func fromString(_ levelString: String) -> FirebaseLogLevel? {
         FirebaseLogLevel(rawValue: levelString.lowercased())
     }
 
@@ -72,7 +72,7 @@ enum FirebaseLogLevel: String, CaseIterable {
     ///
     /// Use when you only have FirebaseLoggerLevel; cannot distinguish .min from .error or .max from .debug.
     /// Returns nil if the level is not recognized (e.g., Firebase SDK added a new log level).
-    static func string(from loggerLevel: FirebaseLoggerLevel) -> String? {
+    static func toString(_ loggerLevel: FirebaseLoggerLevel) -> String? {
         FirebaseLogLevel(firebaseLoggerLevel: loggerLevel)?.rawValue
     }
 }
