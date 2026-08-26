@@ -91,6 +91,7 @@ public enum FirebaseDestination: JSONObjectPathConvertible {
     /// The hashed phone number for conversion measurement (`"hashed_phone_number"`).
     case conversionHashedPhone
 
+    /// The path in the Firebase command payload that this destination writes to.
     public var path: JSONObjectPath {
         switch self {
         // LogEvent

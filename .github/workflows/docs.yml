@@ -1,0 +1,68 @@
+name: Build Docs
+
+on:
+  push:
+    branches:
+      - main
+  # Allows to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  # Build job
+  build_docs:
+    # Specify runner + build & upload the static files as an artifact
+    runs-on: 'macOS-15'
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build static files
+        id: build
+        run: ./scripts/docs.sh
+      - name: Upload static files as artifact
+        id: upload-artifact
+        uses: actions/upload-pages-artifact@v4
+  # Deployment job
+  deploy_docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+    runs-on: 'macOS-15'
+    needs: build_docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Second build with the docs.tealium.com theme, published to the gh-pages branch where
+  # Hugo consumes it. The default-theme build above stays on GitHub Pages.
+  build_and_deploy_for_hugo:
+    runs-on: 'macOS-15'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: "Run Local Action: Setup Machine"
+        uses: ./.github/workflows/setup-machine
+      - name: Build static files
+        id: build
+        run: ./scripts/docs.sh --theme ./docs/tealdocs-theme/
+      - name: Push to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          # Set this to the directory produced by ./scripts/docs.sh
+          publish_dir: ./_site
+          # Recreate gh-pages as an orphan branch → exactly one commit each deploy
+          force_orphan: true

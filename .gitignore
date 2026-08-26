@@ -54,6 +54,9 @@ Temporary Items
 .build
 *xcuserdata*
 
+## Generated documentation (jazzy output)
+_site/
+
 ## Pods folder
 Pods/
 
