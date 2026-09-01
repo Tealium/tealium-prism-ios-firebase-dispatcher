@@ -8,11 +8,11 @@ The Firebase module can be configured using three different approaches:
 Configure the module using local JSON settings file (via `settingsFile` parameter) and/or remote settings (via `settingsUrl` parameter):
 
 ```swift
-var config = TealiumConfig(account: "tealiummobile",
-                          profile: "your-profile",
+var config = TealiumConfig(account: "my_account",
+                          profile: "my_profile",
                           environment: "dev",
                           settingsFile: "TealiumSettings",
-                          settingsUrl: "https://tags.tiqcdn.com/dle/tealiummobile/lib/example_settings.json")
+                          settingsUrl: "https://tags.tiqcdn.com/dle/my_account/my_profile/example_settings.json")
 ```
 
 **Default initialization** - module will be initialized only if configured in settings file specified:
@@ -51,8 +51,8 @@ Configure the module programmatically by adding it to the `modules` parameter in
 
 **Default initialization** - module will be initialized with default settings:
 ```swift
-let config = TealiumConfig(account: "tealiummobile",
-                          profile: "your-profile",
+let config = TealiumConfig(account: "my_account",
+                          profile: "my_profile",
                           environment: "dev",
                           modules: [
                               Modules.firebaseDispatcher(),
@@ -62,8 +62,8 @@ let config = TealiumConfig(account: "tealiummobile",
 
 **Custom configuration** - module with enforced settings:
 ```swift
-let config = TealiumConfig(account: "tealiummobile",
-                          profile: "your-profile",
+let config = TealiumConfig(account: "my_account",
+                          profile: "my_profile",
                           environment: "dev",
                           modules: [
                               Modules.firebaseDispatcher(forcingSettings: { builder in
