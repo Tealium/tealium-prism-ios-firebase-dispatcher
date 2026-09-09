@@ -14,7 +14,7 @@ import TealiumPrismCore
 ///
 /// Holds the settings for Firebase Analytics initialization and behavior.
 struct FirebaseDispatcherConfiguration {
-    /// Session timeout in seconds. Default Firebase session timeout is 30 minutes (1800 seconds).
+    /// Session timeout in seconds. Left untouched on the SDK when nil, so Firebase applies its own default.
     let sessionTimeoutSeconds: Double?
     /// Whether analytics collection is enabled.
     let analyticsCollectionEnabled: Bool?

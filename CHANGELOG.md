@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.0]
 
 ### Added
 - Initial release of Tealium Prism Firebase Dispatcher for iOS.
@@ -27,3 +27,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SwiftUI example app demonstrating all commands.
 - SPM and CocoaPods support.
 - Multi-platform: iOS 15+, macOS 10.15+, tvOS 15+.
+
+[0.1.0]: https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher/releases/tag/0.1.0

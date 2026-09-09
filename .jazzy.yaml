@@ -1,0 +1,36 @@
+module: TealiumPrismFirebase
+title: TealiumPrismFirebase
+author: Tealium
+author_url: https://www.tealium.com
+source_host_url: https://github.com/tealium/tealium-prism-ios-firebase-dispatcher
+# Docs-specific landing page: links point at generated guide pages (`logevent.html`, …) instead of
+# the `docs/guides/*.md` sources, which are not copied into the built site.
+readme: docs/README.md
+exclude:
+  - "**/Internal*"
+sdk: iphoneos
+swift_build_tool: spm
+abstract: 'docs/abstracts/**/**.md'
+documentation: 'docs/guides/**.md'
+
+custom_categories:
+  - name: Firebase Dispatcher
+    children:
+      - Modules
+      - FirebaseSettingsBuilder
+      - FirebaseMappings
+      - FirebaseCommand
+      - FirebaseDestination
+  # Guides from `documentation:`, grouped so they don't fall into jazzy's "Other Guides" bucket.
+  - name: Command Reference
+    children:
+      - Mappings
+      - LogEvent
+      - SetUserID
+      - SetUserProperty
+      - SetDefaultParameters
+      - SetSessionTimeout
+      - SetAnalyticsCollectionEnabled
+      - SetConsent
+      - ResetData
+      - InitiateConversionMeasurement

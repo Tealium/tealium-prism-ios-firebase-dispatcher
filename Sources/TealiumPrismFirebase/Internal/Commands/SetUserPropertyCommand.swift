@@ -11,9 +11,12 @@ import TealiumPrismCore
 
 /// Command for setting Firebase Analytics user property(ies).
 ///
-/// Sets one or multiple user properties. Up to 25 user property names are supported.
+/// Sets one or multiple user properties.
 /// Once set, user property values persist throughout the app lifecycle and across sessions.
 /// Empty string removes the property.
+///
+/// Every resolved name/value pair is forwarded to the SDK as-is. Firebase enforces its own quotas
+/// on property names and values; this command does not duplicate them.
 ///
 /// This command automatically detects whether the input is a single property or multiple properties:
 /// - Single values: `property_name` and `property_value` as strings

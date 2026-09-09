@@ -105,6 +105,61 @@ final class ItemsConverterTests: XCTestCase {
         XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU3")
     }
 
+    func test_array_of_objects_drops_null_only_entries() throws {
+        // An entry whose only property resolves to null has no real content once converted —
+        // dropped the same way a literally empty dict is, since checking the input dict alone
+        // would miss this case.
+        let input = try DataItem(jsonValue: [
+            [AnalyticsParameterItemID: "SKU1", AnalyticsParameterPrice: 29.99],
+            [AnalyticsParameterItemID: NSNull()],
+            [AnalyticsParameterItemID: "SKU3", AnalyticsParameterPrice: 49.99],
+        ] as [Any])
+
+        let items = try ItemsConverter.convert(from: input)
+
+        XCTAssertEqual(items?.count, 2)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU3")
+    }
+
+    func test_array_of_objects_drops_individual_null_properties_but_keeps_item() throws {
+        let input = try DataItem(jsonValue: [
+            [AnalyticsParameterItemID: "SKU1", AnalyticsParameterPrice: NSNull()],
+        ] as [Any])
+
+        let items = try ItemsConverter.convert(from: input)
+
+        XCTAssertEqual(items?.count, 1)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertNil(items?[0][AnalyticsParameterPrice])
+    }
+
+    func test_parallel_arrays_drops_index_where_every_property_is_null() throws {
+        let input = try DataItem(jsonValue: [
+            AnalyticsParameterItemID: ["SKU1", NSNull(), "SKU3"],
+            AnalyticsParameterPrice: [29.99, NSNull(), 49.99],
+        ] as [String: Any])
+
+        let items = try ItemsConverter.convert(from: input)
+
+        XCTAssertEqual(items?.count, 2)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertEqual(items?[1][AnalyticsParameterItemID] as? String, "SKU3")
+    }
+
+    func test_parallel_arrays_drops_individual_null_element_but_keeps_item() throws {
+        let input = try DataItem(jsonValue: [
+            AnalyticsParameterItemID: ["SKU1"],
+            AnalyticsParameterPrice: [NSNull()],
+        ] as [String: Any])
+
+        let items = try ItemsConverter.convert(from: input)
+
+        XCTAssertEqual(items?.count, 1)
+        XCTAssertEqual(items?[0][AnalyticsParameterItemID] as? String, "SKU1")
+        XCTAssertNil(items?[0][AnalyticsParameterPrice])
+    }
+
     // MARK: - Error Tests
 
     func test_mismatched_parallel_arrays_throw_arrayLengthMismatch() {

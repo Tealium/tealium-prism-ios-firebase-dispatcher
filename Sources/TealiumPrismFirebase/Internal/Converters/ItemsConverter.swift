@@ -20,7 +20,10 @@ import TealiumPrismCore
 ///    or a scalar value treated as a single-element array;
 ///    the converter transposes them into a list of per-item dictionaries.
 ///
-/// Any array-length mismatch in shape (2) throws `CommandError.arrayLengthMismatch`.
+/// Any array-length mismatch in shape (2) throws `CommandError.arrayLengthMismatch`. In both shapes,
+/// unsupported or null property values are dropped individually, and an item left with no properties
+/// at all is dropped entirely — Firebase discards empty items itself, so keeping one has no effect and
+/// only risks approaching the per-event item limit sooner.
 enum ItemsConverter {
 
     /// Converts Firebase items array from either parallel arrays or array of objects format.
@@ -41,16 +44,22 @@ enum ItemsConverter {
     /// Input:  [DataItem(dict: {"item_id": "SKU1"}), DataItem(dict: {"item_id": "SKU2"})]
     /// Output: [["item_id": "SKU1"], ["item_id": "SKU2"]]
     private static func convertArrayOfObjects(_ arrayOfObjects: [DataItem]) -> [[String: Any]] {
-        return arrayOfObjects.compactMap { itemData in
-            // Drop non-dict and empty entries — Firebase discards empty items itself, so keeping
-            // an empty slot has no effect and only risks approaching the per-event item limit sooner.
-            guard let itemDict = itemData.getDataDictionary(), !itemDict.isEmpty else {
+        return arrayOfObjects.compactMap { itemData -> [String: Any]? in
+            // Drop non-dict entries outright.
+            guard let itemDict = itemData.getDataDictionary() else {
                 return nil
             }
 
-            return itemDict.reduce(into: [String: Any]()) { result, pair in
-                result[pair.key] = pair.value.toDataInput()
+            // Drop properties that don't resolve to a real value, then drop the whole item if
+            // nothing is left — checking emptiness on the input dict alone would miss items whose
+            // only properties are null (e.g. `{"discount": null}`).
+            let item = itemDict.reduce(into: [String: Any]()) { result, pair in
+                let value = pair.value.toDataInput()
+                if !(value is NSNull) {
+                    result[pair.key] = value
+                }
             }
+            return item.isEmpty ? nil : item
         }
     }
 
@@ -74,14 +83,19 @@ enum ItemsConverter {
             )
         }
 
-        return (0..<itemCount).map { index in
-            makeItem(from: arrays, at: index)
+        // Drop items left with no properties once nulls are removed — same rule as array-of-objects.
+        return (0..<itemCount).compactMap { index in
+            let item = makeItem(from: arrays, at: index)
+            return item.isEmpty ? nil : item
         }
     }
 
     private static func makeItem(from arrays: [String: [DataInput]], at index: Int) -> [String: Any] {
         arrays.reduce(into: [String: Any]()) { result, keyValue in
-            result[keyValue.key] = keyValue.value[index]
+            let value = keyValue.value[index]
+            if !(value is NSNull) {
+                result[keyValue.key] = value
+            }
         }
     }
 

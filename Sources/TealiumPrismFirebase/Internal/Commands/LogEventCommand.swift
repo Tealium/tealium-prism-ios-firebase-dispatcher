@@ -20,7 +20,7 @@ import TealiumPrismCore
 ///
 /// ## Expected Payload
 ///
-/// ### Format 1: Object of Arrays (Tealium convention - most common)
+/// ### Format 1: Parallel Arrays (Tealium convention - most common)
 /// ```
 /// payload = [
 ///     "command_name": "logevent",
