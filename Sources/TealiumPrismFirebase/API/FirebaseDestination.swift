@@ -1,0 +1,148 @@
+//
+//  FirebaseDestination.swift
+//  TealiumPrismFirebase
+//
+//  Created by Sebastian Krajna on 5/03/2026.
+//  Copyright © 2026 Tealium. All rights reserved.
+//
+
+import FirebaseAnalytics
+import Foundation
+import TealiumPrismCore
+
+// MARK: - Firebase Destinations
+
+/// Type-safe Firebase Analytics mapping destinations.
+///
+/// Each case maps to a specific key or path in the Firebase command payload.
+/// Use with `mapFrom(_:to:)`, `mapConstant(_:to:)`, and `keep(_:)`.
+public enum FirebaseDestination: JSONObjectPathConvertible {
+
+    // MARK: LogEvent
+
+    /// The event name parameter (`"event_name"`).
+    case eventName
+
+    /// The event parameters dictionary (`"parameters"`).
+    case eventParams
+
+    /// A specific event parameter nested under `parameters.[name]`.
+    ///
+    /// Pass a Firebase Analytics parameter constant (e.g. `AnalyticsParameterCurrency`)
+    /// or any custom string for non-predefined parameters.
+    case eventParam(String)
+
+    /// A specific item parameter nested under `parameters.items.[name]`.
+    ///
+    /// Pass a Firebase Analytics item parameter constant (e.g. `AnalyticsParameterItemID`)
+    /// or any custom string for non-predefined parameters.
+    case itemParam(String)
+
+    // MARK: SetUserId
+
+    /// The user ID parameter (`"user_id"`).
+    case userId
+
+    // MARK: SetUserProperty
+
+    /// The user property name(s) parameter (`"property_name"`).
+    case userPropertyName
+
+    /// The user property value(s) parameter (`"property_value"`).
+    case userPropertyValue
+
+    // MARK: SetDefaultParameters
+
+    /// The default parameters dictionary (`"parameters"`).
+    case defaultParams
+
+    /// A specific default parameter nested under `parameters.[name]`.
+    case defaultParam(String)
+
+    // MARK: SetConsent
+
+    /// The consent settings dictionary (`"consent_settings"`).
+    case consentSettings
+
+    /// A specific consent setting nested under `consent_settings.[type.rawValue]`.
+    case consentSetting(ConsentType)
+
+    // MARK: SetSessionTimeout
+
+    /// The session timeout parameter (`"session_timeout_seconds"`).
+    case sessionTimeout
+
+    // MARK: SetAnalyticsCollectionEnabled
+
+    /// The analytics enabled parameter (`"analytics_collection_enabled"`).
+    case analyticsEnabled
+
+    // MARK: InitiateConversionMeasurement
+
+    /// The email address for conversion measurement (`"email_address"`).
+    case conversionEmail
+
+    /// The phone number for conversion measurement (`"phone_number"`).
+    case conversionPhone
+
+    /// The hashed email address for conversion measurement (`"hashed_email_address"`).
+    case conversionHashedEmail
+
+    /// The hashed phone number for conversion measurement (`"hashed_phone_number"`).
+    case conversionHashedPhone
+
+    /// The path in the Firebase command payload that this destination writes to.
+    public var path: JSONObjectPath {
+        switch self {
+        // LogEvent
+        case .eventName:
+            JSONPath["event_name"]
+        case .eventParams:
+            JSONPath["parameters"]
+        case .eventParam(let param):
+            JSONPath["parameters"][param]
+        case .itemParam(let param):
+            JSONPath["parameters"][AnalyticsParameterItems][param]
+
+        // SetUserId
+        case .userId:
+            JSONPath["user_id"]
+
+        // SetUserProperty
+        case .userPropertyName:
+            JSONPath["property_name"]
+        case .userPropertyValue:
+            JSONPath["property_value"]
+
+        // SetDefaultParameters
+        case .defaultParams:
+            JSONPath["parameters"]
+        case .defaultParam(let name):
+            JSONPath["parameters"][name]
+
+        // SetConsent
+        case .consentSettings:
+            JSONPath["consent_settings"]
+        case .consentSetting(let type):
+            JSONPath["consent_settings"][type.rawValue]
+
+        // SetSessionTimeout
+        case .sessionTimeout:
+            JSONPath["session_timeout_seconds"]
+
+        // SetAnalyticsCollectionEnabled
+        case .analyticsEnabled:
+            JSONPath["analytics_collection_enabled"]
+
+        // InitiateConversionMeasurement
+        case .conversionEmail:
+            JSONPath["email_address"]
+        case .conversionPhone:
+            JSONPath["phone_number"]
+        case .conversionHashedEmail:
+            JSONPath["hashed_email_address"]
+        case .conversionHashedPhone:
+            JSONPath["hashed_phone_number"]
+        }
+    }
+}
