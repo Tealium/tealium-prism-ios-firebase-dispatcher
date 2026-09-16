@@ -13,7 +13,7 @@ user properties, consent settings, and more.
 | iOS                     | 15.0+    |
 | macOS                   | 10.15+   |
 | tvOS                    | 15.0+    |
-| Swift                   | 5.5+     |
+| Swift                   | 6.0+     |
 | Tealium Prism Core      | >= 0.5.0 |
 | Firebase iOS SDK        | 12.0.0+  |
 
