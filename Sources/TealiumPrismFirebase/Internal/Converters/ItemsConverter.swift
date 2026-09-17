@@ -8,7 +8,11 @@
 
 import FirebaseAnalytics
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Converts Tealium item payloads into Firebase-compatible `[[String: Any]]` arrays.
 ///

@@ -7,7 +7,11 @@
 //
 
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Extension for TealiumPrismCore LogCategory to add Firebase category.
 extension LogCategory {

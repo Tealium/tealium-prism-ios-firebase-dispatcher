@@ -8,7 +8,11 @@
 
 import FirebaseCore
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Configuration for Firebase Dispatcher module.
 ///
