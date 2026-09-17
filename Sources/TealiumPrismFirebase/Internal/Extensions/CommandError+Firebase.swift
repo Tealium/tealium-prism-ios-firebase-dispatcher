@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 extension CommandError {
     static func missingParameter(_ parameter: FirebaseDestination) -> Self {

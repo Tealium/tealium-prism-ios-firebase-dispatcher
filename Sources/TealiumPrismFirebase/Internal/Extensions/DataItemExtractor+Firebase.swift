@@ -6,7 +6,11 @@
 //
 
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 extension DataItemExtractor {
     func requireDataItem(_ destination: FirebaseDestination) throws(CommandError) -> DataItem {

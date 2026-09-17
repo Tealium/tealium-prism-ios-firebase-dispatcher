@@ -7,7 +7,11 @@
 //
 
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Command for setting default event parameters in Firebase Analytics.
 ///

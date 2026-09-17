@@ -19,6 +19,9 @@ Pod::Spec.new do |s|
     s.tvos.deployment_target = "15.0"
     
     s.swift_version = '5.5'
+
+    # Firebase ships static xcframeworks; a dynamic wrapper cannot link GoogleAppMeasurement symbols.
+    s.static_framework = true
     
     s.source_files = "Sources/TealiumPrismFirebase/**/*.{swift,h,m}"
     

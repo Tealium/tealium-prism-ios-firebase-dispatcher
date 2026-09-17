@@ -8,7 +8,11 @@
 
 import FirebaseAnalytics
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Command for configuring Firebase Analytics consent settings.
 ///

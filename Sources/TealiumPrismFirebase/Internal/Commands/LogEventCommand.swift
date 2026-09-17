@@ -8,7 +8,11 @@
 
 import FirebaseAnalytics
 import Foundation
+#if canImport(TealiumPrismCore)
 import TealiumPrismCore
+#else
+import TealiumPrism
+#endif
 
 /// Command for logging Firebase Analytics events with parameter and item support.
 ///
