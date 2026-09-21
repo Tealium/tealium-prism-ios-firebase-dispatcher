@@ -11,7 +11,7 @@ let package = Package(
     products: [
         .library(
             name: "TealiumPrismFirebase",
-            targets: ["TealiumPrismFirebase"]
+            targets: ["TealiumPrismFirebase", "TealiumPrismFirebaseObjC"]
         ),
     ],
     dependencies: [
@@ -25,12 +25,19 @@ let package = Package(
                 .product(name: "TealiumPrismCore", package: "tealium-prism-swift"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
-            path: "./Sources/TealiumPrismFirebase"
+            path: "./Sources/TealiumPrismFirebase",
+            exclude: ["Internal/ObjC/"]
+        ),
+        .target(
+            name: "TealiumPrismFirebaseObjC",
+            dependencies: ["TealiumPrismFirebase"],
+            path: "./Sources/TealiumPrismFirebase/Internal/ObjC/"
         ),
         .testTarget(
             name: "TealiumPrismFirebaseTests",
-            dependencies: ["TealiumPrismFirebase"],
-            path: "./Tests/TealiumPrismFirebaseTests"
+            dependencies: ["TealiumPrismFirebase", "TealiumPrismFirebaseObjC"],
+            path: "./Tests/TealiumPrismFirebaseTests",
+            resources: [.process("Resources")]
         ),
     ]
 )
