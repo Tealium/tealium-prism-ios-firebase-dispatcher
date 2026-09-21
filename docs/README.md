@@ -29,7 +29,7 @@ user properties, consent settings, and more.
 Or add it manually to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "0.1.0")
+.package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "0.2.0")
 ```
 
 ### CocoaPods
