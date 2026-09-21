@@ -11,12 +11,11 @@ Configure the module using local JSON settings file (via `settingsFile` paramete
 var config = TealiumConfig(account: "my_account",
                           profile: "my_profile",
                           environment: "dev",
-                          modules: [Modules.firebaseDispatcher(forcingSettings: nil)],
                           settingsFile: "TealiumSettings",
                           settingsUrl: "https://tags.tiqcdn.com/dle/my_account/my_profile/example_settings.json")
 ```
 
-Passing `nil` registers the module factory without enforcing any settings. The factory has to be registered for a settings-driven module to be created at all, while `nil` keeps its initialization conditional on the local or remote settings.
+The Firebase Dispatcher auto-registers as a default module at app startup, so the settings entry alone is enough to enable it — no need to add it to `modules`. `Modules.firebaseDispatcher(forcingSettings:)` remains the way to force settings from code.
 
 **Default initialization** - module will be initialized only if configured in settings file specified:
 ```json

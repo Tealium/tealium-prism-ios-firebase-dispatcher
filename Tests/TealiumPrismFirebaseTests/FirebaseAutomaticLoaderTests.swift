@@ -88,10 +88,19 @@ final class FirebaseModuleSettingsTests: XCTestCase {
 /// anywhere below — mirroring `../tealium-prism-swift/Example/Tests/EndToEnd/Tealium+SettingsTests.swift`.
 final class FirebaseAutomaticLoaderEndToEndTests: XCTestCase {
 
-    override func setUp() {
-        super.setUp()
-        TealiumQueue.worker.dispatchQueue.sync {}
-    }
+    /// Upper bound for `Tealium.create` reporting that an instance finished initializing.
+    /// Deliberately much larger than `XCTestCase.longTimeout`: instance creation is real work
+    /// (SQLite schema setup, settings merge, construction of every enabled module) and on a cold,
+    /// contended CI iOS simulator it has taken well over five seconds. It is only ever waited out
+    /// in full when initialization genuinely never completes.
+    private static let startupTimeout: TimeInterval = 30
+
+    // No `setUp` blocking on `TealiumQueue.worker` here, unlike the classes above: those read
+    // `ModuleRegistry` directly from the test thread, while this class goes through
+    // `Tealium.create`, which enqueues onto the same serial worker queue as the `+load`-time
+    // `Modules.addDefaultModule` and therefore already observes the registration by FIFO order.
+    // Blocking the main thread on that queue would also make one slow instance cascade into the
+    // next test's setUp.
 
     /// A config that never registers Firebase via `addModule`. When `settingsFile` is provided,
     /// it is resolved from `Bundle.module` (this target's SPM resource bundle) instead of the
@@ -102,6 +111,26 @@ final class FirebaseAutomaticLoaderEndToEndTests: XCTestCase {
         config.bundle = .module
         config.databaseName = nil
         return config
+    }
+
+    /// Creates the instance and returns only once the SDK reports initialization finished.
+    ///
+    /// `Tealium.create` builds `TealiumImpl` asynchronously on `TealiumQueue.worker`, and
+    /// `ModuleProxy.getModule` stays silent until that construction has emitted. Waiting on the
+    /// `create` completion — the public signal for "this instance is ready" — keeps start-up
+    /// latency out of the module-query budget below, so a slow machine can no longer be
+    /// misreported as "the module was not created".
+    private func createTealium(settingsFile: String?, account: String) -> Tealium {
+        let initialized = expectation(description: "Tealium initialized")
+        let config = makeConfig(settingsFile: settingsFile, account: account)
+        let teal = Tealium.create(config: config) { result in
+            if case .failure(let error) = result {
+                XCTFail("Tealium failed to initialize: \(error)")
+            }
+            initialized.fulfill()
+        }
+        wait(for: [initialized], timeout: Self.startupTimeout)
+        return teal
     }
 
     /// Uses `Tealium.createModuleProxy(for:)` — the same public "get me a module" entry point a real
@@ -117,20 +146,18 @@ final class FirebaseAutomaticLoaderEndToEndTests: XCTestCase {
             isPresent = module != nil
             checked.fulfill()
         }
-        wait(for: [checked], timeout: 5)
+        wait(for: [checked], timeout: Self.longTimeout)
         return isPresent
     }
 
     func test_firebaseDispatcher_is_enabled_by_local_settings_without_addModule() {
-        let config = makeConfig(settingsFile: "firebase_default_module_settings", account: "e2e-firebase-enabled")
-        let teal = Tealium.create(config: config)
+        let teal = createTealium(settingsFile: "firebase_default_module_settings", account: "e2e-firebase-enabled")
 
         XCTAssertTrue(firebaseModuleIsPresent(in: teal))
     }
 
     func test_firebaseDispatcher_stays_disabled_without_matching_settings() {
-        let config = makeConfig(settingsFile: nil, account: "e2e-firebase-disabled")
-        let teal = Tealium.create(config: config)
+        let teal = createTealium(settingsFile: nil, account: "e2e-firebase-disabled")
 
         XCTAssertFalse(firebaseModuleIsPresent(in: teal))
     }
