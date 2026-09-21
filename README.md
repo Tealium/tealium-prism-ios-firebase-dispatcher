@@ -31,7 +31,7 @@ Command Dispatcher that routes Tealium Prism tracking events to the Firebase Ana
 Or add it manually to `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "0.1.0")
+.package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "0.2.0")
 ```
 
 ### CocoaPods
@@ -78,6 +78,13 @@ let config = TealiumConfig(
 )
 let tealium = Tealium.create(config: config)
 ```
+
+> **Note:** The Firebase Dispatcher auto-registers as a default module at app startup, so adding
+> it to `modules` above is optional. It is still the way to force settings from code (see
+> `forcingSettings:` below). Without it, the module is enabled whenever your settings contain:
+> ```json
+> "modules": { "FirebaseDispatcher": { "module_type": "FirebaseDispatcher", "enabled": true } }
+> ```
 
 ## Configuration
 
