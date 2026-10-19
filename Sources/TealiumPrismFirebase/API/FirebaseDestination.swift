@@ -19,7 +19,7 @@ import TealiumPrism
 /// Type-safe Firebase Analytics mapping destinations.
 ///
 /// Each case maps to a specific key or path in the Firebase command payload.
-/// Use with `mapFrom(_:to:)`, `mapConstant(_:to:)`, and `keep(_:)`.
+/// Use with `mapFrom(_:to:)` and `mapConstant(_:to:)`.
 public enum FirebaseDestination: JSONObjectPathConvertible {
 
     // MARK: LogEvent

@@ -10,7 +10,6 @@
 		4545963F2FED7AAE0061517A /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 4545963E2FED7AAE0061517A /* TealiumPrismFirebase */; };
 		9E0CA46A2F71FDB700693B10 /* TealiumPrismCore in Frameworks */ = {isa = PBXBuildFile; productRef = 9E0CA4692F71FDB700693B10 /* TealiumPrismCore */; };
 		9E0CA46C2F71FDB700693B10 /* TealiumPrismLifecycle in Frameworks */ = {isa = PBXBuildFile; productRef = 9E0CA46B2F71FDB700693B10 /* TealiumPrismLifecycle */; };
-		9E0CA46E2F71FDB700693B10 /* TealiumPrismMomentsAPI in Frameworks */ = {isa = PBXBuildFile; productRef = 9E0CA46D2F71FDB700693B10 /* TealiumPrismMomentsAPI */; };
 		9E0CA4712F71FDCB00693B10 /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 9E0CA4702F71FDCB00693B10 /* TealiumPrismFirebase */; };
 		9ECB60E02F5B1C820085DBB0 /* TealiumPrismFirebase in Frameworks */ = {isa = PBXBuildFile; productRef = 9ECB60DF2F5B1C820085DBB0 /* TealiumPrismFirebase */; };
 /* End PBXBuildFile section */
@@ -36,7 +35,6 @@
 				9ECB60E02F5B1C820085DBB0 /* TealiumPrismFirebase in Frameworks */,
 				9E0CA46C2F71FDB700693B10 /* TealiumPrismLifecycle in Frameworks */,
 				9E0CA46A2F71FDB700693B10 /* TealiumPrismCore in Frameworks */,
-				9E0CA46E2F71FDB700693B10 /* TealiumPrismMomentsAPI in Frameworks */,
 				4545963F2FED7AAE0061517A /* TealiumPrismFirebase in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,7 +89,6 @@
 				9ECB60DF2F5B1C820085DBB0 /* TealiumPrismFirebase */,
 				9E0CA4692F71FDB700693B10 /* TealiumPrismCore */,
 				9E0CA46B2F71FDB700693B10 /* TealiumPrismLifecycle */,
-				9E0CA46D2F71FDB700693B10 /* TealiumPrismMomentsAPI */,
 				9E0CA4702F71FDCB00693B10 /* TealiumPrismFirebase */,
 				4545963E2FED7AAE0061517A /* TealiumPrismFirebase */,
 			);
@@ -382,10 +379,6 @@
 		9E0CA46B2F71FDB700693B10 /* TealiumPrismLifecycle */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TealiumPrismLifecycle;
-		};
-		9E0CA46D2F71FDB700693B10 /* TealiumPrismMomentsAPI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = TealiumPrismMomentsAPI;
 		};
 		9E0CA4702F71FDCB00693B10 /* TealiumPrismFirebase */ = {
 			isa = XCSwiftPackageProductDependency;

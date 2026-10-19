@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `ModuleSettings` entry for `Modules.Types.firebaseDispatcher` in `SDKSettings`, without needing
   `config.addModule(...)`.
 
+### Changed
+- Requires Tealium Prism 0.7.0 or later, below 1.0.0.
+
 ## [0.1.0]
 
 ### Added
