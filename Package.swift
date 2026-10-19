@@ -11,12 +11,12 @@ let package = Package(
     products: [
         .library(
             name: "TealiumPrismFirebase",
-            targets: ["TealiumPrismFirebase"]
+            targets: ["TealiumPrismFirebase", "TealiumPrismFirebaseObjC"]
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/Tealium/tealium-prism-swift", from: "0.5.0"),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "12.0.0")
+        .package(url: "https://github.com/Tealium/tealium-prism-swift", .upToNextMajor(from: "0.7.0")),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "12.0.0"))
     ],
     targets: [
         .target(
@@ -25,12 +25,19 @@ let package = Package(
                 .product(name: "TealiumPrismCore", package: "tealium-prism-swift"),
                 .product(name: "FirebaseAnalytics", package: "firebase-ios-sdk")
             ],
-            path: "./Sources/TealiumPrismFirebase"
+            path: "./Sources/TealiumPrismFirebase",
+            exclude: ["Internal/ObjC/"]
+        ),
+        .target(
+            name: "TealiumPrismFirebaseObjC",
+            dependencies: ["TealiumPrismFirebase"],
+            path: "./Sources/TealiumPrismFirebase/Internal/ObjC/"
         ),
         .testTarget(
             name: "TealiumPrismFirebaseTests",
-            dependencies: ["TealiumPrismFirebase"],
-            path: "./Tests/TealiumPrismFirebaseTests"
+            dependencies: ["TealiumPrismFirebase", "TealiumPrismFirebaseObjC"],
+            path: "./Tests/TealiumPrismFirebaseTests",
+            resources: [.process("Resources")]
         ),
     ]
 )

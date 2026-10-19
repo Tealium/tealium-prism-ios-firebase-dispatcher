@@ -23,7 +23,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         }
 
         // Command should be added because tealium_event == "screen_view"
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "screen_view"
         ])
@@ -40,7 +40,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
 
         // Command should NOT be added because tealium_event != "screen_view"
         // But event name should still be mapped
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             "event_name": "purchase"
         ])
     }
@@ -55,7 +55,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         }
 
         // Both command and event name should be added
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "screen_view"
         ])
@@ -71,7 +71,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
         }
 
         // Command should be added, but event name should NOT be mapped
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue
         ])
     }
@@ -91,7 +91,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
 
         // Both commands should be in payload
         // When multiple commands are added to the same key, they are combined into an array
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             TealiumDataKey.commandName: [
                 FirebaseCommand.logEvent.rawValue,
                 FirebaseCommand.setUserId.rawValue
@@ -112,7 +112,7 @@ final class FirebaseConditionalMappingsTests: FirebaseMappingsTestBase {
             mappings.mapFrom("custom_event", to: .eventName)
         }
 
-        XCTAssertEqual(result.payload, [
+        XCTAssertEqual(result.payload, dispatch.payload + [
             TealiumDataKey.commandName: FirebaseCommand.logEvent.rawValue,
             "event_name": "special_screen"
         ])

@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
     s.name             = 'TealiumPrismFirebase'
     s.module_name      = "TealiumPrismFirebase"
-    s.version          = '0.1.0'
+    s.version          = '0.2.0'
     s.summary          = 'Tealium Prism Firebase Dispatcher'
     
     s.description      = <<-DESC
@@ -25,9 +25,6 @@ Pod::Spec.new do |s|
     
     s.source_files = "Sources/TealiumPrismFirebase/**/*.{swift,h,m}"
     
-    # IMPORTANT: Use '>= 0.5.0' instead of '~> 0.5.0' to allow local development
-    # With '~> 0.5.0', CocoaPods tries to resolve version from git before checking local pods
-    # With '>= 0.5.0', CocoaPods can use local pods from Podfile
-    s.dependency 'tealium-prism/Core', '>= 0.5.0'
+    s.dependency 'tealium-prism/Core', '~> 0.7'
     s.dependency 'Firebase/Analytics', '~> 12.0'
   end

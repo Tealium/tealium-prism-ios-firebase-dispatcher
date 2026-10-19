@@ -23,9 +23,6 @@ class TealiumHelper {
             account: "tealiummobile",
             profile: "firebase-test",
             environment: "dev",
-            modules: [
-                Modules.firebaseDispatcher()
-            ],
             settingsFile: "TealiumSettings",
             forcingSettings: { builder in
                 builder.setMinLogLevel(.trace)
