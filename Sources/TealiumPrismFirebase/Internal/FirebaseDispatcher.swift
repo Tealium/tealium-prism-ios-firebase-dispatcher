@@ -6,11 +6,7 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Firebase Analytics Dispatcher for Tealium Prism SDK
 class FirebaseDispatcher: CommandDispatcher, BasicModule {

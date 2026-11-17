@@ -6,11 +6,7 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Command for resetting Firebase Analytics data.
 ///

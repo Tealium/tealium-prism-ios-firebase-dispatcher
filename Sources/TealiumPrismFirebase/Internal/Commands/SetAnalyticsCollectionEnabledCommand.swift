@@ -6,11 +6,7 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Command for dynamically enabling or disabling Firebase Analytics collection.
 ///

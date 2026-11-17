@@ -5,11 +5,7 @@
 //  Created by Enrico Zannini on 18/06/2026.
 //
 
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 extension CommandError {
     static func missingParameter(_ parameter: FirebaseDestination) -> Self {

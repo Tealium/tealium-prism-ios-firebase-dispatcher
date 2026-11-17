@@ -7,11 +7,7 @@
 //
 
 import FirebaseCore
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Builder for Firebase Dispatcher configuration settings.
 ///

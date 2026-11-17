@@ -7,11 +7,7 @@
 //
 
 import Foundation
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// A class used to automatically register `FirebaseDispatcher` in the default modules of all `Tealium` instances.
 public class FirebaseAutomaticLoader: NSObject {

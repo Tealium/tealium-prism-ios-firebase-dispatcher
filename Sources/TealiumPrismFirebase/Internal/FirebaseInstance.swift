@@ -8,11 +8,7 @@
 
 import FirebaseAnalytics
 import FirebaseCore
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Internal implementation of `FirebaseAnalyticsInterface` wrapping Firebase Analytics SDK calls.
 ///
