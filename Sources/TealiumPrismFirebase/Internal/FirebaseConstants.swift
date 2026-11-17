@@ -6,8 +6,6 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-import Foundation
-
 /// Module-level constants for the Firebase Dispatcher.
 ///
 /// Payload key strings for the command schema are defined in `FirebaseDestination`
@@ -18,5 +16,4 @@ enum FirebaseConstants {
 
     static let version = "0.3.0"
     static let moduleType = "FirebaseDispatcher"
-
 }

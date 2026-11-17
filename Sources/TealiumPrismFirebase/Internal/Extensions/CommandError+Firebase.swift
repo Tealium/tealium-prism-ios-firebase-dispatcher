@@ -5,7 +5,6 @@
 //  Created by Enrico Zannini on 18/06/2026.
 //
 
-import Foundation
 #if canImport(TealiumPrismCore)
 import TealiumPrismCore
 #else

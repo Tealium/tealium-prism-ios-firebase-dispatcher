@@ -7,7 +7,6 @@
 //
 
 import FirebaseCore
-import Foundation
 
 // MARK: - Firebase Log Level
 

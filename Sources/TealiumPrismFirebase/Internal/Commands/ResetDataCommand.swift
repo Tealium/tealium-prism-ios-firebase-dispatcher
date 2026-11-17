@@ -6,7 +6,6 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-import Foundation
 #if canImport(TealiumPrismCore)
 import TealiumPrismCore
 #else

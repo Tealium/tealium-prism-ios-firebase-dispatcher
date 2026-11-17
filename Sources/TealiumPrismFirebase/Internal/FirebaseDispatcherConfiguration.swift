@@ -7,7 +7,6 @@
 //
 
 import FirebaseCore
-import Foundation
 #if canImport(TealiumPrismCore)
 import TealiumPrismCore
 #else
