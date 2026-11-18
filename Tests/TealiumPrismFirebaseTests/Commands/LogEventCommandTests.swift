@@ -193,7 +193,7 @@ final class LogEventCommandTests: XCTestCase {
 
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
             guard let commandError = error as? CommandError,
-                  case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
+                  case let .arrayLengthMismatch(_, count1, _, count2) = commandError else {
                 XCTFail("Expected arrayLengthMismatch error but got \(error)")
                 return
             }

@@ -171,7 +171,7 @@ final class ItemsConverterTests: XCTestCase {
 
         XCTAssertThrowsError(try ItemsConverter.convert(from: input)) { error in
             guard let commandError = error as? CommandError,
-                  case .arrayLengthMismatch(_, let count1, _, let count2) = commandError else {
+                  case let .arrayLengthMismatch(_, count1, _, count2) = commandError else {
                 XCTFail("Expected arrayLengthMismatch but got \(error)")
                 return
             }

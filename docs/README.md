@@ -8,14 +8,15 @@ user properties, consent settings, and more.
 
 ## Requirements
 
-| Dependency              | Version  |
-|-------------------------|----------|
-| iOS                     | 15.0+    |
-| macOS                   | 10.15+   |
-| tvOS                    | 15.0+    |
-| Swift                   | 6.0+     |
-| Tealium Prism Core      | ~> 0.7   |
-| Firebase iOS SDK        | 12.0.0+  |
+| Dependency         | Version |
+|--------------------|---------|
+| iOS                | 15.0+   |
+| macOS              | 11.0+   |
+| tvOS               | 15.0+   |
+| Swift              | 6.2+    |
+| Xcode              | 26.2+   |
+| Tealium Prism Core | ~> 0.7  |
+| Firebase iOS SDK   | 13.x    |
 
 ## Installation
 
@@ -30,14 +31,6 @@ Or add it manually to `Package.swift`:
 
 ```swift
 .package(url: "https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher.git", from: "0.3.0")
-```
-
-### CocoaPods
-
-Add the following line to your `Podfile`:
-
-```ruby
-pod 'TealiumPrismFirebase'
 ```
 
 ### Firebase Setup

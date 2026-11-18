@@ -7,11 +7,7 @@
 //
 
 import Foundation
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Command for initiating on-device conversion measurement.
 ///

@@ -8,7 +8,6 @@
 
 import FirebaseAnalytics
 import FirebaseCore
-import Foundation
 
 /// Internal protocol abstracting Firebase Analytics SDK calls for testability.
 ///

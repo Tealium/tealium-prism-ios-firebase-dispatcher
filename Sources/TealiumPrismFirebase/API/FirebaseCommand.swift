@@ -6,12 +6,7 @@
 //  Copyright © 2026 Tealium. All rights reserved.
 //
 
-import Foundation
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 // MARK: - Firebase Commands
 

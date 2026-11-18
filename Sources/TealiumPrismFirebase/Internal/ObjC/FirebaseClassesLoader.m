@@ -8,18 +8,10 @@
 
 #import "FirebaseClassesLoader.h"
 
-#if COCOAPODS
-#if defined __has_include && __has_include(<TealiumPrismFirebase-Swift.h>)
-#import <TealiumPrismFirebase-Swift.h>
-#else
-#import <TealiumPrismFirebase/TealiumPrismFirebase-Swift.h>
-#endif
-#else
 #ifdef SWIFT_PACKAGE
 @import TealiumPrismFirebase;
 #else
 #import <TealiumPrismFirebase/TealiumPrismFirebase-Swift.h>
-#endif
 #endif
 
 @implementation FirebaseClassesLoader

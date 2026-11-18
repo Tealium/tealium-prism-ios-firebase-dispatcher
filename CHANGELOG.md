@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0]
+
+### Changed
+- Requires Firebase iOS SDK 13, Xcode 26.2+ and macOS 11+.
+
+### Removed
+- CocoaPods distribution. CocoaPods trunk becomes read-only on 2 December 2026 and Firebase 13 is distributed through Swift Package Manager only.
+
 ## [0.2.0]
 
 ### Added
@@ -38,4 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SPM and CocoaPods support.
 - Multi-platform: iOS 15+, macOS 10.15+, tvOS 15+.
 
+[0.3.0]: https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher/releases/tag/0.3.0
+[0.2.0]: https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher/releases/tag/0.2.0
 [0.1.0]: https://github.com/Tealium/tealium-prism-ios-firebase-dispatcher/releases/tag/0.1.0

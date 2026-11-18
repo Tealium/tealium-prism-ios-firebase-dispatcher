@@ -7,12 +7,7 @@
 //
 
 import FirebaseAnalytics
-import Foundation
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 // MARK: - Firebase Destinations
 

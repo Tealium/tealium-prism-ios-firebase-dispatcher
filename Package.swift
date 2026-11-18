@@ -5,7 +5,7 @@ let package = Package(
     name: "TealiumPrismFirebase",
     platforms: [
         .iOS(.v15),
-        .macOS(.v10_15),
+        .macOS(.v11),
         .tvOS(.v15)
     ],
     products: [
@@ -16,7 +16,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Tealium/tealium-prism-swift", .upToNextMajor(from: "0.7.0")),
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "12.0.0"))
+        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "13.0.0"))
     ],
     targets: [
         .target(

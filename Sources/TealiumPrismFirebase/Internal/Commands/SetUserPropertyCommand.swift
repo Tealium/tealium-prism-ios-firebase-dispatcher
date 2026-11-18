@@ -6,12 +6,7 @@
 //  Copyright © 2025 Tealium. All rights reserved.
 //
 
-import Foundation
-#if canImport(TealiumPrismCore)
 import TealiumPrismCore
-#else
-import TealiumPrism
-#endif
 
 /// Command for setting Firebase Analytics user property(ies).
 ///
