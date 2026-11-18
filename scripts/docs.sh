@@ -2,12 +2,10 @@
 
 set -euo pipefail
 
-# Resolve scripts dir and source the validator
+# Resolve scripts dir
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 REPO_ROOT="${SCRIPT_DIR}/.."
-# shellcheck source=/dev/null
-source "${SCRIPT_DIR}/validate_versions.sh"
 
 declare -a POSITIONAL_ARGS=()   # make sure array exists
 
@@ -42,11 +40,10 @@ else
   set --
 fi
 
-VERSION="$(get_version)"
 : "${THEME:=fullwidth}"
 : "${OUTPUT:=_site}"
 
-echo "Building Documentation for Version" "$VERSION"
+echo "Building Documentation"
 
 cd "$REPO_ROOT" || { echo "cd failure" >&2; exit 1; }
 
