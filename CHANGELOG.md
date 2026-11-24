@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.3.0]
 
 ### Changed
+- **Breaking:** requires Tealium Prism 0.8.0 or later, below 1.0.0.
+- Command payloads are read with the Prism 0.8.0 extraction helpers. An invalid parameter now fails the command with `CommandError.invalidPayload`, wrapping the matching `ExtractionError` (`missing`, `typeMismatch`, `invalidValue` or `empty`). The error messages, shown only in the `CommandDispatcher` log, changed accordingly and never include the parameter's value.
+- `logevent` fails when `event_name` is blank. Firebase Analytics requires event names of 1 to 40 characters that start with a letter.
+- `setconsent` trims the consent status before matching it, and reports a blank or `null` status as such. An empty `consent_settings` object is now reported as `empty` instead of `noValidParameters`.
+- `initiateconversionmeasurement` reports a hashed value that isn't valid Base64 as `invalidValue` instead of `invalidParameterType`.
 - Requires Firebase iOS SDK 13, Xcode 26.2+ and macOS 11+.
 
 ### Removed

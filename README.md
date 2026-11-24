@@ -15,7 +15,7 @@ Command Dispatcher that routes Tealium Prism tracking events to the Firebase Ana
 | tvOS               | 15.0+   |
 | Swift              | 6.2+    |
 | Xcode              | 26.2+   |
-| Tealium Prism Core | ~> 0.7  |
+| Tealium Prism Core | ~> 0.8  |
 | Firebase iOS SDK   | 13.x    |
 
 ## Installation

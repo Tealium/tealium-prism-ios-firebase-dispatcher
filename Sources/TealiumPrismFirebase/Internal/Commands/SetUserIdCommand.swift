@@ -34,8 +34,8 @@ class SetUserIdCommand: SyncCommand {
         super.init(name: FirebaseCommand.setUserId.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
-        let userId = try payload.require(.userId, converter: LenientConverters.string)
+    override func execute(payload: DataObject) throws {
+        let userId = try payload.require(FirebaseDestination.userId, converter: LenientConverters.string)
         // Empty string clears the user ID
         let userIdToSet = userId.isEmpty ? nil : userId
 

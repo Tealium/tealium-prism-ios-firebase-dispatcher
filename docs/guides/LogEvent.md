@@ -5,6 +5,8 @@ parameters and nested item arrays for e-commerce.
 
 **command_name:** `logevent` · **Firebase API:** `Analytics.logEvent(_:parameters:)`
 
+A missing or blank `event_name` fails the command. Firebase Analytics requires event names of 1 to 40 characters that start with a letter.
+
 There are two mapping approaches for this command.
 
 ## Approach 1 — Explicit event name

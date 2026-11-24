@@ -52,7 +52,7 @@ class SetUserPropertyCommand: SyncCommand {
         super.init(name: FirebaseCommand.setUserProperty.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws {
         let properties = try extractNamesAndValues(payload: payload)
         for (name, value) in properties {
             setProperty(name: name, value: value)
@@ -61,11 +61,11 @@ class SetUserPropertyCommand: SyncCommand {
 
     // MARK: - Private Helpers
 
-    private func extractNamesAndValues(payload: DataObject) throws(CommandError) -> [(
+    private func extractNamesAndValues(payload: DataObject) throws -> [(
         name: String, value: String?
     )] {
-        let namesItem = try payload.requireDataItem(.userPropertyName)
-        let valuesItem = try payload.requireDataItem(.userPropertyValue)
+        let namesItem = try payload.requireDataItem(FirebaseDestination.userPropertyName)
+        let valuesItem = try payload.requireDataItem(FirebaseDestination.userPropertyValue)
 
         let namesArray = (namesItem.getDataArray() ?? [namesItem])
             .map { $0.getConvertible(converter: LenientConverters.string) }
@@ -73,7 +73,7 @@ class SetUserPropertyCommand: SyncCommand {
             .map { $0.getConvertible(converter: LenientConverters.string) }
 
         guard !namesArray.isEmpty else {
-            throw CommandError.emptyArray(.userPropertyName)
+            throw ExtractionError.empty(key: FirebaseDestination.userPropertyName.path.render())
         }
 
         guard namesArray.count == valuesArray.count else {
@@ -93,7 +93,7 @@ class SetUserPropertyCommand: SyncCommand {
         }
 
         guard !properties.isEmpty else {
-            throw CommandError.emptyArray(.userPropertyName)
+            throw ExtractionError.empty(key: FirebaseDestination.userPropertyName.path.render())
         }
 
         return properties

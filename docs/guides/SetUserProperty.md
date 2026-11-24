@@ -49,6 +49,6 @@ builder.setMappings { mappings in
 ```
 
 > Passing an empty string as `property_value` removes that property from Firebase. A length mismatch
-> between the name and value arrays fails the command.
+> between the name and value arrays fails the command, as does a name array containing only nulls.
 
 See [Mappings](mappings.html) for the shared mapping concepts used above.

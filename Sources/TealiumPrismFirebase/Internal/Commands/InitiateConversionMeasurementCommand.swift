@@ -44,7 +44,7 @@ class InitiateConversionMeasurementCommand: SyncCommand {
         super.init(name: FirebaseCommand.initiateConversionMeasurement.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws {
         // Priority: hashed_email > hashed_phone > email > phone
         if let hashedEmail = payload.extract(
             path: FirebaseDestination.conversionHashedEmail.path, as: String.self) {
@@ -70,39 +70,36 @@ class InitiateConversionMeasurementCommand: SyncCommand {
 
     // MARK: - Private Helpers
 
-    private func initiateWithEmail(_ email: String) throws(CommandError) {
+    private func initiateWithEmail(_ email: String) throws(ExtractionError) {
         guard !email.isEmpty else {
-            throw CommandError.emptyParameter(.conversionEmail)
+            throw ExtractionError.empty(key: FirebaseDestination.conversionEmail.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(emailAddress: email)
     }
 
-    private func initiateWithPhone(_ phone: String) throws(CommandError) {
+    private func initiateWithPhone(_ phone: String) throws(ExtractionError) {
         guard !phone.isEmpty else {
-            throw CommandError.emptyParameter(.conversionPhone)
+            throw ExtractionError.empty(key: FirebaseDestination.conversionPhone.path.render())
         }
         firebaseInstance.initiateOnDeviceConversionMeasurement(phoneNumber: phone)
     }
 
-    private func initiateWithHashedEmail(_ hashedEmail: String) throws(CommandError) {
+    private func initiateWithHashedEmail(_ hashedEmail: String) throws(ExtractionError) {
         let data = try dataFromHashedString(hashedEmail, for: .conversionHashedEmail)
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedEmailAddress: data)
     }
 
-    private func initiateWithHashedPhone(_ hashedPhone: String) throws(CommandError) {
+    private func initiateWithHashedPhone(_ hashedPhone: String) throws(ExtractionError) {
         let data = try dataFromHashedString(hashedPhone, for: .conversionHashedPhone)
         firebaseInstance.initiateOnDeviceConversionMeasurement(hashedPhoneNumber: data)
     }
 
-    private func dataFromHashedString(_ hashed: String, for destination: FirebaseDestination) throws(CommandError) -> Data {
+    private func dataFromHashedString(_ hashed: String, for destination: FirebaseDestination) throws(ExtractionError) -> Data {
         guard !hashed.isEmpty else {
-            throw CommandError.emptyParameter(destination)
+            throw .empty(key: destination.path.render())
         }
         guard let data = Data(base64Encoded: hashed) else {
-            throw CommandError.invalidParameterType(
-                parameter: destination,
-                expectedType: "Base64-encoded SHA-256 hash"
-            )
+            throw .invalidValue(key: destination.path.render(), reason: "expected a Base64-encoded SHA-256 hash")
         }
         return data
     }

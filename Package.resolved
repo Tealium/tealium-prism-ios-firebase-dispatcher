@@ -123,8 +123,8 @@
         "repositoryURL": "https://github.com/stephencelis/SQLite.swift.git",
         "state": {
           "branch": null,
-          "revision": "964c300fb0736699ce945c9edb56ecd62eba27a3",
-          "version": "0.16.0"
+          "revision": "0c08856385fe24f7b76d8c51842d78a196e8e817",
+          "version": "0.15.5"
         }
       },
       {
@@ -132,8 +132,8 @@
         "repositoryURL": "https://github.com/Tealium/tealium-prism-swift",
         "state": {
           "branch": null,
-          "revision": "35474046021ec96203748c3f5e28238b824cffe8",
-          "version": "0.7.0"
+          "revision": "8f6b610e64671800e3bbc4397b2304801c202fe6",
+          "version": "0.8.0"
         }
       }
     ]

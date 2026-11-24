@@ -45,19 +45,12 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastEmailAddress, "user@example.com")
     }
 
-    func test_execute_with_empty_email_address_throws_error() {
+    func test_execute_with_empty_email_address_throws_empty() {
         let payload: DataObject = [
             "email_address": ""
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .emptyParameter = commandError
-            else {
-                XCTFail("Expected emptyParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "email_address"))
         XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
 
@@ -73,19 +66,12 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastPhoneNumber, "+1234567890")
     }
 
-    func test_execute_with_empty_phone_number_throws_error() {
+    func test_execute_with_empty_phone_number_throws_empty() {
         let payload: DataObject = [
             "phone_number": ""
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .emptyParameter = commandError
-            else {
-                XCTFail("Expected emptyParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "phone_number"))
         XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
@@ -106,23 +92,16 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
     }
 
-    func test_execute_with_empty_hashed_email_address_throws_error() {
+    func test_execute_with_empty_hashed_email_address_throws_empty() {
         let payload: DataObject = [
             "hashed_email_address": ""
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .emptyParameter = commandError
-            else {
-                XCTFail("Expected emptyParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "hashed_email_address"))
         XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
     }
 
-    func test_execute_with_invalid_hashed_email_throws_error() {
+    func test_execute_with_invalid_hashed_email_throws_invalid_value() {
         // Test invalid Base64 strings that should fail decoding
         let invalidHashes = [
             "!@#$%^&*()",  // Invalid Base64 characters
@@ -134,15 +113,10 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
                 "hashed_email_address": invalidHash
             ]
 
-            XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-                guard let commandError = error as? CommandError,
-                    case .invalidParameterType = commandError
-                else {
-                    XCTFail(
-                        "Expected invalidParameterType error for '\(invalidHash)' but got \(error)")
-                    return
-                }
-            }
+            XCTAssertThrowsExtractionError(
+                try command.execute(payload: payload),
+                .invalidValue(key: "hashed_email_address", reason: "expected a Base64-encoded SHA-256 hash")
+            )
             XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
         }
     }
@@ -180,37 +154,26 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data(hash))
     }
 
-    func test_execute_with_empty_hashed_phone_number_throws_error() {
+    func test_execute_with_empty_hashed_phone_number_throws_empty() {
         let payload: DataObject = [
             "hashed_phone_number": ""
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .emptyParameter = commandError
-            else {
-                XCTFail("Expected emptyParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "hashed_phone_number"))
         XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 
-    func test_execute_with_invalid_hashed_phone_throws_error() {
+    func test_execute_with_invalid_hashed_phone_throws_invalid_value() {
         // Test with invalid Base64 string
         let invalidHash = "invalidbase64!@#"
         let payload: DataObject = [
             "hashed_phone_number": invalidHash
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .invalidParameterType = commandError
-            else {
-                XCTFail("Expected invalidParameterType error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(key: "hashed_phone_number", reason: "expected a Base64-encoded SHA-256 hash")
+        )
         XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 

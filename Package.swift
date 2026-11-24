@@ -15,7 +15,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/Tealium/tealium-prism-swift", .upToNextMajor(from: "0.7.0")),
+        .package(url: "https://github.com/Tealium/tealium-prism-swift", .upToNextMajor(from: "0.8.0")),
         .package(url: "https://github.com/firebase/firebase-ios-sdk.git", .upToNextMajor(from: "13.0.0"))
     ],
     targets: [

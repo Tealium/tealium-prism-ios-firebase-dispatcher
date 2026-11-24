@@ -21,16 +21,16 @@ enum ConsentConverter {
         "ad_personalization": .adPersonalization
     ]
 
-    private static let statusByRaw: [String: ConsentStatus] = [
+    /// The consent statuses keyed by their raw value, for use with `requireOneOf(_:values:)`.
+    static let statuses: [String: ConsentStatus] = [
         "granted": .granted,
         "denied": .denied
     ]
 
+    /// The known raw consent types, comma separated and sorted, for error messages.
+    static let typeNames: String = typeByRaw.keys.sorted().joined(separator: ", ")
+
     static func typeOrNil(_ raw: String) -> ConsentType? {
         typeByRaw[raw.lowercased()]
-    }
-
-    static func statusOrNil(_ raw: String) -> ConsentStatus? {
-        statusByRaw[raw.lowercased()]
     }
 }

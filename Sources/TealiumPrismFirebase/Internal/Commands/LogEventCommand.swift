@@ -51,6 +51,9 @@ import TealiumPrismCore
 ///     ]
 /// ]
 /// ```
+///
+/// A missing or blank `event_name` fails the command. Firebase Analytics requires event names of
+/// 1 to 40 characters that start with a letter.
 class LogEventCommand: SyncCommand {
 
     private let firebaseInstance: FirebaseAnalyticsInterface
@@ -60,8 +63,8 @@ class LogEventCommand: SyncCommand {
         super.init(name: FirebaseCommand.logEvent.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
-        let eventName = try payload.require(.eventName, converter: LenientConverters.string)
+    override func execute(payload: DataObject) throws {
+        let eventName = try payload.requireNonBlank(FirebaseDestination.eventName, converter: LenientConverters.string)
         let parameters = try buildParameters(from: payload)
         firebaseInstance.logEvent(eventName, parameters: parameters.isEmpty ? nil : parameters)
     }
