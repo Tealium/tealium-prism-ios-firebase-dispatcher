@@ -37,6 +37,10 @@ Or add it manually to `Package.swift`:
 
 Place `GoogleService-Info.plist` in the app target root. The Firebase Dispatcher calls `FirebaseApp.configure()` automatically on first use. If you need custom initialization order (e.g. for Crashlytics), call `FirebaseApp.configure()` manually — add `import FirebaseCore` to your app entry point and call it before `Tealium.create(config:)`. The dispatcher will detect the existing `FirebaseApp` and skip its own initialization.
 
+### On-Device Conversion Measurement
+
+To use `initiateconversionmeasurement`, add `-ObjC` to the app target's **Other Linker Flags** (`OTHER_LDFLAGS`). Firebase looks up the `GoogleAdsOnDeviceConversion` framework at runtime, so without the flag the linker drops it and every call fails inside Firebase while the dispatcher reports it as executed. See [InitiateConversionMeasurement](docs/guides/InitiateConversionMeasurement.md) for how to check the setup.
+
 ## Example App
 
 To run the example project, clone the repo and open `Example/Example.xcodeproj` in Xcode. Add a real `GoogleService-Info.plist` and run the Example scheme.
