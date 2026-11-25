@@ -18,31 +18,40 @@ final class LogEventCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_event_name_throws_error() {
+    func test_execute_without_event_name_throws_missing() {
         let payload: DataObject = [:]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                  case .missingParameter = commandError else {
-                XCTFail("Expected missingParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "event_name"))
         XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
-    func test_execute_with_non_string_event_name_throws_invalid_parameter_type() {
+    func test_execute_with_null_event_name_throws_missing() {
+        let payload: DataObject = [
+            "event_name": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "event_name"))
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
+    }
+
+    func test_execute_with_blank_event_name_throws_empty() {
+        let payload: DataObject = [
+            "event_name": "  "
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "event_name"))
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
+    }
+
+    func test_execute_with_non_string_event_name_throws_type_mismatch() {
         let payload: DataObject = [
             "event_name": ["nested": "value"]
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                  case .invalidParameterType = commandError else {
-                XCTFail("Expected invalidParameterType error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .typeMismatch(key: "event_name", expectedType: "String")
+        )
         XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 

@@ -44,9 +44,10 @@ builder.setMappings { mappings in
 | `ad_user_data` | `.consentSetting(.adUserData)` | `granted`, `denied` |
 | `ad_personalization` | `.consentSetting(.adPersonalization)` | `granted`, `denied` |
 
-> Type and status strings are matched case-insensitively. An unknown consent type or status is rejected
-> and the command fails, surfacing the configuration mistake instead of silently dropping the entry. A
-> `consent_settings` object that resolves to no valid entries also fails. Valid types: `ad_storage`,
-> `analytics_storage`, `ad_user_data`, `ad_personalization`. Valid statuses: `granted`, `denied`.
+> Type and status strings are matched case-insensitively, and status strings are trimmed. An unknown
+> consent type or status is rejected and the command fails, surfacing the configuration mistake instead of
+> silently dropping the entry. A blank or `null` status and an empty `consent_settings` object also fail.
+> Valid types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`. Valid statuses:
+> `granted`, `denied`.
 
 See [Mappings](mappings.html) for the shared mapping concepts used above.

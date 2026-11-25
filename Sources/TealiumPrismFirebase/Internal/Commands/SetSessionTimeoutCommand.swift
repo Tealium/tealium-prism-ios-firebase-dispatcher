@@ -33,8 +33,8 @@ class SetSessionTimeoutCommand: SyncCommand {
         super.init(name: FirebaseCommand.setSessionTimeout.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
-        let sessionTimeout = try payload.require(.sessionTimeout, converter: LenientConverters.double)
+    override func execute(payload: DataObject) throws {
+        let sessionTimeout = try payload.require(FirebaseDestination.sessionTimeout, converter: LenientConverters.double)
         firebaseInstance.setSessionTimeoutInterval(sessionTimeout)
     }
 }

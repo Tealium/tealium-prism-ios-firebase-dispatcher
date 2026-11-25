@@ -18,30 +18,34 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_consent_data_throws_error() {
+    func test_execute_without_consent_data_throws_missing() {
         let payload: DataObject = [:]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                  case .missingParameter = commandError else {
-                XCTFail("Expected missingParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "consent_settings"))
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
-    func test_execute_with_empty_consent_settings_throws_noValidParameters() {
+    func test_execute_with_empty_consent_settings_throws_empty() {
         let payload: DataObject = [
             "consent_settings": [:] as DataObject
         ]
 
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "consent_settings"))
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
+    func test_execute_with_non_dictionary_consent_settings_throws_type_mismatch() {
+        let payload: DataObject = [
+            "consent_settings": "granted"
+        ]
+
         XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                  case .noValidParameters = commandError else {
-                XCTFail("Expected noValidParameters error but got \(error)")
+            guard let extractionError = error as? ExtractionError,
+                  case .typeMismatch(let key, _) = extractionError else {
+                XCTFail("Expected typeMismatch error but got \(error)")
                 return
             }
+            XCTAssertEqual(key, "consent_settings")
         }
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
@@ -129,7 +133,7 @@ final class SetConsentCommandTests: XCTestCase {
 
     // MARK: - Invalid Values Tests
 
-    func test_execute_throws_for_unknown_consent_type() {
+    func test_execute_throws_invalid_value_for_unknown_consent_type() {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -137,13 +141,17 @@ final class SetConsentCommandTests: XCTestCase {
             ] as DataObject
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(
+                key: "consent_settings.functional_storage",
+                reason: "unknown consent type, expected one of ad_personalization, ad_storage, ad_user_data, analytics_storage"
+            )
+        )
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
-    func test_execute_throws_for_unknown_consent_status() {
+    func test_execute_throws_invalid_value_for_unknown_consent_status() {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: "granted",
@@ -151,23 +159,58 @@ final class SetConsentCommandTests: XCTestCase {
             ] as DataObject
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(key: "consent_settings.analytics_storage", reason: "expected one of denied, granted")
+        )
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
     }
 
-    func test_execute_throws_error_for_non_string_value() {
+    func test_execute_throws_invalid_value_for_non_string_value() {
         let payload: DataObject = [
             "consent_settings": [
                 ConsentType.adStorage.rawValue: 123
             ] as DataObject
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            XCTAssert(error is CommandError)
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(key: "consent_settings.ad_storage", reason: "expected one of denied, granted")
+        )
         XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
+    func test_execute_throws_empty_for_blank_status() {
+        let payload: DataObject = [
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: " "
+            ] as DataObject
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "consent_settings.ad_storage"))
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
+    func test_execute_throws_missing_for_null_status() {
+        let payload: DataObject = [
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: DataItem.null
+            ] as DataObject
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "consent_settings.ad_storage"))
+        XCTAssertEqual(mockFirebase.setConsentCount, 0)
+    }
+
+    func test_execute_trims_consent_status() {
+        let payload: DataObject = [
+            "consent_settings": [
+                ConsentType.adStorage.rawValue: " granted\n"
+            ] as DataObject
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastConsentSettings?[.adStorage], .granted)
     }
 
     // MARK: - Case Sensitivity Tests

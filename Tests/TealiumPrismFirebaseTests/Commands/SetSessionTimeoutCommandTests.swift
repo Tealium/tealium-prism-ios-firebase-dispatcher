@@ -17,17 +17,19 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_command_data_throws_missing_parameter() {
+    func test_execute_without_command_data_throws_missing() {
         let payload: DataObject = [:]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .missingParameter = commandError
-            else {
-                XCTFail("Expected missingParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "session_timeout_seconds"))
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
+    }
+
+    func test_execute_with_null_timeout_throws_missing() {
+        let payload: DataObject = [
+            "session_timeout_seconds": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "session_timeout_seconds"))
         XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
 
@@ -67,19 +69,15 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.lastSessionTimeout, 1800.5)
     }
 
-    func test_execute_throws_invalid_parameter_type_for_invalid_string() {
+    func test_execute_throws_type_mismatch_for_invalid_string() {
         let payload: DataObject = [
             "session_timeout_seconds": "invalid"
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .invalidParameterType = commandError
-            else {
-                XCTFail("Expected invalidParameterType error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .typeMismatch(key: "session_timeout_seconds", expectedType: "Double")
+        )
         XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
 

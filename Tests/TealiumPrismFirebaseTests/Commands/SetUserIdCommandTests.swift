@@ -18,33 +18,31 @@ final class SetUserIdCommandTests: XCTestCase {
 
     // MARK: - Basic Tests
 
-    func test_execute_without_user_id_throws_error() {
+    func test_execute_without_user_id_throws_missing() {
         let payload: DataObject = [:]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .missingParameter = commandError
-            else {
-                XCTFail("Expected missingParameter error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "user_id"))
         XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
 
-    func test_execute_with_non_string_value_throws_invalid_parameter_type() {
+    func test_execute_with_null_user_id_throws_missing() {
+        let payload: DataObject = [
+            "user_id": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "user_id"))
+        XCTAssertEqual(mockFirebase.setUserIdCount, 0)
+    }
+
+    func test_execute_with_non_string_value_throws_type_mismatch() {
         let payload: DataObject = [
             "user_id": ["nested": "value"]
         ]
 
-        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
-            guard let commandError = error as? CommandError,
-                case .invalidParameterType = commandError
-            else {
-                XCTFail("Expected invalidParameterType error but got \(error)")
-                return
-            }
-        }
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .typeMismatch(key: "user_id", expectedType: "String")
+        )
         XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
 

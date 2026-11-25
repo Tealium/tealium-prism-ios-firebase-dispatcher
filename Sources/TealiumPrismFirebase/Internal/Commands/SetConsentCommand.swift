@@ -33,7 +33,7 @@ import TealiumPrismCore
 /// Unknown consent type/status strings cause the command to fail — unrecognized values
 /// are rejected to surface configuration mistakes instead of silently discarding entries.
 /// Known types: `ad_storage`, `analytics_storage`, `ad_user_data`, `ad_personalization`.
-/// Known values: `granted`, `denied`.
+/// Known values: `granted`, `denied`. Both are matched ignoring case, and values are trimmed.
 class SetConsentCommand: SyncCommand {
 
     private let firebaseInstance: FirebaseAnalyticsInterface
@@ -43,38 +43,30 @@ class SetConsentCommand: SyncCommand {
         super.init(name: FirebaseCommand.setConsent.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
-        let consentData = try payload.requireDataDictionary(.consentSettings)
+    override func execute(payload: DataObject) throws {
+        firebaseInstance.setConsent(try consentSettings(in: payload))
+    }
+
+    // MARK: - Private Helpers
+
+    private func consentSettings(in payload: DataObject) throws(ExtractionError) -> [ConsentType: ConsentStatus] {
+        let path = FirebaseDestination.consentSettings.path
+        let consentData = try payload.requireDataDictionary(path)
+        guard !consentData.isEmpty else {
+            throw .empty(key: path.render())
+        }
 
         var consentSettings: [ConsentType: ConsentStatus] = [:]
-        for (key, value) in consentData {
-            guard let statusString = value.get(as: String.self) else {
-                throw .invalidParameterType(
-                    parameter: "\(FirebaseDestination.consentSettings.path.render()).\(key)",
-                    expectedType: "string consent status"
-                )
-            }
+        for key in consentData.keys {
+            let settingPath = path[key]
             guard let type = ConsentConverter.typeOrNil(key) else {
-                throw .invalidParameterType(
-                    parameter: "\(FirebaseDestination.consentSettings.path.render()).\(key)",
-                    expectedType:
-                        "known consent type (ad_storage, analytics_storage, ad_user_data, ad_personalization)"
+                throw .invalidValue(
+                    key: settingPath.render(),
+                    reason: "unknown consent type, expected one of \(ConsentConverter.typeNames)"
                 )
             }
-            guard let status = ConsentConverter.statusOrNil(statusString) else {
-                throw .invalidParameterType(
-                    parameter:
-                        "\(FirebaseDestination.consentSettings.path.render()).\(key)=\(statusString)",
-                    expectedType: "known consent status (granted, denied)"
-                )
-            }
-            consentSettings[type] = status
+            consentSettings[type] = try payload.requireOneOf(settingPath, values: ConsentConverter.statuses)
         }
-
-        guard !consentSettings.isEmpty else {
-            throw .noValidParameters(expected: [.consentSettings])
-        }
-
-        firebaseInstance.setConsent(consentSettings)
+        return consentSettings
     }
 }

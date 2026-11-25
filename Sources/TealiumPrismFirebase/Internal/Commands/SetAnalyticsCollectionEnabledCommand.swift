@@ -33,8 +33,8 @@ class SetAnalyticsCollectionEnabledCommand: SyncCommand {
         super.init(name: FirebaseCommand.setAnalyticsCollectionEnabled.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
-        let enabled = try payload.require(.analyticsEnabled, converter: LenientConverters.bool)
+    override func execute(payload: DataObject) throws {
+        let enabled = try payload.require(FirebaseDestination.analyticsEnabled, converter: LenientConverters.bool)
         firebaseInstance.setAnalyticsCollectionEnabled(enabled)
     }
 }

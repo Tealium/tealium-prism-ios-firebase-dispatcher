@@ -48,7 +48,13 @@ builder.setMappings { mappings in
 }
 ```
 
-> Passing an empty string as `property_value` removes that property from Firebase. A length mismatch
-> between the name and value arrays fails the command.
+> Numbers and booleans are sent as strings (`42` becomes `"42"`). An empty string, `null`, or a value that
+> can't be converted, such as an object, as `property_value` removes that property from Firebase. Array names that can't be converted, such as `null`
+> or an object, are skipped.
+>
+> The command fails if:
+> - `property_name` is an object instead of a value or an array,
+> - the name and value arrays have different lengths, or
+> - none of the names can be converted.
 
 See [Mappings](mappings.html) for the shared mapping concepts used above.

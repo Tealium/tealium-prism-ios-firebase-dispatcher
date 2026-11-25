@@ -11,6 +11,9 @@ import TealiumPrismCore
 // MARK: - Firebase Commands
 
 /// Type-safe Firebase Analytics commands for use with `FirebaseMappings.mapCommand(_:)`.
+#if hasAttribute(nonexhaustive)
+@nonexhaustive
+#endif
 public enum FirebaseCommand: String, CommandName {
 
     /// Logs an analytics event via `Analytics.logEvent(_:parameters:)`.

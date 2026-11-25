@@ -38,7 +38,7 @@ class SetDefaultParametersCommand: SyncCommand {
         super.init(name: FirebaseCommand.setDefaultParameters.commandName)
     }
 
-    override func execute(payload: DataObject) throws(CommandError) {
+    override func execute(payload: DataObject) throws {
         guard
             let defaultParamsData = payload.extractDataDictionary(
                 path: FirebaseDestination.defaultParams.path)

@@ -9,6 +9,17 @@ in a single dispatch — only one is forwarded to Firebase per call, selected by
 > This command is iOS only. The Firebase Android SDK does not expose an on-device conversion measurement
 > API, so the Android dispatcher does not implement it.
 
+## Linking the on-device conversion framework
+
+Firebase looks up the `GoogleAdsOnDeviceConversion` framework at runtime, so the linker drops it unless the app
+target adds `-ObjC` to **Other Linker Flags** (`OTHER_LDFLAGS`). Without the flag every call fails, and only the
+Firebase log shows why: `On-device conversion measurement dependency not linked in`, or `does not support phone
+numbers` / `does not support hashed identifiers`. The dispatcher still reports the command as executed, because
+Firebase doesn't return a result.
+
+To check the setup, launch the app with the `-FIRDebugEnabled` and `-DebugOnDeviceConversionMeasurement`
+arguments. On startup Firebase logs `Conversion service GoogleAdsOnDeviceConversion framework is linked`.
+
 ## JSON Mappings
 
 ```json
@@ -46,7 +57,33 @@ match wins):
 3. `email_address` → `.conversionEmail`
 4. `phone_number` → `.conversionPhone`
 
-> `hashed_email_address` and `hashed_phone_number` must be **Base64-encoded SHA-256 hashes**. Passing a
-> plain string will be rejected.
+A `null` credential counts as not mapped. A mapped credential that is invalid, for example empty or a hash in
+the wrong format, fails the command instead of falling back to the next one.
+
+## Plain credentials
+
+Map `email_address` or `phone_number` when the app has the plain value. Firebase hashes it on the device.
+The phone number must be in E.164 format, for example `+15555551234`.
+
+## Hashed credentials
+
+Map `hashed_email_address` or `hashed_phone_number` when you hash the value yourself:
+
+1. Normalize the email address or phone number as described in
+   [Firebase's on-device measurement guide](https://firebase.google.com/docs/tutorials/ads-ios-on-device-measurement/step-3).
+2. Hash its UTF-8 bytes with SHA-256.
+3. Map the 32-byte result as 64 hexadecimal characters or 44 characters of standard Base64.
+
+Any other value, such as a plain email address or a SHA-1 hash, fails the command with `invalidValue`. The
+dispatcher can't check the normalization: a hash of a value that wasn't normalized is forwarded and never
+matches.
+
+```swift
+import CryptoKit
+
+let digest = SHA256.hash(data: Data(normalizedEmail.utf8))
+let hex = digest.map { String(format: "%02x", $0) }.joined()   // or: Data(digest).base64EncodedString()
+teal.track("conversion", data: ["hashed_email": hex])
+```
 
 See [Mappings](mappings.html) for the shared mapping concepts used above.

@@ -174,6 +174,29 @@ final class FirebaseDispatcherTests: XCTestCase {
         XCTAssertEqual(mockFirebase.loggedEvents.count, 1)
     }
 
+    func test_dispatch_with_invalid_payload_executes_other_commands() {
+        let dispatch = Dispatch(
+            name: "invalid_payload",
+            data: [
+                TealiumDataKey.commandName: [
+                    FirebaseCommand.logEvent.rawValue,
+                    FirebaseCommand.setUserId.rawValue,
+                ],
+                "user_id": "user123",
+            ])
+
+        let completionCalled = expectation(description: "Completion called")
+
+        _ = dispatcher.dispatch([dispatch]) { processedDispatches in
+            XCTAssertEqual(processedDispatches.count, 1)
+            completionCalled.fulfill()
+        }
+
+        waitForDefaultTimeout()
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
+        XCTAssertEqual(mockFirebase.setUserIdCount, 1)
+    }
+
     func test_dispatch_with_command_as_number_does_not_crash() {
         let dispatch = Dispatch(
             name: "invalid_type",
