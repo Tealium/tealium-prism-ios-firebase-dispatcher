@@ -2,39 +2,25 @@ name: Build and Test
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
+env:
+  BUNDLE_WITHOUT: docs
+  FASTLANE_SKIP_UPDATE_CHECK: "1"
+  FASTLANE_HIDE_CHANGELOG: "1"
+  FASTLANE_OPT_OUT_USAGE: "1"
+
+# PR jobs only restore the gems cache; gems-cache-seed.yml on main writes the entry PRs restore.
+# Quirk: ruby/setup-ruby bundles an @actions/cache that ignores cache-mode and has no restore-only
+# input, so on a cache miss it still builds the archive and then logs a refused save (no failure).
+cache-mode: read
+
 jobs:
-  SwiftLint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Lint Source
-        uses: norio-nomura/action-swiftlint@3.2.1
-        with:
-          args: --config .swiftlint.yml
-      - name: Lint Tests
-        uses: norio-nomura/action-swiftlint@3.2.1
-        with:
-          args: --config .swiftlint_test.yml
-  inspect:
-    name: Inspect Machine
-    needs: [SwiftLint]
-    runs-on: macos-15
-    timeout-minutes: 10
-    steps:
-      - name: List available Xcode versions
-        run: ls /Applications | grep Xcode
-        shell: bash
-      - name: List available devices
-        run: xcrun simctl list devices
-        shell: bash
-      - name: List runtimes
-        run: xcrun simctl list runtimes
-        shell: bash
   build_example:
     name: Example Builds | ${{ matrix.scheme }}
-    needs: [SwiftLint]
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 15
     strategy:
       matrix:
         scheme:
@@ -42,17 +28,20 @@ jobs:
         destination:
             - "generic/platform=iOS Simulator"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: "Run Local Action: Setup Machine"
         uses: ./.github/workflows/setup-machine
       - name: Build - "${{ matrix.scheme }}"
-        run: scripts/build.sh --scheme "${{ matrix.scheme }}" --destination "${{ matrix.destination }}" --path Example
+        # The index store is only used by the Xcode editor.
+        run: |
+          scripts/build.sh --scheme "${{ matrix.scheme }}" --destination "${{ matrix.destination }}" --path Example \
+            --xcargs "COMPILER_INDEX_STORE_ENABLE=NO"
   build_SPM:
     name: SPM Builds | ${{ matrix.destination }}
-    needs: [SwiftLint]
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 15
     strategy:
+      fail-fast: false
       matrix:
         destination:
           - "generic/platform=iOS"
@@ -61,41 +50,57 @@ jobs:
           - "generic/platform=tvOS Simulator"
           - "generic/platform=macOS"
     steps:
-      - uses: actions/checkout@v4
-      - name: "Run Local Action: Setup Machine"
-        uses: ./.github/workflows/setup-machine
+      - uses: actions/checkout@v7
+      - name: "Run Local Action: Setup Xcode"
+        uses: ./.github/workflows/setup-xcode
       - name: Build - TealiumPrismFirebase
-        run: scripts/build.sh --scheme "TealiumPrismFirebase" --destination "${{ matrix.destination }}" --path .
+        run: scripts/build_spm.sh "${{ matrix.destination }}"
   test_iOS:
     name: iOS Tests
-    needs: [SwiftLint]
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - name: "Run Local Action: Setup Machine"
-        uses: ./.github/workflows/setup-machine
+      - uses: actions/checkout@v7
+      # run_tests.sh calls xcodebuild directly, so no Ruby or gems are needed.
+      - name: "Run Local Action: Setup Xcode"
+        uses: ./.github/workflows/setup-xcode
       - name: Test - TealiumPrismFirebaseTests
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=iOS Simulator,OS=18.5,name=iPhone 16 Pro"
+      - name: Diagnostics on failure or cancel
+        if: failure() || cancelled()
+        run: |
+          xcode-select -p && xcodebuild -version
+          xcrun simctl list runtimes
+          xcrun simctl list devices available
   test_tvOS:
     name: tvOS Tests
-    needs: [SwiftLint]
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - name: "Run Local Action: Setup Machine"
-        uses: ./.github/workflows/setup-machine
+      - uses: actions/checkout@v7
+      # run_tests.sh calls xcodebuild directly, so no Ruby or gems are needed.
+      - name: "Run Local Action: Setup Xcode"
+        uses: ./.github/workflows/setup-xcode
       - name: Test - TealiumPrismFirebaseTests
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=tvOS Simulator,OS=18.5,name=Apple TV"
+      - name: Diagnostics on failure or cancel
+        if: failure() || cancelled()
+        run: |
+          xcode-select -p && xcodebuild -version
+          xcrun simctl list runtimes
+          xcrun simctl list devices available
   test_macOS:
     name: macOS Tests
-    needs: [SwiftLint]
     runs-on: macos-15
-    timeout-minutes: 60
+    timeout-minutes: 20
     steps:
-      - uses: actions/checkout@v4
-      - name: "Run Local Action: Setup Machine"
-        uses: ./.github/workflows/setup-machine
+      - uses: actions/checkout@v7
+      # run_tests.sh calls xcodebuild directly, so no Ruby or gems are needed.
+      - name: "Run Local Action: Setup Xcode"
+        uses: ./.github/workflows/setup-xcode
       - name: Test - TealiumPrismFirebaseTests
         run: scripts/run_tests.sh --scheme "TealiumPrismFirebase" --destination "platform=macOS"
+      - name: Diagnostics on failure or cancel
+        if: failure() || cancelled()
+        run: |
+          xcode-select -p && xcodebuild -version

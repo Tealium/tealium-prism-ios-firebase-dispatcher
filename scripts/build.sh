@@ -26,6 +26,11 @@ while [[ $# -gt 0 ]]; do
         shift # past argument
         shift # past value
         ;;
+        -x|--xcargs)
+        XCARGS="$2"
+        shift # past argument
+        shift # past value
+        ;;
         --*|-*)
         echo "Unknown option $1"
         exit 1
@@ -51,4 +56,8 @@ fi
 
 cd "$PATH_ARG" || { echo "--path '$PATH_ARG' is not a valid directory"; exit 1; }
 
-rm -rf build && bundle exec fastlane run xcodebuild scheme:"$SCHEME" destination:"$DESTINATION"
+FASTLANE_ARGS=(scheme:"$SCHEME" destination:"$DESTINATION")
+if [ -n "$XCARGS" ]; then
+    FASTLANE_ARGS+=(xcargs:"$XCARGS")
+fi
+rm -rf build && bundle exec fastlane run xcodebuild "${FASTLANE_ARGS[@]}"
