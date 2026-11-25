@@ -9,6 +9,17 @@ in a single dispatch — only one is forwarded to Firebase per call, selected by
 > This command is iOS only. The Firebase Android SDK does not expose an on-device conversion measurement
 > API, so the Android dispatcher does not implement it.
 
+## Linking the on-device conversion framework
+
+Firebase looks up the `GoogleAdsOnDeviceConversion` framework at runtime, so the linker drops it unless the app
+target adds `-ObjC` to **Other Linker Flags** (`OTHER_LDFLAGS`). Without the flag every call fails, and only the
+Firebase log shows why: `On-device conversion measurement dependency not linked in`, or `does not support phone
+numbers` / `does not support hashed identifiers`. The dispatcher still reports the command as executed, because
+Firebase doesn't return a result.
+
+To check the setup, launch the app with the `-FIRDebugEnabled` and `-DebugOnDeviceConversionMeasurement`
+arguments. On startup Firebase logs `Conversion service GoogleAdsOnDeviceConversion framework is linked`.
+
 ## JSON Mappings
 
 ```json
