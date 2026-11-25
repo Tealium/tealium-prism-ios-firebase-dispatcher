@@ -44,24 +44,29 @@ class SetConsentCommand: SyncCommand {
     }
 
     override func execute(payload: DataObject) throws {
+        firebaseInstance.setConsent(try consentSettings(in: payload))
+    }
+
+    // MARK: - Private Helpers
+
+    private func consentSettings(in payload: DataObject) throws(ExtractionError) -> [ConsentType: ConsentStatus] {
         let path = FirebaseDestination.consentSettings.path
         let consentData = try payload.requireDataDictionary(path)
         guard !consentData.isEmpty else {
-            throw ExtractionError.empty(key: path.render())
+            throw .empty(key: path.render())
         }
 
         var consentSettings: [ConsentType: ConsentStatus] = [:]
         for key in consentData.keys {
             let settingPath = path[key]
             guard let type = ConsentConverter.typeOrNil(key) else {
-                throw ExtractionError.invalidValue(
+                throw .invalidValue(
                     key: settingPath.render(),
                     reason: "unknown consent type, expected one of \(ConsentConverter.typeNames)"
                 )
             }
             consentSettings[type] = try payload.requireOneOf(settingPath, values: ConsentConverter.statuses)
         }
-
-        firebaseInstance.setConsent(consentSettings)
+        return consentSettings
     }
 }

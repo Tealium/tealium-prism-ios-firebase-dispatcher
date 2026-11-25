@@ -98,6 +98,62 @@ final class SetUserPropertyCommandTests: XCTestCase {
         }
     }
 
+    func test_execute_reports_length_mismatch_before_null_names() {
+        let payload: DataObject = [
+            "property_name": [DataItem.null] as [DataItem],
+            "property_value": ["value_a", "value_b"],
+        ]
+
+        XCTAssertThrowsError(try command.execute(payload: payload)) { error in
+            guard let commandError = error as? CommandError,
+                case let .arrayLengthMismatch(array1, count1, array2, count2) = commandError
+            else {
+                XCTFail("Expected arrayLengthMismatch error but got \(error)")
+                return
+            }
+            XCTAssertEqual(array1, "property_name")
+            XCTAssertEqual(count1, 1)
+            XCTAssertEqual(array2, "property_value")
+            XCTAssertEqual(count2, 2)
+        }
+        XCTAssertTrue(mockFirebase.userProperties.isEmpty)
+    }
+
+    func test_execute_with_non_string_name_throws_type_mismatch() {
+        let payload: DataObject = [
+            "property_name": ["nested": "object"],
+            "property_value": "premium",
+        ]
+
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .typeMismatch(key: "property_name", expectedType: "String or array of String")
+        )
+        XCTAssertTrue(mockFirebase.userProperties.isEmpty)
+    }
+
+    func test_execute_with_null_name_throws_empty() {
+        let payload: DataObject = [
+            "property_name": DataItem.null,
+            "property_value": "premium",
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "property_name"))
+        XCTAssertTrue(mockFirebase.userProperties.isEmpty)
+    }
+
+    func test_execute_skips_array_names_that_cannot_be_read_as_string() {
+        let payload: DataObject = [
+            "property_name": [DataItem(value: ["nested": "object"]), DataItem(value: "tier")],
+            "property_value": ["ignored", "premium"],
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.userProperties.count, 1)
+        XCTAssertEqual(mockFirebase.userProperties.first?.name, "tier")
+        XCTAssertEqual(mockFirebase.userProperties.first?.value, "premium")
+    }
+
     func test_execute_sets_single_property_with_array_format() {
         let payload: DataObject = [
             "property_name": ["subscription_tier"],

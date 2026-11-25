@@ -24,6 +24,15 @@ final class SetSessionTimeoutCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
     }
 
+    func test_execute_with_null_timeout_throws_missing() {
+        let payload: DataObject = [
+            "session_timeout_seconds": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "session_timeout_seconds"))
+        XCTAssertEqual(mockFirebase.setSessionTimeoutCount, 0)
+    }
+
     // MARK: - Double Value Tests
 
     func test_execute_sets_timeout_from_double() {

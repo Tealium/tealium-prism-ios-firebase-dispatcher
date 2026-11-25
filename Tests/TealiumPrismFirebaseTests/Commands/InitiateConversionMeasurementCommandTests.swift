@@ -54,6 +54,15 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
     }
 
+    func test_execute_with_blank_email_address_throws_empty() {
+        let payload: DataObject = [
+            "email_address": "  "
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "email_address"))
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+    }
+
     // MARK: - Phone Number Tests
 
     func test_execute_with_phone_number() {
@@ -75,21 +84,73 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
+    func test_execute_with_blank_phone_number_throws_empty() {
+        let payload: DataObject = [
+            "phone_number": " \n"
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "phone_number"))
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
+    }
+
     // MARK: - Hashed Email Address Tests
 
-    func test_execute_with_hashed_email_address() {
-        // Real-world scenario: hash an email and encode to Base64
-        let email = "user@example.com"
-        let hash = SHA256.hash(data: Data(email.utf8))
-        let base64Hash = Data(hash).base64EncodedString()
-
+    func test_execute_with_base64_hashed_email_address_forwards_digest() {
+        let digest = sha256("user@example.com")
         let payload: DataObject = [
-            "hashed_email_address": base64Hash
+            "hashed_email_address": digest.base64EncodedString()
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
-        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, digest)
+    }
+
+    func test_execute_with_hex_hashed_email_address_forwards_digest() {
+        let digest = sha256("user@example.com")
+        let payload: DataObject = [
+            "hashed_email_address": hex(digest)
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, digest)
+    }
+
+    func test_execute_with_uppercase_hex_hashed_email_address_forwards_digest() {
+        let digest = sha256("user@example.com")
+        let payload: DataObject = [
+            "hashed_email_address": hex(digest).uppercased()
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, digest)
+    }
+
+    func test_execute_with_known_hashed_email_address_forwards_same_digest_for_hex_and_base64() {
+        // SHA-256 of "test@gmail.com", computed independently with
+        // `printf %s test@gmail.com | shasum -a 256` and `... | openssl dgst -sha256 -binary | base64`.
+        let encodings = [
+            "87924606b4131a8aceeeae8868531fbb9712aaa07a5d3a756b26ce0f5d6ca674",
+            "h5JGBrQTGorO7q6IaFMfu5cSqqB6XTp1aybOD11spnQ=",
+        ]
+
+        for encoded in encodings {
+            mockFirebase.lastHashedEmailAddress = nil
+            XCTAssertNoThrow(try command.execute(payload: ["hashed_email_address": encoded]))
+            XCTAssertEqual(mockFirebase.lastHashedEmailAddress, sha256("test@gmail.com"))
+            XCTAssertEqual(mockFirebase.lastHashedEmailAddress?.count, 32)
+        }
+    }
+
+    func test_execute_ignores_whitespace_around_hashed_email_address() {
+        let digest = sha256("user@example.com")
+
+        for encoded in [" \(hex(digest)) ", "\(digest.base64EncodedString())\n"] {
+            mockFirebase.lastHashedEmailAddress = nil
+            XCTAssertNoThrow(try command.execute(payload: ["hashed_email_address": encoded]))
+            XCTAssertEqual(mockFirebase.lastHashedEmailAddress, digest)
+        }
     }
 
     func test_execute_with_empty_hashed_email_address_throws_empty() {
@@ -101,57 +162,65 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
     }
 
-    func test_execute_with_invalid_hashed_email_throws_invalid_value() {
-        // Test invalid Base64 strings that should fail decoding
-        let invalidHashes = [
-            "!@#$%^&*()",  // Invalid Base64 characters
-            "abc",  // Valid Base64 but too short
+    func test_execute_with_blank_hashed_email_address_throws_empty() {
+        let payload: DataObject = [
+            "hashed_email_address": "   "
         ]
 
-        for invalidHash in invalidHashes {
-            let payload: DataObject = [
-                "hashed_email_address": invalidHash
-            ]
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "hashed_email_address"))
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
+    }
 
-            XCTAssertThrowsExtractionError(
-                try command.execute(payload: payload),
-                .invalidValue(key: "hashed_email_address", reason: "expected a Base64-encoded SHA-256 hash")
-            )
-            XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
+    func test_execute_with_value_that_is_not_a_sha256_digest_throws_invalid_value() throws {
+        for invalid in invalidHashedValues() {
+            try XCTContext.runActivity(named: invalid.description) { _ in
+                XCTAssertThrowsExtractionError(
+                    try command.execute(payload: ["hashed_email_address": invalid.value]),
+                    .invalidValue(key: "hashed_email_address", reason: invalidHashReason)
+                )
+            }
         }
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
     }
 
     func test_execute_with_normalized_gmail_hashed_email() {
         // Test with Gmail normalization scenario (like in TealiumHelper example)
         let rawEmail = "An.Email.User0125@googlemail.com"
         let normalizedEmail = normalizeGmailForTest(rawEmail)
-        let hash = SHA256.hash(data: Data(normalizedEmail.utf8))
-        let base64Hash = Data(hash).base64EncodedString()
+        XCTAssertEqual(normalizedEmail, "anemalluserolzs@gmail.com", "Example from the Firebase normalization guide")
+        let digest = sha256(normalizedEmail)
 
         let payload: DataObject = [
-            "hashed_email_address": base64Hash
+            "hashed_email_address": digest.base64EncodedString()
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 1)
-        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, Data(hash))
+        XCTAssertEqual(mockFirebase.lastHashedEmailAddress, digest)
     }
 
     // MARK: - Hashed Phone Number Tests
 
-    func test_execute_with_hashed_phone_number() {
-        // Real-world scenario: hash a phone number and encode to Base64
-        let phoneNumber = "+15555551234"
-        let hash = SHA256.hash(data: Data(phoneNumber.utf8))
-        let base64Hash = Data(hash).base64EncodedString()
-
+    func test_execute_with_base64_hashed_phone_number_forwards_digest() {
+        let digest = sha256("+15555551234")
         let payload: DataObject = [
-            "hashed_phone_number": base64Hash
+            "hashed_phone_number": digest.base64EncodedString()
         ]
 
         XCTAssertNoThrow(try command.execute(payload: payload))
         XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
-        XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, Data(hash))
+        XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, digest)
+    }
+
+    func test_execute_with_hex_hashed_phone_number_forwards_digest() {
+        let digest = sha256("+15555551234")
+        let payload: DataObject = [
+            "hashed_phone_number": hex(digest)
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 1)
+        XCTAssertEqual(mockFirebase.lastHashedPhoneNumber, digest)
     }
 
     func test_execute_with_empty_hashed_phone_number_throws_empty() {
@@ -163,18 +232,103 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
     }
 
-    func test_execute_with_invalid_hashed_phone_throws_invalid_value() {
-        // Test with invalid Base64 string
-        let invalidHash = "invalidbase64!@#"
+    func test_execute_with_blank_hashed_phone_number_throws_empty() {
         let payload: DataObject = [
-            "hashed_phone_number": invalidHash
+            "hashed_phone_number": "\t"
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .empty(key: "hashed_phone_number"))
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+    }
+
+    func test_execute_with_phone_value_that_is_not_a_sha256_digest_throws_invalid_value() throws {
+        for invalid in invalidHashedValues() {
+            try XCTContext.runActivity(named: invalid.description) { _ in
+                XCTAssertThrowsExtractionError(
+                    try command.execute(payload: ["hashed_phone_number": invalid.value]),
+                    .invalidValue(key: "hashed_phone_number", reason: invalidHashReason)
+                )
+            }
+        }
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+    }
+
+    // MARK: - Credential Type and Whitespace Tests
+
+    func test_execute_with_object_credential_throws_type_mismatch_without_falling_back() {
+        let payload: DataObject = [
+            "hashed_email_address": ["nested": "object"],
+            "email_address": "user@example.com",
         ]
 
         XCTAssertThrowsExtractionError(
             try command.execute(payload: payload),
-            .invalidValue(key: "hashed_phone_number", reason: "expected a Base64-encoded SHA-256 hash")
+            .typeMismatch(key: "hashed_email_address", expectedType: "String")
         )
-        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+    }
+
+    func test_execute_with_array_credential_throws_type_mismatch() {
+        let payload: DataObject = [
+            "phone_number": ["+15555551234"]
+        ]
+
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .typeMismatch(key: "phone_number", expectedType: "String")
+        )
+        XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
+    }
+
+    func test_execute_with_numeric_hashed_credential_throws_invalid_value_without_falling_back() {
+        let payload: DataObject = [
+            "hashed_email_address": 123,
+            "email_address": "user@example.com",
+        ]
+
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(key: "hashed_email_address", reason: invalidHashReason)
+        )
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+    }
+
+    func test_execute_with_numeric_phone_number_forwards_it_as_string() {
+        let payload: DataObject = [
+            "phone_number": 15_555_551_234
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastPhoneNumber, "15555551234")
+    }
+
+    func test_execute_with_null_credential_uses_next_one() {
+        let payload: DataObject = [
+            "hashed_email_address": DataItem.null,
+            "email_address": "user@example.com",
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
+        XCTAssertEqual(mockFirebase.lastEmailAddress, "user@example.com")
+    }
+
+    func test_execute_trims_whitespace_around_email_address() {
+        let payload: DataObject = [
+            "email_address": " user@example.com\n"
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastEmailAddress, "user@example.com")
+    }
+
+    func test_execute_trims_whitespace_around_phone_number() {
+        let payload: DataObject = [
+            "phone_number": "\t+15555551234 "
+        ]
+
+        XCTAssertNoThrow(try command.execute(payload: payload))
+        XCTAssertEqual(mockFirebase.lastPhoneNumber, "+15555551234")
     }
 
     // MARK: - Priority Tests
@@ -248,7 +402,64 @@ final class InitiateConversionMeasurementCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.conversionPhoneCount, 0)
     }
 
+    func test_execute_with_invalid_hashed_email_fails_without_falling_back_to_other_credentials() {
+        let payload: DataObject = [
+            "hashed_email_address": "user@example.com",
+            "hashed_phone_number": sha256("+15555551234").base64EncodedString(),
+            "email_address": "user@example.com",
+        ]
+
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .invalidValue(key: "hashed_email_address", reason: invalidHashReason)
+        )
+        XCTAssertEqual(mockFirebase.conversionHashedEmailCount, 0)
+        XCTAssertEqual(mockFirebase.conversionHashedPhoneCount, 0)
+        XCTAssertEqual(mockFirebase.conversionEmailCount, 0)
+    }
+
     // MARK: - Helper Methods
+
+    private let invalidHashReason = "expected a SHA-256 hash as 64 hexadecimal or 44 Base64 characters"
+
+    private struct InvalidHashedValue {
+        let description: String
+        let value: String
+    }
+
+    /// Values that must never reach Firebase as a hashed credential, because they aren't a 32-byte digest.
+    private func invalidHashedValues() -> [InvalidHashedValue] {
+        let digest = sha256("user@example.com")
+        let digestHex = hex(digest)
+        let digestBase64 = digest.base64EncodedString()
+        let sha1 = Data(Insecure.SHA1.hash(data: Data("user@example.com".utf8)))
+        let sha512 = Data(SHA512.hash(data: Data("user@example.com".utf8)))
+        return [
+            InvalidHashedValue(description: "plain email address", value: "user@example.com"),
+            InvalidHashedValue(description: "plain phone number, valid Base64 of 9 bytes", value: "+12345678901"),
+            InvalidHashedValue(description: "short valid Base64", value: "abcd"),
+            InvalidHashedValue(description: "invalid characters", value: "!@#$%^&*()"),
+            InvalidHashedValue(description: "SHA-1 as hex, valid Base64 of 30 bytes", value: hex(sha1)),
+            InvalidHashedValue(description: "SHA-1 as Base64", value: sha1.base64EncodedString()),
+            InvalidHashedValue(description: "SHA-512 as hex", value: hex(sha512)),
+            InvalidHashedValue(description: "SHA-512 as Base64", value: sha512.base64EncodedString()),
+            InvalidHashedValue(description: "hex one digit short", value: String(digestHex.dropLast())),
+            InvalidHashedValue(description: "hex one digit too long", value: digestHex + "0"),
+            InvalidHashedValue(description: "64 characters with a non-hex digit", value: "g" + digestHex.dropFirst()),
+            InvalidHashedValue(description: "64 characters with a sign", value: "+f" + digestHex.dropFirst(2)),
+            InvalidHashedValue(description: "hex with 0x prefix", value: "0x" + digestHex),
+            InvalidHashedValue(description: "Base64 without padding", value: String(digestBase64.dropLast())),
+            InvalidHashedValue(description: "Base64 of the hex string", value: Data(digestHex.utf8).base64EncodedString()),
+        ]
+    }
+
+    private func sha256(_ text: String) -> Data {
+        Data(SHA256.hash(data: Data(text.utf8)))
+    }
+
+    private func hex(_ data: Data) -> String {
+        data.map { String(format: "%02x", $0) }.joined()
+    }
 
     /// Normalizes Gmail address for testing (simplified version of TealiumHelper.normalizeEmail)
     private func normalizeGmailForTest(_ email: String) -> String {

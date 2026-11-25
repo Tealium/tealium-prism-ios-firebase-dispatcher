@@ -1,5 +1,5 @@
 //
-//  XCTestCase+ExtractionError.swift
+//  XCTAssertThrowsExtractionError.swift
 //  TealiumPrismFirebaseTests
 //
 //  Created by Sebastian Krajna on 24/11/2026.
@@ -11,8 +11,9 @@ import XCTest
 
 /// Asserts that `expression` throws the `expected` `ExtractionError`.
 ///
-/// `ExtractionError` is not `Equatable`, so the errors are compared by `message`,
-/// which differs for every case and includes the key.
+/// `ExtractionError` is not `Equatable`, so the errors are compared by their reflected description,
+/// which contains the case and its associated values but not the message, so a change to Core's
+/// message wording doesn't fail these tests.
 func XCTAssertThrowsExtractionError(
     _ expression: @autoclosure () throws -> Void,
     _ expected: ExtractionError,
@@ -24,6 +25,6 @@ func XCTAssertThrowsExtractionError(
             XCTFail("Expected \(expected) but got \(error)", file: file, line: line)
             return
         }
-        XCTAssertEqual(extractionError.message, expected.message, file: file, line: line)
+        XCTAssertEqual(String(reflecting: extractionError), String(reflecting: expected), file: file, line: line)
     }
 }

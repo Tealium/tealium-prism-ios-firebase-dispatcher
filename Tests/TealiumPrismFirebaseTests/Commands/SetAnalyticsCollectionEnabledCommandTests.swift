@@ -28,6 +28,18 @@ final class SetAnalyticsCollectionEnabledCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
     }
 
+    func test_execute_with_null_value_throws_missing() {
+        let payload: DataObject = [
+            "analytics_collection_enabled": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(
+            try command.execute(payload: payload),
+            .missing(key: "analytics_collection_enabled")
+        )
+        XCTAssertEqual(mockFirebase.setAnalyticsEnabledCount, 0)
+    }
+
     func test_execute_throws_type_mismatch_for_non_boolean() {
         let payload: DataObject = [
             "analytics_collection_enabled": "maybe"

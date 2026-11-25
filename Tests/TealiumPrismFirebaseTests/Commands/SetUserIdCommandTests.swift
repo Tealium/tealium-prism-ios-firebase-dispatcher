@@ -25,6 +25,15 @@ final class SetUserIdCommandTests: XCTestCase {
         XCTAssertEqual(mockFirebase.setUserIdCount, 0)
     }
 
+    func test_execute_with_null_user_id_throws_missing() {
+        let payload: DataObject = [
+            "user_id": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "user_id"))
+        XCTAssertEqual(mockFirebase.setUserIdCount, 0)
+    }
+
     func test_execute_with_non_string_value_throws_type_mismatch() {
         let payload: DataObject = [
             "user_id": ["nested": "value"]

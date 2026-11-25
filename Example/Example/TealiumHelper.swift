@@ -267,19 +267,19 @@ class TealiumHelper {
     }
     
     /// Initiate conversion measurement with hashed phone
-    /// Flow: E.164 format → SHA256 hash → Base64 encode → send via Tealium
+    /// Flow: E.164 format → SHA256 hash → hex encode → send via Tealium
     func conversionWithHashedPhone() {
         let phoneNumber = "+15555551234"
         let hash = SHA256.hash(data: Data(phoneNumber.utf8))
-        let base64String = Data(hash).base64EncodedString()
-        
+        let hexString = hash.map { String(format: "%02x", $0) }.joined()
+
         teal?.track("conversion_measurement", data: [
-            "hashed_phone": base64String
+            "hashed_phone": hexString
         ])
-        
+
         print("📱 Hashed Phone Conversion")
         print("   Phone: \(phoneNumber)")
-        print("   Base64: \(base64String)")
+        print("   Hex: \(hexString)")
     }
     
     // MARK: - Email Normalization Helper

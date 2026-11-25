@@ -25,6 +25,15 @@ final class LogEventCommandTests: XCTestCase {
         XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
     }
 
+    func test_execute_with_null_event_name_throws_missing() {
+        let payload: DataObject = [
+            "event_name": DataItem.null
+        ]
+
+        XCTAssertThrowsExtractionError(try command.execute(payload: payload), .missing(key: "event_name"))
+        XCTAssertTrue(mockFirebase.loggedEvents.isEmpty)
+    }
+
     func test_execute_with_blank_event_name_throws_empty() {
         let payload: DataObject = [
             "event_name": "  "

@@ -15,6 +15,9 @@ import TealiumPrismCore
 ///
 /// Each case maps to a specific key or path in the Firebase command payload.
 /// Use with `mapFrom(_:to:)` and `mapConstant(_:to:)`.
+#if hasAttribute(nonexhaustive)
+@nonexhaustive
+#endif
 public enum FirebaseDestination: JSONObjectPathConvertible {
 
     // MARK: LogEvent
